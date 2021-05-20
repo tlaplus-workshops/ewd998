@@ -108,8 +108,7 @@ Wakeup(i) ==
  \* * on two states — the current and the next — which is true if the next state
  \* * is acceptable.
  \* * The next-state relation should somehow plug concrete values into the 
- \* * (sub-) actions Terminate, SendMsg, and Wakeup.  For the moment, let's assume
- \* * N = 4 and plug the values in explicitly.
+ \* * (sub-) actions Terminate, SendMsg, and Wakeup.
 Next ==
         \* * A TLA+ specification is a formula and TLC evaluates it.  With the
          \* * conjunct list, ignoring the temporal logic for now, we essentially
@@ -120,24 +119,18 @@ Next ==
          \* *   /\ active[2] = TRUE
          \* *   /\ active[3] = TRUE
          \* * which is FALSE causing TLC to terminate after printing the initial state.
-        \* TODO Can we rewrite this s.t. it takes the spec parameter CONSTANT N into account?
-         \* TODO Create a new file O.tla with the following content:
-         \* TODO   ---- MODULE O ----
-         \* TODO   CONSTANT O(_)
-         \* TODO   THEOREM O(1) /\ O(2) <=> \E i \in {1,2}: O(i) OBVIOUS
-         \* TODO   THEOREM O(1) /\ O(2) <=> \A i \in {1,2}: O(i) OBVIOUS
-         \* TODO   THEOREM O(1) \/ O(2) <=> \E i \in {1,2}: O(i) OBVIOUS
-         \* TODO   THEOREM O(1) \/ O(2) <=> \A i \in {1,2}: O(i) OBVIOUS
-         \* TODO   ====
-         \* TODO Switch to the terminal and check what the TLA+ proof system, which one
-         \* TODO are valid THEOREMs: `tlapm O.tla`:
-        \/ Terminate(0)
-        \/ Terminate(1)
-        \/ Terminate(2)
-        \/ Terminate(3)
-        \/ Wakeup(0)
-        \/ Wakeup(1)
-        \* Rest omitted.
+        \* * (Existential/Universal) Quantification generalizes (disjunct/conjunct) lists.
+    \* TODO Have TLC check this spec:
+     \* TODO 1) Without its `-deadlock` command-line parameter
+     \* TODO 2) With the `-deadlock` command-line parameter
+     \* TODO 3) Without `-deadlock` but a disjunct `UNCHANGED vars` added below
+     \* TODO Why does the state space appear infinite even though N is fixed?
+    \E i,j \in Node:   
+        \/ Terminate(i)
+        \/ Wakeup(i)
+        \* ? Is it correct to let node i send a message to node j with i = j?
+        \/ SendMsg(i, j)
+        \* TODO \/ UNCHANGED vars
 
 =============================================================================
 \* Modification History
