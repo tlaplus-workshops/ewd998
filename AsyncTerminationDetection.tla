@@ -51,6 +51,18 @@ vars == << active, pending >>
 
 \* * Initially, all nodes are active and no messages are pending.
 Init ==
+    \* * ...all nodes are active.
+     \* * The TLA+ language construct below is a function. A function has a domain
+     \* * and a co-domain/range. Lamport: ["In the absence of types, I don't know
+     \* * what a partial function would be or why it would be useful."]
+     \* * (http://discuss.tlapl.us/msg01536.html).
+     \* * Here, we "map" each element in Node to the value TRUE (it is just
+     \* * coincidence that the elements of Node are 0, 1, ..., N-1, which could
+     \* * suggest that functions are just zero-indexed arrays found in programming
+     \* * languages. As a matter of fact, the domain of a function can be any set,
+     \* * even infinite ones: [n \in Nat |-> n]). 
+    active = [ n \in Node |-> TRUE ]
+    \* TODO Define the value of variable pending in the initial state(s).
 
 -----------------------------------------------------------------------------
 
