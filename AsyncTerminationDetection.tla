@@ -60,9 +60,9 @@ Init ==
      \* * coincidence that the elements of Node are 0, 1, ..., N-1, which could
      \* * suggest that functions are just zero-indexed arrays found in programming
      \* * languages. As a matter of fact, the domain of a function can be any set,
-     \* * even infinite ones: [n \in Nat |-> n]). 
-    active = [ n \in Node |-> TRUE ]
-    \* TODO Define the value of variable pending in the initial state(s).
+     \* * even infinite ones: [n \in Nat |-> n]).
+    \* * /\ is logical And (&& in programming).
+    active = [ n \in Node |-> TRUE ] /\ pending = [ n \in Node |-> 0 ]
 
 -----------------------------------------------------------------------------
 
