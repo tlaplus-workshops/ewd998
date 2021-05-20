@@ -84,16 +84,23 @@ Terminate(i) ==
     \* * If node i is active *in this state*, it can terminate...
     /\ active[i]
     \* * ...in the next state (the prime operator ').
-    \* TODO Is there anything wrong with this (syntactically correct) expression?
-    /\ active[i]' = FALSE
-    /\ UNCHANGED vars \* Short-hand saying that the variables do not change.
+    \* * The previous expression didn't say anything about the other values of the
+     \* * function, or even state that active' is a function (function update).
+    /\ active' = [ active EXCEPT ![i] = FALSE ]
+    \* * Also, the variable active is no longer unchanged.
+    \* TODO Are there alternative, shorter variants to UNCHANGED <<pending>> ?
+    /\ UNCHANGED <<pending>>
 
 \* * Node i sends a message to node j.
 SendMsg(i, j) ==
+    \* TODO You should now be able to specify SendMsg and Wakeup (Note that the @
+    \* TODO symbol refers to the old value in a function update).
     UNCHANGED vars
 
 \* * Node I receives a message.
 Wakeup(i) ==
+    \* TODO You should now be able to specify Wakeup (Note that the symbol @ refers
+    \* TODO to the old value in a function update).
     UNCHANGED vars
 
 =============================================================================
