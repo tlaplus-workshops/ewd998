@@ -24,24 +24,16 @@ CONSTANT N
  \* * upon startup.
 ASSUME NIsPosNat == N \in Nat \ {0}
 
-\* TODO Fire up the TLA+ repl (`tlcrepl` in the Terminal > New Terminal) and 
- \* TODO find out what TLC returns for the following expressions:
- \* TODO 23 = "frob"
- \* TODO 23 # "frob"                       \* # is pretty-printed as ≠
- \* TODO {1,2,2,3,3} = {3,1,1,2,3,1}
- \* TODO 1 \div 4
- \* TODO 1 \div 0
- \* TODO {1,2,3} \cap {2,3,4}              \* \cap pp'ed as ∩
- \* TODO {1,2,3} \cup {2,3,4}              \* \cap pp'ed as ∪
- \* TODO {1,2,3} \ {2,3,4}
- \* TODO 23 \in {0}                        \* \in pp'ed as ∈
- \* TODO 23 \in {23, "frob"}
- \* TODO 23 \in {"frob", 23}
- \* TODO 23 \in {23} \ 23
- \* TODO 23 \in {23} \ {23}
- \* TODO 23 \notin {23} \ {23}
- \* TODO 10 \in 1..10
- \* TODO 1 \in 1..0
+\* * A definition Id == exp defines Id to be synonymous with an expression exp.
+ \* * A definition just gives a name to an expression. The name isn't special.
+ \* * It is best to write comments that explain what is being defined. To get
+ \* * a feeling for how extensive comments tend to be, see the Paxos spec at
+ \* * https://git.io/JZJaD .
+ \* * Here, we define Node to be synonymous with the set of naturals numbers
+ \* * 0 to N-1.  Semantically, Node is going to represent the ring of nodes.
+ \* * Note that the definition Node is a zero-arity (parameter-less) operator.
+Node == 0 .. N-1                           \* == pp'ed as ≜
+
 
 =============================================================================
 \* Modification History
