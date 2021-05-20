@@ -88,20 +88,19 @@ Terminate(i) ==
      \* * function, or even state that active' is a function (function update).
     /\ active' = [ active EXCEPT ![i] = FALSE ]
     \* * Also, the variable active is no longer unchanged.
-    \* TODO Are there alternative, shorter variants to UNCHANGED <<pending>> ?
-    /\ UNCHANGED <<pending>>
+    /\ pending' = pending
 
 \* * Node i sends a message to node j.
 SendMsg(i, j) ==
-    \* TODO You should now be able to specify SendMsg and Wakeup (Note that the @
-    \* TODO symbol refers to the old value in a function update).
-    UNCHANGED vars
+    /\ active[i]
+    /\ pending' = [pending EXCEPT ![j] = @ + 1]
+    /\ UNCHANGED active
 
 \* * Node I receives a message.
 Wakeup(i) ==
-    \* TODO You should now be able to specify Wakeup (Note that the symbol @ refers
-    \* TODO to the old value in a function update).
-    UNCHANGED vars
+    /\ pending[i] > 0
+    /\ active' = [active EXCEPT ![i] = TRUE]
+    /\ pending' = [pending EXCEPT ![i] = @ - 2]
 
 =============================================================================
 \* Modification History
