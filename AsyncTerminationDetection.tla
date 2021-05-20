@@ -111,9 +111,16 @@ Wakeup(i) ==
  \* * (sub-) actions Terminate, SendMsg, and Wakeup.  For the moment, let's assume
  \* * N = 4 and plug the values in explicitly.
 Next ==
-        \* TODO With a next-state relation, the spec is accepted by TLC (note AsyncTerminationDetection.cfg).
-         \* TODO Right-click the spec editor and press "Check model with TLC".  Alternatively, you can run
-         \* TODO "tlc AsyncTerminationDetection" on the terminal.  What do you see and how can you fix it?
+        \* * A TLA+ specification is a formula and TLC evaluates it.  With the
+         \* * conjunct list, ignoring the temporal logic for now, we essentially
+         \* * stated the following formula 
+         \* *   /\ active = [n \in Node |-> FALSE]
+         \* *   /\ active[0] = TRUE
+         \* *   /\ active[1] = TRUE
+         \* *   /\ active[2] = TRUE
+         \* *   /\ active[3] = TRUE
+         \* * which is FALSE causing TLC to terminate after printing the initial state.
+        \* TODO Convert the conjunct into a disjunct list (OR) and rerun TLC.
         /\ Terminate(0)
         /\ Terminate(1)
         /\ Terminate(2)
