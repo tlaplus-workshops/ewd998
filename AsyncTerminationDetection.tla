@@ -61,8 +61,10 @@ Init ==
      \* * suggest that functions are just zero-indexed arrays found in programming
      \* * languages. As a matter of fact, the domain of a function can be any set,
      \* * even infinite ones: [n \in Nat |-> n]).
-    \* * /\ is logical And (&& in programming).
-    active = [ n \in Node |-> TRUE ] /\ pending = [ n \in Node |-> 0 ]
+    \* * /\ is logical And (&& in programming). Conjunct lists usually make it easier
+     \* * to read. However, indentation is significant!
+    /\ active = [ n \in Node |-> TRUE ]
+    /\ pending = [ n \in Node |-> 0 ]
 
 -----------------------------------------------------------------------------
 
