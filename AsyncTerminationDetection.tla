@@ -78,7 +78,15 @@ Init ==
 
 \* * Node i terminates.
 Terminate(i) ==
-    UNCHANGED vars \* Short-hand saying that the variables do not change.
+    \* * Assuming active is a function (can we be sure?), function application
+     \* * is denoted by square brakets.  A mathmatician would expect parens, but TLA+
+     \* * uses parenthesis for (non-zero-arity) operator application.
+    \* * If node i is active *in this state*, it can terminate...
+    /\ active[i]
+    \* * ...in the next state (the prime operator ').
+    \* TODO Is there anything wrong with this (syntactically correct) expression?
+    /\ active[i]' = FALSE
+    /\ UNCHANGED vars \* Short-hand saying that the variables do not change.
 
 \* * Node i sends a message to node j.
 SendMsg(i, j) ==
