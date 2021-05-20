@@ -32,8 +32,22 @@ ASSUME NIsPosNat == N \in Nat \ {0}
  \* * Here, we define Node to be synonymous with the set of naturals numbers
  \* * 0 to N-1.  Semantically, Node is going to represent the ring of nodes.
  \* * Note that the definition Node is a zero-arity (parameter-less) operator.
-Node == 0 .. N-1                           \* == pp'ed as ≜
+Node == 0 .. N-1
 
+
+\* * Contrary to constants above, variables may change value in a behavior:
+ \* * The value of active may be 23 in one state and "frob" in another.
+ \* * For EWD998, active will maintain the activation status of our nodes,
+ \* * while pending counts the in-flight messages from other nodes that a
+ \* * node has yet to receive.
+VARIABLES 
+  active,               \* activation status of nodes
+  pending               \* number of messages pending at a node
+
+\* * A definition that lets us refer to the spec's variables (more on it later).
+vars == << active, pending >>
+
+-----------------------------------------------------------------------------
 
 =============================================================================
 \* Modification History
