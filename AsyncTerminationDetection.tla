@@ -120,13 +120,23 @@ Next ==
          \* *   /\ active[2] = TRUE
          \* *   /\ active[3] = TRUE
          \* * which is FALSE causing TLC to terminate after printing the initial state.
-        \* TODO Convert the conjunct into a disjunct list (OR) and rerun TLC.
-        /\ Terminate(0)
-        /\ Terminate(1)
-        /\ Terminate(2)
-        /\ Terminate(3)
-        /\ Wakeup(0)
-        /\ Wakeup(1)
+        \* TODO Can we rewrite this s.t. it takes the spec parameter CONSTANT N into account?
+         \* TODO Create a new file O.tla with the following content:
+         \* TODO   ---- MODULE O ----
+         \* TODO   CONSTANT O(_)
+         \* TODO   THEOREM O(1) /\ O(2) <=> \E i \in {1,2}: O(i) OBVIOUS
+         \* TODO   THEOREM O(1) /\ O(2) <=> \A i \in {1,2}: O(i) OBVIOUS
+         \* TODO   THEOREM O(1) \/ O(2) <=> \E i \in {1,2}: O(i) OBVIOUS
+         \* TODO   THEOREM O(1) \/ O(2) <=> \A i \in {1,2}: O(i) OBVIOUS
+         \* TODO   ====
+         \* TODO Switch to the terminal and check what the TLA+ proof system, which one
+         \* TODO are valid THEOREMs: `tlapm O.tla`:
+        \/ Terminate(0)
+        \/ Terminate(1)
+        \/ Terminate(2)
+        \/ Terminate(3)
+        \/ Wakeup(0)
+        \/ Wakeup(1)
         \* Rest omitted.
 
 =============================================================================
