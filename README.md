@@ -47,3 +47,26 @@ The fix proposed in [Shmuel Safra's EWD998](https://www.cs.utexas.edu/users/EWD/
 ![EWD998](figures/v01-ring04.gif)
 
 Throughout the chapters of this tutorial, we will use the TLA+ specification language to model EWD998, and check interesting properties.
+
+### v02: High-level spec AsyncTerminationDetection
+
+TLA+ is all about abstraction, and, as we will later see, has first-class support to connect different levels of abstraction. Let's use this and write a basic spec that either falsifies our design above, or gives us sufficient confidence to invest in writing a more detailed spec.
+
+(Credit: [Stephan Merz](https://members.loria.fr/Stephan.Merz/) wrote AsyncTerminationDetection)
+
+#### v02a: Spec skeleton
+
+Instead of modeling message channels, let alone modeling the transport layer, we will write a spec that models:
+
+1) A ring of N nodes 
+2) The activation status of each node
+3) The number of messages *pending*[^2] at a node
+4) A send action
+5) A receive action
+6) A terminate action
+7) The initial configuration of the system
+
+Please switch to [AsyncTerminationDetection.tla](AsyncTerminationDetection.tla) and read its comments.  From here
+on, the tutorial continues there...
+
+[^2] It's difficult to (efficiently) count pending messages in an implementation. In a TLA+ spec, we don't care about that notion of efficiency.  Also, all variables are global.
