@@ -120,17 +120,11 @@ Next ==
          \* *   /\ active[3] = TRUE
          \* * which is FALSE causing TLC to terminate after printing the initial state.
         \* * (Existential/Universal) Quantification generalizes (disjunct/conjunct) lists.
-    \* TODO Have TLC check this spec:
-     \* TODO 1) Without its `-deadlock` command-line parameter
-     \* TODO 2) With the `-deadlock` command-line parameter
-     \* TODO 3) Without `-deadlock` but a disjunct `UNCHANGED vars` added below
-     \* TODO Why does the state space appear infinite even though N is fixed?
     \E i,j \in Node:   
         \/ Terminate(i)
         \/ Wakeup(i)
         \* ? Is it correct to let node i send a message to node j with i = j?
         \/ SendMsg(i, j)
-        \* TODO \/ UNCHANGED vars
 
 =============================================================================
 \* Modification History
