@@ -63,6 +63,15 @@ Init ==
      \* * even infinite ones: [n \in Nat |-> n]).
     \* * /\ is logical And (&& in programming). Conjunct lists usually make it easier
      \* * to read. However, indentation is significant!
+    \* * So far, the initial predicate defined a single state.  That seems natural as
+     \* * most programs usually start with all variables initialized to some fixed
+     \* * value.  In a spec, we don't have to be this strict.  Instead, why not let
+     \* * the system start from any (type-correct) state?
+     \* * Besides syntax to define a specific function, TLA+ also has syntax to define
+     \* * a set of functions mapping from some set S (the domain) to some other set T:
+     \* *   [ S -> T ] or, more concretely:  [ {0,1,2,3} -> {TRUE, FALSE} ]
+    \* TODO Rewrite Init such that the system can "start" in any state. If you want to
+     \* TODO look more at functions and functions sets, open F.tla.
     /\ active = [ n \in Node |-> TRUE ]
     /\ pending = [ n \in Node |-> 0 ]
 

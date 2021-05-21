@@ -18,8 +18,8 @@ ActionConstraint ==
      \* * Among others, the prime operator has action-level.  Thus, it cannot appear in
      \* * a state function such as this state constraint.  Fortunately, TLC also supports
      \* * action constraints.
-    \* TODO Write an action constraint that rules out SendMsg, but not Wakeup actions!
-    TRUE
+     \* * There exists no node for which pending increases.
+    ~ \E n \in Node: pending'[n] > pending[n]
 
 \* * We could have stated the constraint in AsyncTerminationDetection.tla instead of
  \* * in a new module.  However, constraints are only relevant when model-checking
