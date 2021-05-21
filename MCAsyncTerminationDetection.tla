@@ -9,20 +9,32 @@ StateConstraint ==
      \* * of s are not generated.
      \* * Constraints are configured in TLC's configuration file
      \* * (MCAsyncTerminationDetection.cfg).
-     \* * In this model we restrict the state space to a finite fragment such that
+     \* * In this model, we restrict the state space to a finite fragment such that
      \* * at most three messages are pending.
-    \* TODO Restrict the model to those states where pending is less than four for all
-     \* TODO Nodes of the system.
+    \A n \in Node : pending[n] <= 3
+
+ActionConstraint ==
+    \* * A state function cannot only be built from constant- and state-level operators.
+     \* * Among others, the prime operator has action-level.  Thus, it cannot appear in
+     \* * a state function such as this state constraint.  Fortunately, TLC also supports
+     \* * action constraints.
+    \* TODO Write an action constraint that rules out SendMsg, but not Wakeup actions!
     TRUE
 
 \* * We could have stated the constraint in AsyncTerminationDetection.tla instead of
  \* * in a new module.  However, constraints are only relevant when model-checking
  \* * and not part of the system design.
 
-\* TODO Gradually increase the value of CONSTANT N in MCAsyncTerminationDetection.cfg
- \* TODO and observe how quickly the size of the state space explodes (distinct states).
- \* TODO Do we need a supercomputer for model-checking to be useful?  Usually, most bugs
- \* TODO are found even with tiny models.  This is called the "small scope hyphothesis".
- \* TODO If higher assurances are needed, one can write a proof for infinite domains with
- \* TODO the TLA proof system. 
+\* Gradually increase the value of CONSTANT N in MCAsyncTerminationDetection.cfg
+ \* and observe how quickly the size of the state space explodes (distinct states).
+ \* Do we need a supercomputer for model-checking to be useful?  Usually, most bugs
+ \* are found even with tiny models.  This is called the "small scope hyphothesis".
+ \* If higher assurances are needed, one can write a proof for infinite domains with
+ \* the TLA proof system. 
 =============================================================================
+
+| N | Diameter | Distinct States |
+|---| ---|  --- |
+| 4 | 17 |   4k | 
+| 5 | 21 |  32k |
+| 6 | 25 | 262k |
