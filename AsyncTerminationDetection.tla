@@ -70,10 +70,9 @@ Init ==
      \* * Besides syntax to define a specific function, TLA+ also has syntax to define
      \* * a set of functions mapping from some set S (the domain) to some other set T:
      \* *   [ S -> T ] or, more concretely:  [ {0,1,2,3} -> {TRUE, FALSE} ]
-    \* TODO Rewrite Init such that the system can "start" in any state. If you want to
-     \* TODO look more at functions and functions sets, open F.tla.
-    /\ active = [ n \in Node |-> TRUE ]
-    /\ pending = [ n \in Node |-> 0 ]
+    \* TODO Have TLC check this spec, and see what's going on.
+    /\ active \in [ Node -> BOOLEAN ]
+    /\ pending \in [ Node -> Nat ]
 
 -----------------------------------------------------------------------------
 
