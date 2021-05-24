@@ -1,6 +1,10 @@
 ---------------------- MODULE MCAsyncTerminationDetection ---------------------
 EXTENDS AsyncTerminationDetection
 
+MCInit ==
+    /\ pending \in [Node -> 0..3]
+    /\ active \in [ Node -> BOOLEAN ]
+
 StateConstraint ==
     \* * A (state-) constraint is a boolean-valued state function, i.e. a function
      \* * that is true or false of a state.
