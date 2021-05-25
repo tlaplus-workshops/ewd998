@@ -43,6 +43,33 @@ Node == 0 .. N-1
 VARIABLES 
   active,               \* activation status of nodes
   pending               \* number of messages pending at a node
+  \* * Up to now, this specification didn't teach us anything useful regarding
+   \* * termination detection in a ring (we were mostly concerned with TLA+ itself).
+   \* * Let's change this to find out if this proto-algorithm detects termination.
+   \* * In an implementation, we could write to a log file whenever the system
+   \* * terminates.  However, for larger systems it can be challenging to collect
+   \* * e.g., a consistent snapshot.  In a spec, we can just use an (ordinary) variable
+   \* * that -contrary to the other variables- doesn't define the state the system is
+   \* * in, but records what the system has done so far.  The jargon for this variable
+   \* * is "history variable".
+   \* * For termination detection, the complete history of the computation, performed
+   \* * by the system, is not relevant--we only care if the system detected
+   \* * termination.
+   \* TODO a) Declare a new variable terminationDetected and add it to vars
+    \* TODO b) Define the value of terminationDetected in the init predicates Init
+    \* TODO    and MCInit
+    \* TODO c) Add a conjunct for terminationDetected to SendMsg and Wakeup (why?)
+    \* TODO    that leaves the current value of terminationDetected unchanged
+    \* TODO d) Define an operator terminated that equals true iff all nodes are
+    \* TODO    inactive and no messages are pending. 
+    \* TODO e) Add a conjunct for terminationDetected in Terminate that makes it
+    \* TODO    possible but not necessary for the action Terminated to detect
+    \* TODO    termination. In other words, define terminationDetected such that,
+    \* TODO    terminationDetected equals FALSE if the system doesn't terminate
+    \* TODO    in the next state, and non-deterministically equals FALSE or TRUE,
+    \* TODO    iff the system terminates in the next state.
+    \* TODO f) Add a new action DetectTermination s.t. terminationDetected' equals
+    \* TODO    TRUE iff terminated equals TRUE (and leaves the other vars unchanged).
 
 \* * A definition that lets us refer to the spec's variables (more on it later).
 vars == << active, pending >>
@@ -126,7 +153,7 @@ SendMsg(i, j) ==
 Wakeup(i) ==
     /\ pending[i] > 0
     /\ active' = [active EXCEPT ![i] = TRUE]
-    /\ pending' = [pending EXCEPT ![i] = @ - 2]
+    /\ pending' = [pending EXCEPT ![i] = @ - 1]
 
 -----------------------------------------------------------------------------
 
