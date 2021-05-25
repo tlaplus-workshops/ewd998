@@ -88,13 +88,9 @@ Init ==
  \* * Invariants are (a class of) safety properties, and safety props are "informally"
  \* * define as "nothing bad ever happens" (a formal definition can be found in
  \* * https://link.springer.com/article/10.1007/BF01782772, but we won't need it).
-\* TODO   a) State an operator  TypeOK  that equals FALSE when the value of a variable
- \* TODO     is not as expected.
- \* TODO  b) Add  INVARIANT TypeOK  to MCAsyncTerminationDetection.cfg to make TLC
- \* TODO     check the  TypeOK  invariant.
- \* TODO  c) Check the spec with TLC.  What do you find?
 TypeOK ==
-    FALSE \* TODO Replace me!
+    /\ active \in [ Node -> BOOLEAN ]
+    /\ pending \in [ Node -> Nat ]
 
 -----------------------------------------------------------------------------
 
