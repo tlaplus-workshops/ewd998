@@ -73,6 +73,29 @@ Init ==
     /\ active \in [ Node -> BOOLEAN ]
     /\ pending \in [ Node -> Nat ]
 
+\* * Recall that TLA+ is untyped and that we are "free" to write silly expressions.  So
+ \* * why no types?  The reason is that, while real-world specs can be big enough for 
+ \* * silly expressions to sneak in (still way smaller than programs), types would 
+ \* * unnecessarily slow us down when specifying (prototyping). Also, there is a way to
+ \* * catch silly expressions quickly.
+\* * It's finally time to state and check a first correctness property, namely that our
+ \* * spec is "properly typed".  We do this by writing an operator that evaluates to
+ \* * false, should values of variables not be as expected.  We can think of this a
+ \* * stating the types of variables in a special place, and not where they are declared
+ \* * or where values are assigned.  When TLC verifies the spec, it will evaluate the
+ \* * operator on every state it generates.  If the operator evaluates to false, an error
+ \* * is reported.  In other words, the operator is an invariant of the system.
+ \* * Invariants are (a class of) safety properties, and safety props are "informally"
+ \* * define as "nothing bad ever happens" (a formal definition can be found in
+ \* * https://link.springer.com/article/10.1007/BF01782772, but we won't need it).
+\* TODO   a) State an operator  TypeOK  that equals FALSE when the value of a variable
+ \* TODO     is not as expected.
+ \* TODO  b) Add  INVARIANT TypeOK  to MCAsyncTerminationDetection.cfg to make TLC
+ \* TODO     check the  TypeOK  invariant.
+ \* TODO  c) Check the spec with TLC.  What do you find?
+TypeOK ==
+    FALSE \* TODO Replace me!
+
 -----------------------------------------------------------------------------
 
 \* * Each one of the definitions below represent atomic transitions, i.e., define
