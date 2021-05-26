@@ -42,7 +42,7 @@ Node == 0 .. N-1
  \* * node has yet to receive.
 VARIABLES 
   active,               \* activation status of nodes
-  pending               \* number of messages pending at a node
+  pending,              \* number of messages pending at a node
   \* * Up to now, this specification didn't teach us anything useful regarding
    \* * termination detection in a ring (we were mostly concerned with TLA+ itself).
    \* * Let's change this to find out if this proto-algorithm detects termination.
@@ -55,24 +55,12 @@ VARIABLES
    \* * For termination detection, the complete history of the computation, performed
    \* * by the system, is not relevant--we only care if the system detected
    \* * termination.
-   \* TODO a) Declare a new variable terminationDetected and add it to vars
-    \* TODO b) Define the value of terminationDetected in the init predicates Init
-    \* TODO    and MCInit
-    \* TODO c) Add a conjunct for terminationDetected to SendMsg and Wakeup (why?)
-    \* TODO    that leaves the current value of terminationDetected unchanged
-    \* TODO d) Define an operator terminated that equals true iff all nodes are
-    \* TODO    inactive and no messages are pending. 
-    \* TODO e) Add a conjunct for terminationDetected in Terminate that makes it
-    \* TODO    possible but not necessary for the action Terminated to detect
-    \* TODO    termination. In other words, define terminationDetected such that,
-    \* TODO    terminationDetected equals FALSE if the system doesn't terminate
-    \* TODO    in the next state, and non-deterministically equals FALSE or TRUE,
-    \* TODO    iff the system terminates in the next state.
-    \* TODO f) Add a new action DetectTermination s.t. terminationDetected' equals
-    \* TODO    TRUE iff terminated equals TRUE (and leaves the other vars unchanged).
+  terminationDetected
 
 \* * A definition that lets us refer to the spec's variables (more on it later).
-vars == << active, pending >>
+vars == << active, pending, terminationDetected >>
+
+terminated == \A n \in Node : ~ active[n] /\ pending[n] = 0
 
 -----------------------------------------------------------------------------
 
@@ -99,6 +87,7 @@ Init ==
      \* *   [ S -> T ] or, more concretely:  [ {0,1,2,3} -> {TRUE, FALSE} ]
     /\ active \in [ Node -> BOOLEAN ]
     /\ pending \in [ Node -> Nat ]
+    /\ terminationDetected \in {FALSE, terminated}
 
 \* * Recall that TLA+ is untyped and that we are "free" to write silly expressions.  So
  \* * why no types?  The reason is that, while real-world specs can be big enough for 
@@ -118,6 +107,7 @@ Init ==
 TypeOK ==
     /\ active \in [ Node -> BOOLEAN ]
     /\ pending \in [ Node -> Nat ]
+    /\ terminationDetected \in BOOLEAN 
 
 -----------------------------------------------------------------------------
 
@@ -142,18 +132,27 @@ Terminate(i) ==
     /\ active' = [ active EXCEPT ![i] = FALSE ]
     \* * Also, the variable active is no longer unchanged.
     /\ pending' = pending
+    \* * Possibly (but not necessarily) detect termination, iff all nodes are inactive
+     \* * and no messages are in-flight.
+    /\ terminationDetected' \in {terminationDetected, terminated'}
 
 \* * Node i sends a message to node j.
 SendMsg(i, j) ==
     /\ active[i]
     /\ pending' = [pending EXCEPT ![j] = @ + 1]
-    /\ UNCHANGED active
+    /\ UNCHANGED << active, terminationDetected >>
 
 \* * Node I receives a message.
 Wakeup(i) ==
     /\ pending[i] > 0
     /\ active' = [active EXCEPT ![i] = TRUE]
     /\ pending' = [pending EXCEPT ![i] = @ - 1]
+    /\ UNCHANGED << terminationDetected >>
+
+DetectTermination ==
+    /\ terminated
+    /\ terminationDetected' = TRUE
+    /\ UNCHANGED << active, pending >>
 
 -----------------------------------------------------------------------------
 
@@ -163,17 +162,8 @@ Wakeup(i) ==
  \* * The next-state relation should somehow plug concrete values into the 
  \* * (sub-) actions Terminate, SendMsg, and Wakeup.
 Next ==
-        \* * A TLA+ specification is a formula and TLC evaluates it.  With the
-         \* * conjunct list, ignoring the temporal logic for now, we essentially
-         \* * stated the following formula 
-         \* *   /\ active = [n \in Node |-> FALSE]
-         \* *   /\ active[0] = TRUE
-         \* *   /\ active[1] = TRUE
-         \* *   /\ active[2] = TRUE
-         \* *   /\ active[3] = TRUE
-         \* * which is FALSE causing TLC to terminate after printing the initial state.
-        \* * (Existential/Universal) Quantification generalizes (disjunct/conjunct) lists.
-    \E i,j \in Node:   
+    \/ DetectTermination
+    \/ \E i,j \in Node:   
         \/ Terminate(i)
         \/ Wakeup(i)
         \* ? Is it correct to let node i send a message to node j with i = j?
