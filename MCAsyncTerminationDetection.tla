@@ -4,7 +4,7 @@ EXTENDS AsyncTerminationDetection
 MCInit ==
     /\ pending \in [Node -> {0,1,2,3}]
     /\ active \in [ Node -> BOOLEAN ]
-    /\ terminationDetected \in {FALSE, terminated}
+    /\ terminationDetected \in {terminated}
 
 StateConstraint ==
     \* * A (state-) constraint is a boolean-valued state function, i.e. a function
