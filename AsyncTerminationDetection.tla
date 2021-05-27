@@ -200,10 +200,9 @@ Stable ==
      \* * that  Stable  holds in all states of a behavior.  In other words, the formula
      \* * Stable is always true.  Note that Box can also be pushed into the definition of
      \* * Stable.
-    \* TODO Reformulate  Stable  such that it is an assertion on a behavior, i.e., the
-     \* TODO the sequence of states.  Don't forget to change  MCInit  back to
-     \* TODO terminationDetected \in {terminated}  .
-    terminated => terminationDetected
+    \* TODO Can you strengthen  Stable  such that it asserts that  terminationDetected
+     \* TODO always remains true?
+    [](terminated => terminationDetected)
 =============================================================================
 \* Modification History
 \* Created Sun Jan 10 15:19:20 CET 2021 by Stephan Merz @muenchnerkindl
