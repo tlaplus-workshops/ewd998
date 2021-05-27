@@ -218,8 +218,9 @@ Stable ==
      \* * whiteboard?  No, you (intentionally) got hold of the wrong end of the stick.
      \* * It is not that  terminated  implies  terminationDetection  , but the other
      \* * way around.
-    \* TODO Switch the antecedent and consequent of  Stable  .
-    [](terminated => []terminationDetected)
+    \* * Phew, we have a high-level design (and you learned a lot about TLA+). Let's
+     \* * move to the next level.  Except, one should always be suspicious of success...
+    [](terminationDetected => []terminated)
 =============================================================================
 \* Modification History
 \* Created Sun Jan 10 15:19:20 CET 2021 by Stephan Merz @muenchnerkindl
