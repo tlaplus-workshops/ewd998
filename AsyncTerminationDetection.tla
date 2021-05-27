@@ -200,9 +200,26 @@ Stable ==
      \* * that  Stable  holds in all states of a behavior.  In other words, the formula
      \* * Stable is always true.  Note that Box can also be pushed into the definition of
      \* * Stable.
-    \* TODO Can you strengthen  Stable  such that it asserts that  terminationDetected
-     \* TODO always remains true?
-    [](terminated => terminationDetected)
+    \* * The following behavior violates the (strengthened)  Stable:
+     \* *    State 1: <Initial predicate>
+     \* *    /\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+     \* *    /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
+     \* *    /\ terminationDetected = FALSE
+     \* *    State 2: <Terminate line 122, col 5 to line 131, col 66 of module AsyncTerminationDetection>
+     \* *    /\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+     \* *    /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
+     \* *    /\ terminationDetected = FALSE
+     \* *    State 3: <DetectTermination line 147, col 5 to line 149, col 38 of module AsyncTerminationDetection>
+     \* *    /\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+     \* *    /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
+     \* *    /\ terminationDetected = TRUE
+     \* *    State 4: Stuttering
+     \* * Have we already found a flaw in our design and are forced back to the
+     \* * whiteboard?  No, you (intentionally) got hold of the wrong end of the stick.
+     \* * It is not that  terminated  implies  terminationDetection  , but the other
+     \* * way around.
+    \* TODO Switch the antecedent and consequent of  Stable  .
+    [](terminated => []terminationDetected)
 =============================================================================
 \* Modification History
 \* Created Sun Jan 10 15:19:20 CET 2021 by Stephan Merz @muenchnerkindl
