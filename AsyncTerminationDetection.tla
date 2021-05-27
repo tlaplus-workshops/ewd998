@@ -173,15 +173,37 @@ Stable ==
     \* * With the addition of the auxiliary variable  terminationDetected  and
      \* * the action  DetectTermination  , we can check that our (ultra) high-level
      \* * design achieves termination detection.
-    \* TODO a) State that  terminated  implies  terminationDetected
-     \* TODO   If you want to refresh  what implication is, open  O.tla
-     \* TODO b) Check the property  Stable  with TLC.  Does it hold?
-     \* TODO c) What happens if the definition of the operator  terminated  above
-     \* TODO    is changed to  FALSE  ?
-     \* TODO d) Likewise, what happens if the definition of  MCInit  is changed
-     \* TODO    such that  terminationDetected  non-deterministically is  FALSE
-     \* TODO    or  terminationDetected?
-    TRUE \* TODO Replace me!
+    \* * Holds iff  tD = FALSE  instead of    in  Init/MCInit.
+     \* * If the definition of  MCInit  in MCAsyncTerminationDetection.tla is
+     \* * changed to  terminationDetected \in {FALSE, terminated}  ,  Stable  
+     \* * is violated by the initial state:
+     \* *    Error: Property Stable is violated by the initial state:
+     \* *    /\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+     \* *    /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
+     \* *    /\ terminationDetected = FALSE
+     \* * Why? Because  Stable  just asserts something about initial states.
+     \* * With  terminationDetected \in {FALSE, terminated}  , the state above
+     \* * becomes an initial state (see Specifying Systems p. 241 for morew details).
+    \* * How do we say that we want  Stable  to hold for all states of a behavior,
+     \* * not just for initial states?  In other words, how do we state properties
+     \* * that are evaluated on behaviors; not just single states?
+     \* * We have arrived at the provenance of temporal logic.  There are many temporal
+     \* * logics, and TLA is but one of them (the missing "+" is not a typo!).
+     \* * Like with programming, different (temporal) logics make different tradeoffs.
+     \* * Compared to, e.g., Linear temporal logic (LTL), TLA has the two (fundamental)
+     \* * temporal operators, Always (denoted as [] and pronounced "box") and Eventually
+     \* * (<> pronounced "diamond"). In contrast, LTL has Next and Until, which means
+     \* * that one cannot say the same things with both logics.  TLA's operators
+     \* * guarantee that temporal formulae are stuttering invariant, which we will touch
+     \* * on later when we talk about refinement.
+     \* * For now, we just need the Always operator, to state  Stable.   []Stable asserts
+     \* * that  Stable  holds in all states of a behavior.  In other words, the formula
+     \* * Stable is always true.  Note that Box can also be pushed into the definition of
+     \* * Stable.
+    \* TODO Reformulate  Stable  such that it is an assertion on a behavior, i.e., the
+     \* TODO the sequence of states.  Don't forget to change  MCInit  back to
+     \* TODO terminationDetected \in {terminated}  .
+    terminated => terminationDetected
 =============================================================================
 \* Modification History
 \* Created Sun Jan 10 15:19:20 CET 2021 by Stephan Merz @muenchnerkindl
