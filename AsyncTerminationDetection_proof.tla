@@ -3,7 +3,7 @@ EXTENDS AsyncTerminationDetection, TLAPS
 
 (* Whitelist all the known facts/assumptions and definitions *)
 USE NIsPosNat DEF vars, terminated, Node,
-                  Init, Next,
+                  Init, Next, Spec,
                   DetectTermination, Terminate,
                   Wakeup, SendMsg,
                   TypeOK, Stable
@@ -13,6 +13,9 @@ USE NIsPosNat DEF vars, terminated, Node,
 \* * does not help us prove Stable.
 
 \* TODO Prove  TypeOK  inductive.
-LEMMA TypeCorrect == Spec => []TypeOK  OBVIOUS 
+LEMMA TypeCorrect == Spec => []TypeOK
+<1>1. Init => TypeOK  OBVIOUS 
+<1>2. TypeOK /\ [Next]_vars => TypeOK' 
+<1>. QED BY <1>1, <1>2, PTL
 
 =============================================================================
