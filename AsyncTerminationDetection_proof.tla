@@ -14,7 +14,7 @@ USE NIsPosNat DEF vars, terminated, Node,
 
 \* TODO Prove  TypeOK  inductive.
 LEMMA TypeCorrect == Spec => []TypeOK
-<1>1. Init => TypeOK  OBVIOUS 
+<1>1. Init => TypeOK BY NIsPosNat DEF Init, TypeOK, Node, terminated
 <1>2. TypeOK /\ [Next]_vars => TypeOK' 
 <1>. QED BY <1>1, <1>2, PTL
 
