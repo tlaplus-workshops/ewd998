@@ -35,4 +35,9 @@ THEOREM P => Q <=> (~P) \/ Q  OBVIOUS
 \* Negated conditionals.
 THEOREM ~(P => Q) <=> P /\ (~Q)  OBVIOUS 
 
+------------------
+\* Action operators
+THEOREM ASSUME NEW ACTION A, NEW VARIABLE v 
+PROVE [A]_v <=> A \/ v' = v  OBVIOUS 
+
 ====
