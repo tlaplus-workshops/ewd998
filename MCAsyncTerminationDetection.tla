@@ -2,7 +2,7 @@
 EXTENDS AsyncTerminationDetection
 
 MCInit ==
-    /\ pending \in [Node -> {0,1,2,3}]
+    /\ pending \in [Node -> {1,2,3}]
     /\ active \in [ Node -> BOOLEAN ]
     /\ terminationDetected \in {terminated}
 
