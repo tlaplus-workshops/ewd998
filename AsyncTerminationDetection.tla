@@ -234,11 +234,43 @@ Stable ==
  \* * for a behavior if ever step (pair of states) is an  [A]_v  step.  For the moment,
  \* * we will ignore the subscript  _v  and simply write  _vars instead of it:  [A]_vars.
  \* *
- \* TODO Please state an action property  OnlyTerminating  that asserts that the  Terminate
- \* TODO action always occurs at each step of the behavior.  The property  OnlyTerminating
- \* TODO will clearly be violated, but we are sanity checking anyway...
 OnlyTerminating ==
-    TRUE \* TODO Replace me!
+    [][\E i \in Node: Terminate(i)]_vars
+    \* * In hindsight, it was to be expected that the trace just has two states
+     \* * i.e., a single step.  The property  OnlyTerminating  is violated by
+     \* * behaviors that take our actions:
+     \* *    Error: Action property OnlyTerminating is violated.
+     \* *    Error: The behavior up to this point is:
+     \* *    State 1: <Initial predicate>
+     \* *    /\ pending = (0 :> 1 @@ 1 :> 1 @@ 2 :> 1)
+     \* *    /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
+     \* *    /\ terminationDetected = FALSE
+     \* *    
+     \* *    State 2: <Wakeup line 141, col 5 to line 144, col 42 of module AsyncTerminationDetection>
+     \* *    /\ pending = (0 :> 0 @@ 1 :> 1 @@ 2 :> 1)
+     \* *    /\ active = (0 :> TRUE @@ 1 :> FALSE @@ 2 :> FALSE)
+     \* *    /\ terminationDetected = FALSE
+    \* * Let's now focus on the subscript  _v  part that we glossed over previously.
+     \* * The subscript  _v  in  [A]_v  is a state-function, a formula without action- or
+     \* * temporal-level operators, that -informally- defines what happens with the
+     \* * variables. 
+     \* * We replaced  _v  with  _vars  where  vars  equals the defintion on line 57
+     \* *  << active, pending, terminationDetected >>  .  Note that  << >>  is just syntactic
+     \* * sugar to conveniently state  1-indexed arrays.  However, they are called 
+     \* * sequences in TLA are many useful sequence-related operators are defined in the
+     \* * Sequences.tla standard module.  More importantly, a sequence has an order!
+    \* TODO Check with TLC what happens if you replace  _vars  with:
+     \* TODO a)  _FALSE  and  _TRUE
+     \* TODO b)  _{}
+     \* TODO c)  _{active}
+     \* TODO d)  _{active, terminated}
+     \* TODO e)  _<< >>  (empty sequence)
+     \* TODO f)  _<< active >>
+     \* TODO g)  _<< pending, terminationDetected, active >>
+     \* TODO Can you figure out the semantics of  [A]_v  ?  If you can't, it's fine!
+     \* TODO Time to pull out the TLA+ cheat sheet and check page 4:
+     \* TODO  https://www.hpl.hp.com/techreports/Compaq-DEC/SRC-TN-1997-006A.pdf
+
 =============================================================================
 \* Modification History
 \* Created Sun Jan 10 15:19:20 CET 2021 by Stephan Merz @muenchnerkindl
