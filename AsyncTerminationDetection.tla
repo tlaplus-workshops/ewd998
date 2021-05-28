@@ -235,7 +235,7 @@ Stable ==
  \* * we will ignore the subscript  _v  and simply write  _vars instead of it:  [A]_vars.
  \* *
 OnlyTerminating ==
-    [][\E i \in Node: Terminate(i)]_vars
+    [][DetectTermination \/ \E i,j \in Node: (Terminate(i) \/ Wakeup(i) \/ SendMsg(i,j))]_vars
     \* * In hindsight, it was to be expected that the trace just has two states
      \* * i.e., a single step.  The property  OnlyTerminating  is violated by
      \* * behaviors that take our actions:
@@ -263,9 +263,15 @@ OnlyTerminating ==
      \* *  https://www.hpl.hp.com/techreports/Compaq-DEC/SRC-TN-1997-006A.pdf
     \* * The formula  [A]_v  is equivalent to  A \/ (v' = v)  .  Semantically, every
      \* * step of the behavior is an  A  step, or the variables in  v  remain unchanged.
-    \* TODO The property  OnlyTerminating  doesn't hold because our specifcation allows
-     \* TODO other actions  DetectTermination  ,  SendMsg  , and  Wakeup  to occur.
-     \* TODO Rewrite  OnlyTerminating  such that it allows steps of the other actions.
+    \* * If you look closely, you will realize that the disjunct of actions nested in
+     \* *  OnlyTerminating  is equivalent to the  Next  operator above!  Up to now,
+     \* * we've been using a TLC feature that lets us pass  INIT  and  NEXT  in TLC's
+     \* * configuration file.  In TLA, the system specification that defines the set of
+     \* * of valid system behaviors, is actually given as a temporal formula.
+    \* TODO Can you figure out what this formula looks like?
+
+Spec ==
+    TRUE \* TODO Replace me!
 
 =============================================================================
 \* Modification History
