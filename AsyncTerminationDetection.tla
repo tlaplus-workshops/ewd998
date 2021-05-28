@@ -234,7 +234,7 @@ Stable ==
  \* * for a behavior if ever step (pair of states) is an  [A]_v  step.  For the moment,
  \* * we will ignore the subscript  _v  and simply write  _vars instead of it:  [A]_vars.
  \* *
-OnlyTerminating ==
+ActuallyNext ==
     [][DetectTermination \/ \E i,j \in Node: (Terminate(i) \/ Wakeup(i) \/ SendMsg(i,j))]_vars
     \* * In hindsight, it was to be expected that the trace just has two states
      \* * i.e., a single step.  The property  OnlyTerminating  is violated by
@@ -268,10 +268,16 @@ OnlyTerminating ==
      \* * we've been using a TLC feature that lets us pass  INIT  and  NEXT  in TLC's
      \* * configuration file.  In TLA, the system specification that defines the set of
      \* * of valid system behaviors, is actually given as a temporal formula.
-    \* TODO Can you figure out what this formula looks like?
 
+\* * We’ll now define a formula that encompasses our specification of how the system
+ \* * behaves. It combines the Initial state predicate, the next-state action, and
+ \* * something called a fairness property that we will learn about later.
+ \* * It is convention to name the behavior spec  Spec  .
 Spec ==
-    TRUE \* TODO Replace me!
+    \* TODO Do you still remember the "trouble" we had with  terminated => terminationDetected
+     \* TODO when we stated  Stable  earlier?  Do you now see why it only asserts
+     \* TODO on initial states? 
+    Init /\ [][Next]_vars
 
 =============================================================================
 \* Modification History
