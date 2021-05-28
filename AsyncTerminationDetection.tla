@@ -259,17 +259,13 @@ OnlyTerminating ==
      \* * sugar to conveniently state  1-indexed arrays.  However, they are called 
      \* * sequences in TLA are many useful sequence-related operators are defined in the
      \* * Sequences.tla standard module.  More importantly, a sequence has an order!
-    \* TODO Check with TLC what happens if you replace  _vars  with:
-     \* TODO a)  _FALSE  and  _TRUE
-     \* TODO b)  _{}
-     \* TODO c)  _{active}
-     \* TODO d)  _{active, terminated}
-     \* TODO e)  _<< >>  (empty sequence)
-     \* TODO f)  _<< active >>
-     \* TODO g)  _<< pending, terminationDetected, active >>
-     \* TODO Can you figure out the semantics of  [A]_v  ?  If you can't, it's fine!
-     \* TODO Time to pull out the TLA+ cheat sheet and check page 4:
-     \* TODO  https://www.hpl.hp.com/techreports/Compaq-DEC/SRC-TN-1997-006A.pdf
+     \* * Time to pull out the TLA+ cheat sheet and check page 4:
+     \* *  https://www.hpl.hp.com/techreports/Compaq-DEC/SRC-TN-1997-006A.pdf
+    \* * The formula  [A]_v  is equivalent to  A \/ (v' = v)  .  Semantically, every
+     \* * step of the behavior is an  A  step, or the variables in  v  remain unchanged.
+    \* TODO The property  OnlyTerminating  doesn't hold because our specifcation allows
+     \* TODO other actions  DetectTermination  ,  SendMsg  , and  Wakeup  to occur.
+     \* TODO Rewrite  OnlyTerminating  such that it allows steps of the other actions.
 
 =============================================================================
 \* Modification History
