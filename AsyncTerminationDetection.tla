@@ -275,10 +275,7 @@ ActuallyNext ==
  \* * something called a fairness property that we will learn about later.
  \* * It is convention to name the behavior spec  Spec  .
 Spec ==
-    \* TODO Do you still remember the "trouble" we had with  terminated => terminationDetected
-     \* TODO when we stated  Stable  earlier?  Do you now see why it only asserts
-     \* TODO on initial states? 
-    Init /\ [][Next]_vars (*/\ 1 = 2*)
+    Init /\ [][Next]_vars
 
 Terminates ==
     \* * The behavior spec  Spec  asserts that every step/transition is a  Next  step, or
@@ -302,9 +299,49 @@ Terminates ==
  \* * and some variables change. In other words, we wish to assert  A /\ vars' # vars  (which
  \* * is equivalent to   ~(~A \/ vars' = vars)  ).  TLA has dedicated syntax for this, which
  \* * is  <<A>>_v   where  v  is usually  vars  but can be any state function.
-\* TODO Does  []ENABLED <<Next>>_vars  hold for  Spec  ?
 AngleNextSubVars ==
     []ENABLED <<Next>>_vars
+
+-----------------------------------------------------------------------------
+
+Live ==
+    \* * Up to now, we have been stating safety properties, i.e., "nothing bad ever happens".
+     \* * Looking at the counter-examples we've encountered so far, we find that a safety
+     \* * property is a finite prefix of a (infinite) behavior where the final state or action
+     \* * (transition) violates the property.  We primarily care about safety when we check
+     \* * systems.  For example, when we (used to) board a plane, we very much care that the
+     \* * plane never crashes!  However, if the pilots decide not to take off, the plane is
+     \* * guaranteed not to crash.  So we sit on the plane forever, waiting for it to depart.
+     \* * Clearly, as travelers, we eventually wish to arrive at our destination, e.g., to
+     \* * attend a meeting next Tuesday.  Can we formulate this as a safety property?  Easy,
+     \* * if we assume a (global) clock that determines when it is Tuesday.  Specifying
+     \* * algorithms or systems, we know how to replicate clocks. However, an algorithm that
+     \* * requires something to happen in a fixed amount of (some notion of) time is brittle.
+     \* * For example, an algorithm that counts hardware instructions will likely only work
+     \* * on a particular hardware architecture. For EWD998, we could assert that termination
+     \* * is detected within N rounds after termination occurred, but do we know the value of
+     \* * N?  And even with an N, we would need another property to assert that each round
+     \* * terminates...
+     \* * A way out is to formulate the property such that we assert that "something good 
+     \* * eventually happens"--the plane eventually arrives at its destination; the algorithm
+     \* * eventually produces a result, termination is eventually detected.
+     \* *
+     \* * Requiring something good to eventually happen is a liveness property. Unfortunately,
+     \* * in practice, it is not very useful to know that the algorithm eventually produces a
+     \* * result if it takes 5 billion years to do so.
+     \* *
+     \* * A violation of a liveness property is -contrary to a safety property- an infinite
+     \* * behavior where the "good thing" never happens.  When printed, tools such as TLC show
+     \* * a lasso where the property doesn't hold in the lasso loop.
+     \* *
+     \* * In TLA, we syntactically express a property that asserts that something good
+     \* * eventually happens, with the diamond operator  <>  (which is just the dual of the box
+     \* * operator:  <>P <=> ~[]~P  ).
+    \* TODO State two properties that assert that the system 
+     \* TODO 1) eventually terminates
+     \* TODO 2) termination is eventually detected
+     \* TODO 3) Check each property with TLC individually (don't check both at once).
+    TRUE \* TODO Replace me!
 =============================================================================
 \* Modification History
 \* Created Sun Jan 10 15:19:20 CET 2021 by Stephan Merz @muenchnerkindl
