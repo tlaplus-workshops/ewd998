@@ -59,4 +59,44 @@ PROVE (ENABLED [FALSE]_TRUE) (*BY ExpandENABLED*)
 THEOREM ASSUME NEW VARIABLE v
 PROVE (ENABLED [TRUE]_TRUE) (*BY ExpandENABLED*)
 
+------------------
+\* Dual Box and Diamond operators
+THEOREM ASSUME NEW F 
+PROVE <>F <=> ~[]~F  OBVIOUS 
+
+THEOREM ASSUME NEW F 
+PROVE ~<>F <=> []~F  OBVIOUS 
+
+\* see Specifying Systems page 92
+THEOREM ASSUME NEW F 
+PROVE ~[]F <=> <>~F  OBVIOUS 
+
+\* see Specifying Systems page 93
+THEOREM ASSUME NEW F, NEW G 
+PROVE 
+    /\ [](F /\ G) <=> ([]F) /\ ([]G)
+    /\ <>(F \/ G) <=> (<>F) \/ (<>G)
+OBVIOUS 
+
+THEOREM ASSUME NEW F, NEW G 
+PROVE 
+    /\ ([]F) \/ ([]G) => [](F \/ G)
+    /\ <>(F /\ G) => (<>F) /\ (<>G)
+OBVIOUS 
+
+\* see Specifying Systems page 94
+THEOREM ASSUME NEW ACTION A, NEW ACTION B, NEW VARIABLE v 
+PROVE 
+    /\ [A /\ B]_v <=> [A]_v /\ [B]_v
+    /\ <<A \/ B>>_v <=> <<A>>_v \/ <<B>>_v
+    \* 8.5
+    /\ ([]<><<A>>_v) \/ ([]<><<B>>_v) <=> ([]<><<A>>_v) \/ ([]<><<B>>_v)
+OBVIOUS 
+
+\* see Specifying Systems page 95
+THEOREM ASSUME NEW ACTION A, NEW ACTION B, NEW VARIABLE v 
+PROVE 
+    /\ []<><<A \/ B>>_v <=> ([]<><<A>>_v) \/ ([]<><<B>>_v)
+BY PTL
+
 ====
