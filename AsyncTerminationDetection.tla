@@ -304,7 +304,7 @@ AngleNextSubVars ==
 
 -----------------------------------------------------------------------------
 
-Live ==
+Live1 ==
     \* * Up to now, we have been stating safety properties, i.e., "nothing bad ever happens".
      \* * Looking at the counter-examples we've encountered so far, we find that a safety
      \* * property is a finite prefix of a (infinite) behavior where the final state or action
@@ -337,11 +337,68 @@ Live ==
      \* * In TLA, we syntactically express a property that asserts that something good
      \* * eventually happens, with the diamond operator  <>  (which is just the dual of the box
      \* * operator:  <>P <=> ~[]~P  ).
-    \* TODO State two properties that assert that the system 
-     \* TODO 1) eventually terminates
-     \* TODO 2) termination is eventually detected
-     \* TODO 3) Check each property with TLC individually (don't check both at once).
-    TRUE \* TODO Replace me!
+    \* * 
+     \* *   Error: Temporal properties were violated.
+     \* *   Error: The following behavior constitutes a counter-example:
+     \* *   State 1: <Initial predicate>
+     \* *   /\ pending = (0 :> 1 @@ 1 :> 1 @@ 2 :> 1)
+     \* *   /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
+     \* *   /\ terminationDetected = FALSE
+     \* *   State 2: Stuttering
+    <>terminated
+
+Live2 ==
+    \* *    Error: The following behavior constitutes a counter-example:
+     \* *   State 1: <Initial predicate>
+     \* *   /\ pending = (0 :> 1 @@ 1 :> 1 @@ 2 :> 1)
+     \* *   /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
+     \* *   /\ terminationDetected = FALSE
+     \* *   State 2: <Wakeup line 141, col 5 to line 144, col 42 of module AsyncTerminationDetection>
+     \* *   /\ pending = (0 :> 1 @@ 1 :> 1 @@ 2 :> 0)
+     \* *   /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
+     \* *   /\ terminationDetected = FALSE
+     \* *   State 3: <Wakeup line 141, col 5 to line 144, col 42 of module AsyncTerminationDetection>
+     \* *   /\ pending = (0 :> 0 @@ 1 :> 1 @@ 2 :> 0)
+     \* *   /\ active = (0 :> TRUE @@ 1 :> FALSE @@ 2 :> TRUE)
+     \* *   /\ terminationDetected = FALSE
+     \* *   State 4: <Terminate line 122, col 5 to line 131, col 66 of module AsyncTerminationDetection>
+     \* *   /\ pending = (0 :> 0 @@ 1 :> 1 @@ 2 :> 0)
+     \* *   /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
+     \* *   /\ terminationDetected = FALSE
+     \* *   State 5: <Wakeup line 141, col 5 to line 144, col 42 of module AsyncTerminationDetection>
+     \* *   /\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+     \* *   /\ active = (0 :> FALSE @@ 1 :> TRUE @@ 2 :> TRUE)
+     \* *   /\ terminationDetected = FALSE
+     \* *   State 6: <Terminate line 122, col 5 to line 131, col 66 of module AsyncTerminationDetection>
+     \* *   /\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+     \* *   /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
+     \* *   /\ terminationDetected = FALSE
+     \* *   State 7: <Terminate line 122, col 5 to line 131, col 66 of module AsyncTerminationDetection>
+     \* *   /\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+     \* *   /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
+     \* *   /\ terminationDetected = FALSE
+     \* *   State 8: Stuttering
+    <>terminationDetected
+
+    \* * For both properties  Live1  and  Live2  ,  TLC reports counter-examples that end in
+     \* * stuttering.  This is strange!  Clearly, the counter-example for  Live1  could be
+     \* * extended by, e.g., a  Wakeup  action that "consumes" one of the pending messages.
+     \* * Similarly, the counter-example for  Live2  could be extended by a
+     \* *  DetectTermination action.
+     \* * We have to look at  Spec  again to see what is happening.  The (temporal) formula
+     \* *  Spec  defines a set of behaviors, and this set includes the counter-examples
+     \* * reported for  Live1  and  Live2  .  Why?  Because  Spec  does not state a good
+     \* * thing that (eventually) has to happen.  In its current form,  Spec  only defines
+     \* * what must never happen (  Spec  itself is a safety property!).  However, since we
+     \* * ask TLC to check if something good eventually happens, it finds those behaviors
+     \* * permitted by  Spec, where nothing good ever happens.
+     \* * We have to amend  Spec  such that it, in addition to the safety part, also defines
+     \* * the liveness property we the system to satisfy.  Mathematically, this means we have
+     \* * to conjoin  Spec  with some suitable liveness property  F:  Spec /\ F
+    \* * Naively, we might choose for  F  the (liveness) property
+     \* *  <>terminated  /\ <>terminationDetected.
+    \* TODO Amend  Spec  by conjoinit it with  F  where  F  is defined as  
+     \* TODO  <>terminated  /\ <>terminationDetected
 =============================================================================
 \* Modification History
 \* Created Sun Jan 10 15:19:20 CET 2021 by Stephan Merz @muenchnerkindl
