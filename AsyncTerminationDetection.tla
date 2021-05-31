@@ -279,6 +279,18 @@ Spec ==
      \* TODO on initial states? 
     Init /\ [][Next]_vars
 
+Terminates ==
+    \* * The behavior spec  Spec  asserts that every step/transition is a  Next  step, or
+     \* * the variables do not change.  But is it actually true that the system can always
+     \* * and forever take a  Next  step?  Semantically, we are specifying termination
+     \* * detection.  Does the algorithm for termination detection itself terminate or can
+     \* * it execute forever?
+    \* * TLA defines an  ENABLED  operator with which we can state predicates such as
+     \* *  ENABLED A  .  This prediacte is true iff action A is enabled, i.e., there exists
+     \* * a state  t  such that the transition  s -> t  is an A step.
+    \* TODO State a property that is violated iff  Spec  terminates.
+    TRUE \* TODO Replace me!
+    
 =============================================================================
 \* Modification History
 \* Created Sun Jan 10 15:19:20 CET 2021 by Stephan Merz @muenchnerkindl
