@@ -151,6 +151,7 @@ Wakeup(i) ==
 
 DetectTermination ==
     /\ terminated
+    /\ ~terminationDetected
     /\ terminationDetected' = TRUE
     /\ UNCHANGED << active, pending >>
 
@@ -288,11 +289,8 @@ Terminates ==
     \* * TLA defines an  ENABLED  operator with which we can state predicates such as
      \* *  ENABLED A  .  This prediacte is true iff action A is enabled, i.e., there exists
      \* * a state  t  such that the transition  s -> t  is an A step.
-    \* TODO Why isn't  Terminates  violated?  In other words, which sub-actions of  Next
-     \* TODO are *permanently* enabled?  Because this spec is tiny, we can quickly comment 
-     \* TODO the disjuncts of  Next  one by one, and re-run TLC.  Can we rewrite the
-     \* TODO sub-actions s.t.  Terminates  is violated?  How does  Terminates  relate to
-     \* TODO TLC's  "-deadlock"  parameter?
+    \* TODO Now that  Spec  terminates, we should rewrite  Terminates  s.t. it is a theorem
+     \* TODO of this spec.
     []ENABLED Next
     
 =============================================================================
