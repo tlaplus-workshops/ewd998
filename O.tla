@@ -59,4 +59,12 @@ PROVE (ENABLED [FALSE]_TRUE) (*BY ExpandENABLED*)
 THEOREM ASSUME NEW VARIABLE v
 PROVE (ENABLED [TRUE]_TRUE) (*BY ExpandENABLED*)
 
+------------------
+\* Dual Box and Diamond operators
+THEOREM ASSUME NEW F 
+PROVE <>F <=> ~[]~F  OBVIOUS 
+
+THEOREM ASSUME NEW F 
+PROVE ~<>F <=> []~F  OBVIOUS 
+
 ====
