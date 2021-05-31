@@ -278,7 +278,7 @@ Spec ==
     \* TODO Do you still remember the "trouble" we had with  terminated => terminationDetected
      \* TODO when we stated  Stable  earlier?  Do you now see why it only asserts
      \* TODO on initial states? 
-    Init /\ [][Next]_vars
+    Init /\ [][Next]_vars (*/\ 1 = 2*)
 
 Terminates ==
     \* * The behavior spec  Spec  asserts that every step/transition is a  Next  step, or
@@ -291,6 +291,20 @@ Terminates ==
      \* * a state  t  such that the transition  s -> t  is an A step.
     []ENABLED [Next]_vars
     
+
+\* * In  Terminates  , we asserted that it is always "possible" to take a  Next  step, or that
+ \* * it is possible for all variables to remain unchange:  Next \/ vars' = vars  .  This is
+ \* * a tautology in  TLA  and we effectively checked  that  Spec => TRUE  .  A related mistake
+ \* * is when the antecedent is  FALSE  :  FALSE => TRUE  (Try conjoining 1 = 2 to  Spec )
+ \* * Remember:  [](Be suspicious of success).
+ \* *
+ \* * Sometime, we wish to assert that all or some steps are an  A  step (for an action A),
+ \* * and some variables change. In other words, we wish to assert  A /\ vars' # vars  (which
+ \* * is equivalent to   ~(~A \/ vars' = vars)  ).  TLA has dedicated syntax for this, which
+ \* * is  <<A>>_v   where  v  is usually  vars  but can be any state function.
+\* TODO Does  []ENABLED <<Next>>_vars  hold for  Spec  ?
+AngleNextSubVars ==
+    []ENABLED <<Next>>_vars
 =============================================================================
 \* Modification History
 \* Created Sun Jan 10 15:19:20 CET 2021 by Stephan Merz @muenchnerkindl

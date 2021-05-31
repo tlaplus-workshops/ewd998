@@ -40,6 +40,9 @@ THEOREM ~(P => Q) <=> P /\ (~Q)  OBVIOUS
 THEOREM ASSUME NEW ACTION A, NEW VARIABLE v 
 PROVE [A]_v <=> A \/ v' = v  OBVIOUS 
 
+THEOREM ASSUME NEW ACTION A, NEW VARIABLE v 
+PROVE <<A>>_v <=> A /\ v' # v  OBVIOUS 
+
 \* ExpandENABLED requires TLAPS version greater than 1.4
 \* ENABLED A \/ v=v'  is a tautology.
 INSTANCE TLAPS
