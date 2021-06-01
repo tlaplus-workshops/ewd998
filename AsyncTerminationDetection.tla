@@ -289,9 +289,7 @@ Terminates ==
     \* * TLA defines an  ENABLED  operator with which we can state predicates such as
      \* *  ENABLED A  .  This prediacte is true iff action A is enabled, i.e., there exists
      \* * a state  t  such that the transition  s -> t  is an A step.
-    \* TODO Now that  Spec  terminates, we should rewrite  Terminates  s.t. it is a theorem
-     \* TODO of this spec.
-    []ENABLED Next
+    []ENABLED [Next]_vars
     
 =============================================================================
 \* Modification History
