@@ -399,7 +399,17 @@ Live ==
      \* * really care about is that when all nodes terminate, the termination detection
      \* * algorithm eventually detects termination.  It might take a number of rounds for the
      \* * algorithm to detect the termination.
-    [](terminated => <>terminationDetected)
+    \* * In TLA, we can write  [](terminated => <>terminationDetected)  more compactly with
+     \* * the leads-to operators:  
+    terminated ~> terminationDetected
+
+\* * Lastly, we state for readers which properties are theorems of the system.  This is yet
+ \* * another place where implication shows up.  This is nothing other than stating that the
+ \* * behaviors defined by  Spec  are a subset of the behaviors defined  by  Stable, and
+ \* *  Live  .
+THEOREM Spec => Stable
+
+THEOREM Spec => Live
 
     \* * For both properties  Live1  and  Live2  ,  TLC reports counter-examples that end in
      \* * stuttering.  This is strange!  Clearly, the counter-example for  Live1  could be
