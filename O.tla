@@ -99,4 +99,18 @@ PROVE
     /\ []<><<A \/ B>>_v <=> ([]<><<A>>_v) \/ ([]<><<B>>_v)
 BY PTL
 
+------------------
+\* (Weak) Fairness (see Specifying Systems page 97ff for more equivalent formulae)
+THEOREM ASSUME NEW ACTION A, NEW VARIABLE v 
+PROVE ( <>[](ENABLED <<A>>_v) => []<><<A>>_v ) <=> ( []([]ENABLED <<A>>_v => <><<A>>_v) )  BY PTL 
+
+THEOREM ASSUME NEW ACTION A, NEW VARIABLE v 
+PROVE ( <>[](ENABLED <<A>>_v) => []<><<A>>_v ) <=> ( WF_v(A) )  BY PTL 
+
+THEOREM ASSUME NEW ACTION A, NEW VARIABLE v 
+PROVE ( []<>(~ENABLED <<A>>_v) \/ []<><<A>>_v ) <=> ( WF_v(A) )  BY PTL 
+
+THEOREM ASSUME NEW ACTION A, NEW VARIABLE v 
+PROVE ( []<>(ENABLED <<A>>_v) => []<><<A>>_v ) <=>( SF_v(A) )  BY PTL 
+
 ====
