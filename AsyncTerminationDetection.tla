@@ -317,8 +317,6 @@ F ==
      \* *   /\ terminationDetected = FALSE
      \* *   
      \* *   Back to state 1: <Terminate line 122, col 5 to line 131, col 66 of module AsyncTerminationDetection>
-    \* TODO Do we have to conjoin  WF_vars(Next)  with additional fairness properties to
-     \* TODO make  Live1  and  Live2  hold?
     WF_vars(Next)
 
 \* * We’ll now define a formula that encompasses our specification of how the system
@@ -355,7 +353,7 @@ AngleNextSubVars ==
 
 -----------------------------------------------------------------------------
 
-Live1 ==
+Live ==
     \* * Up to now, we have been stating safety properties, i.e., "nothing bad ever happens".
      \* * Looking at the counter-examples we've encountered so far, we find that a safety
      \* * property is a finite prefix of a (infinite) behavior where the final state or action
@@ -396,40 +394,12 @@ Live1 ==
      \* *   /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
      \* *   /\ terminationDetected = FALSE
      \* *   State 2: Stuttering
-    <>terminated
-
-Live2 ==
-    \* *    Error: The following behavior constitutes a counter-example:
-     \* *   State 1: <Initial predicate>
-     \* *   /\ pending = (0 :> 1 @@ 1 :> 1 @@ 2 :> 1)
-     \* *   /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-     \* *   /\ terminationDetected = FALSE
-     \* *   State 2: <Wakeup line 141, col 5 to line 144, col 42 of module AsyncTerminationDetection>
-     \* *   /\ pending = (0 :> 1 @@ 1 :> 1 @@ 2 :> 0)
-     \* *   /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-     \* *   /\ terminationDetected = FALSE
-     \* *   State 3: <Wakeup line 141, col 5 to line 144, col 42 of module AsyncTerminationDetection>
-     \* *   /\ pending = (0 :> 0 @@ 1 :> 1 @@ 2 :> 0)
-     \* *   /\ active = (0 :> TRUE @@ 1 :> FALSE @@ 2 :> TRUE)
-     \* *   /\ terminationDetected = FALSE
-     \* *   State 4: <Terminate line 122, col 5 to line 131, col 66 of module AsyncTerminationDetection>
-     \* *   /\ pending = (0 :> 0 @@ 1 :> 1 @@ 2 :> 0)
-     \* *   /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-     \* *   /\ terminationDetected = FALSE
-     \* *   State 5: <Wakeup line 141, col 5 to line 144, col 42 of module AsyncTerminationDetection>
-     \* *   /\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-     \* *   /\ active = (0 :> FALSE @@ 1 :> TRUE @@ 2 :> TRUE)
-     \* *   /\ terminationDetected = FALSE
-     \* *   State 6: <Terminate line 122, col 5 to line 131, col 66 of module AsyncTerminationDetection>
-     \* *   /\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-     \* *   /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-     \* *   /\ terminationDetected = FALSE
-     \* *   State 7: <Terminate line 122, col 5 to line 131, col 66 of module AsyncTerminationDetection>
-     \* *   /\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-     \* *   /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-     \* *   /\ terminationDetected = FALSE
-     \* *   State 8: Stuttering
-    <>terminationDetected
+    \* * Studying the counter-example below  F  will eventually make us realize that  Live1
+     \* * and  Live2  are non-properties of the system.  Instead, the liveness property we
+     \* * really care about is that when all nodes terminate, the termination detection
+     \* * algorithm eventually detects termination.  It might take a number of rounds for the
+     \* * algorithm to detect the termination.
+    [](terminated => <>terminationDetected)
 
     \* * For both properties  Live1  and  Live2  ,  TLC reports counter-examples that end in
      \* * stuttering.  This is strange!  Clearly, the counter-example for  Live1  could be
