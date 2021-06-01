@@ -293,7 +293,33 @@ F ==
      \* * - <<A>>_v
      \* * - Combining  []  and  <>  to  []<>  and  <>[]
      \* * "If  A  is enabled forever,  infinitely many  A  steps will eventually occur."
-    <>[](ENABLED <<Next>>_vars) => []<><<Next>>_vars
+     \* *   <>[](ENABLED <<Next>>_vars) => []<><<Next>>_vars
+     \* * This can be written more compactly as  WF_vars(Next)  , but TLC still shows
+     \* * a lasso-shaped counter-example:
+     \* *   
+     \* *   Error: Temporal properties were violated.
+     \* *   
+     \* *   Error: The following behavior constitutes a counter-example:
+     \* *   
+     \* *   State 1: <Initial predicate>
+     \* *   /\ pending = (0 :> 1 @@ 1 :> 1 @@ 2 :> 1)
+     \* *   /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
+     \* *   /\ terminationDetected = FALSE
+     \* *   
+     \* *   State 2: <Wakeup line 141, col 5 to line 144, col 42 of module AsyncTerminationDetection>
+     \* *   /\ pending = (0 :> 1 @@ 1 :> 1 @@ 2 :> 0)
+     \* *   /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
+     \* *   /\ terminationDetected = FALSE
+     \* *   
+     \* *   State 3: <SendMsg line 135, col 5 to line 137, col 50 of module AsyncTerminationDetection>
+     \* *   /\ pending = (0 :> 1 @@ 1 :> 1 @@ 2 :> 1)
+     \* *   /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
+     \* *   /\ terminationDetected = FALSE
+     \* *   
+     \* *   Back to state 1: <Terminate line 122, col 5 to line 131, col 66 of module AsyncTerminationDetection>
+    \* TODO Do we have to conjoin  WF_vars(Next)  with additional fairness properties to
+     \* TODO make  Live1  and  Live2  hold?
+    WF_vars(Next)
 
 \* * We’ll now define a formula that encompasses our specification of how the system
  \* * behaves. It combines the Initial state predicate, the next-state action, and
