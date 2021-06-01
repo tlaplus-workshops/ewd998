@@ -270,12 +270,37 @@ ActuallyNext ==
      \* * configuration file.  In TLA, the system specification that defines the set of
      \* * of valid system behaviors, is actually given as a temporal formula.
 
+F ==
+    \* * With this liveness property  F  , all (other) properties hold. :-)  However,
+     \* * it looks funny that check  Live1  and  Live2  when both are also part of  Spec.
+     \* * At the level of termination detection with EWD998,  terminated  might never be
+     \* * true because nodes may never terminate.
+     \* * Additionally, there is a second problem with  F  that is even independent of
+     \* * EWD998: A scheduler would have to look into the future to see if the
+     \* * scheduling choice it is making at some point, leads to an unrecoverable state
+     \* * later from where the stipulated "good thing" can no longer happen.  This is
+     \* * elsewhere informally called "paint itself in the corner", or -formally- is the
+     \* * topic of machine-closed specifications.
+    \* * We want  F  to not add additional safety properties on top of  Spec  .  We won't
+     \* * discuss the whys here, but if we restrict ourselve to only stipulate that
+     \* * enabled sub-actions of the next-state relation  Next  eventually happen, we can
+     \* * be sure that we don't paint the scheduler in the corner.  To rule out the
+     \* * behavior shown by TLC as a violation of  Live1  , we have to require that a
+     \* * Next  step eventually hapens (if it is "possible"). We need to put a number of
+     \* * previously seen concepts together now:
+     \* * - =>  (implication)
+     \* * - ENABLED
+     \* * - <<A>>_v
+     \* * - Combining  []  and  <>  to  []<>  and  <>[]
+    \* TODO How would such a liveness/fairness property look like?
+    <>terminated (*Live1*) /\ <>terminationDetected (*Live2*)
+
 \* * We’ll now define a formula that encompasses our specification of how the system
  \* * behaves. It combines the Initial state predicate, the next-state action, and
  \* * something called a fairness property that we will learn about later.
  \* * It is convention to name the behavior spec  Spec  .
 Spec ==
-    Init /\ [][Next]_vars
+    Init /\ [][Next]_vars /\ F
 
 Terminates ==
     \* * The behavior spec  Spec  asserts that every step/transition is a  Next  step, or
@@ -397,8 +422,6 @@ Live2 ==
      \* * to conjoin  Spec  with some suitable liveness property  F:  Spec /\ F
     \* * Naively, we might choose for  F  the (liveness) property
      \* *  <>terminated  /\ <>terminationDetected.
-    \* TODO Amend  Spec  by conjoinit it with  F  where  F  is defined as  
-     \* TODO  <>terminated  /\ <>terminationDetected
 =============================================================================
 \* Modification History
 \* Created Sun Jan 10 15:19:20 CET 2021 by Stephan Merz @muenchnerkindl
