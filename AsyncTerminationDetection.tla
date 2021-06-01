@@ -292,8 +292,8 @@ F ==
      \* * - ENABLED
      \* * - <<A>>_v
      \* * - Combining  []  and  <>  to  []<>  and  <>[]
-    \* TODO How would such a liveness/fairness property look like?
-    <>terminated (*Live1*) /\ <>terminationDetected (*Live2*)
+     \* * "If  A  is enabled forever,  infinitely many  A  steps will eventually occur."
+    <>[](ENABLED <<Next>>_vars) => []<><<Next>>_vars
 
 \* * We’ll now define a formula that encompasses our specification of how the system
  \* * behaves. It combines the Initial state predicate, the next-state action, and
