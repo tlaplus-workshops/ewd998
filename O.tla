@@ -78,4 +78,9 @@ PROVE ( <>[](ENABLED <<A>>_v) => []<><<A>>_v ) <=>( WF_v(A) )  OMITTED
 THEOREM ASSUME NEW ACTION A, NEW VARIABLE v 
 PROVE ( []<>(ENABLED <<A>>_v) => []<><<A>>_v ) <=>( SF_v(A) )  OMITTED 
 
+------------------
+\* Leads-to
+THEOREM ASSUME NEW F, NEW G
+PROVE [](F => <>G) <=> (F ~> G)  OMITTED 
+
 ====
