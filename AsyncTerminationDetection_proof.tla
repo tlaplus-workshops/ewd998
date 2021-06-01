@@ -43,6 +43,17 @@ LEMMA TypeCorrect == Spec => []TypeOK
 <1>. QED BY <1>1, <1>2, PTL DEF Spec
 
 \* ? How do we prove   Spec => Stable  ?
- \* ? We would have to find an inductive invariant that implies  Stable  .
+ \* ? We would have to find an inductive invariant  IInv  that implies  Stable  ,
+ \* ? (unless  Stable  happens to be inductive).  Usually, we start with  TypeOK
+ \* ? and conjoin additional constraints.  The proof then is as follows:
+IInv ==
+    /\ TypeOK
+    /\ TRUE \* The additional constraints here.
+
+THEOREM Termination == Spec => Stable
+<1>1. Init => IInv
+<1>2. IInv /\ [Next]_vars => IInv'
+<1>3. IInv => Stable
+<1>. QED BY <1>1, <1>2, <1>3 DEF Spec, Stable
 
 =============================================================================
