@@ -15,7 +15,9 @@ EXTENDS Naturals
  \* * syntactically correct.  However, we don't know what elements are in the sets 
  \* * 23 and "frob" (nor do we care). The value of 23="frob" is undefined, and TLA+
  \* * users call this a "silly expression".
-CONSTANT N
+CONSTANT 
+    \* @type: Int;
+    N
 
 \* * We should declare what we assume about the parameters of a spec--the constants.
  \* * In this spec, we assume constant N to be a (positive) natural number, by
@@ -41,7 +43,9 @@ Node == 0 .. N-1
  \* * while pending counts the in-flight messages from other nodes that a
  \* * node has yet to receive.
 VARIABLES 
+  \* @type: Int -> Bool;
   active,               \* activation status of nodes
+  \* @type: Int -> Int;
   pending,              \* number of messages pending at a node
   \* * Up to now, this specification didn't teach us anything useful regarding
    \* * termination detection in a ring (we were mostly concerned with TLA+ itself).
@@ -55,6 +59,7 @@ VARIABLES
    \* * For termination detection, the complete history of the computation, performed
    \* * by the system, is not relevant--we only care if the system detected
    \* * termination.
+  \* @type: Bool;
   terminationDetected
 
 \* * A definition that lets us refer to the spec's variables (more on it later).
@@ -324,7 +329,8 @@ F ==
  \* * something called a fairness property that we will learn about later.
  \* * It is convention to name the behavior spec  Spec  .
 Spec ==
-    Init /\ [][Next]_vars /\ F
+    \* *  F  has been inlined because of https://github.com/informalsystems/apalache/issues/468#issuecomment-853259723
+    Init /\ [][Next]_vars /\ WF_vars(Next) (*  F  *)
 
 Terminates ==
     \* * The behavior spec  Spec  asserts that every step/transition is a  Next  step, or

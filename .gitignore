@@ -24,5 +24,8 @@
 __tlacache__
 .tlacache
 
+## Blacklist apalache working dir
+x/
+
 ## Ignore tools installed into the workspace
 tools/
