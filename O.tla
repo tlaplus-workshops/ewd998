@@ -113,4 +113,9 @@ PROVE ( []<>(~ENABLED <<A>>_v) \/ []<><<A>>_v ) <=> ( WF_v(A) )  BY PTL
 THEOREM ASSUME NEW ACTION A, NEW VARIABLE v 
 PROVE ( []<>(ENABLED <<A>>_v) => []<><<A>>_v ) <=>( SF_v(A) )  BY PTL 
 
+------------------
+\* Leads-to
+THEOREM ASSUME NEW F, NEW G
+PROVE [](F => <>G) <=> (F ~> G)  OMITTED 
+
 ====
