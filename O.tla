@@ -67,4 +67,15 @@ PROVE <>F <=> ~[]~F  OBVIOUS
 THEOREM ASSUME NEW F 
 PROVE ~<>F <=> []~F  OBVIOUS 
 
+------------------
+\* (Weak) Fairness (see Specifying Systems page 97ff for more equivalent formulae)
+THEOREM ASSUME NEW ACTION A, NEW VARIABLE v 
+PROVE ( <>[](ENABLED <<A>>_v) => []<><<A>>_v ) <=> ( []([]ENABLED <<A>>_v => <><<A>>_v) )  OMITTED 
+
+THEOREM ASSUME NEW ACTION A, NEW VARIABLE v 
+PROVE ( <>[](ENABLED <<A>>_v) => []<><<A>>_v ) <=>( WF_v(A) )  OMITTED 
+
+THEOREM ASSUME NEW ACTION A, NEW VARIABLE v 
+PROVE ( []<>(ENABLED <<A>>_v) => []<><<A>>_v ) <=>( SF_v(A) )  OMITTED 
+
 ====
