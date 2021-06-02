@@ -56,29 +56,47 @@ VARIABLES
     \* @type: Int -> Bool;
     active,
     \* @type: Int -> Int;
-    pending
-    \* TODO What are new variables?
+    pending,
+    color,
+    counter,
+    token
 
-vars == <<active, pending>>
+vars == <<active, pending, color, counter, token>>
 
 TypeOK ==
-  /\ active \in [Node -> BOOLEAN]
-  /\ pending \in [Node -> Nat]
+    /\ active \in [Node -> BOOLEAN]
+    /\ pending \in [Node -> Nat]
+    /\ color \in [Node -> Color]
+    /\ counter \in [Node -> Int]
+    \* TODO What about  token  ?
 
 -----------------------------------------------------------------------------
 
 Init ==
     /\ active \in [Node -> BOOLEAN]
     /\ pending = [i \in Node |-> 0]
+    (* Rule 0 *)
 
 -----------------------------------------------------------------------------
 
+InitiateProbe ==
+    (* Rules 1 + 5 + 6 *)
+    /\ UNCHANGED <<>>
+
+PassToken(i) ==
+    (* Rules 2 + 4 + 7 *)
+    /\ UNCHANGED <<>>
+
 System ==
-    UNCHANGED vars \* TODO What shall be the System's actions?
+    \/ InitiateProbe
+    \* TODO Who can pass the token?
+    \/ \E i \in Node : PassToken(i)
+
 
 -----------------------------------------------------------------------------
 
 SendMsg(i) ==
+    (* Rule 0 *)
     /\ active[i]
     /\ UNCHANGED <<>>
 
@@ -87,6 +105,7 @@ RecvMsg(i) ==
     /\ pending[i] > 0
     /\ active' = [active EXCEPT ![i] = TRUE]
     /\ pending' = [pending EXCEPT ![i] = @ - 1]
+    (* Rule 0 + 3 *)
     /\ UNCHANGED <<>>
 
 \* Terminate(i) in AsyncTerminationDetection.
