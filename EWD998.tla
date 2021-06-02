@@ -40,4 +40,72 @@ The remaining concepts this tutorial covers are:
 - CHOOSE operator (Hilbert's epsilon)
 
 ------------------------------- MODULE EWD998 -------------------------------
+EXTENDS Integers \* No longer Naturals \* TODO Do you already see why?
+
+CONSTANT 
+    \* @type: Int;
+    N
+
+ASSUME NIsPosNat == N \in Nat \ {0}
+
+Node == 0 .. N-1
+
+Color == {"white", "black"}
+
+VARIABLES 
+    \* @type: Int -> Bool;
+    active,
+    \* @type: Int -> Int;
+    pending
+    \* TODO What are new variables?
+
+vars == <<active, pending>>
+
+TypeOK ==
+  /\ active \in [Node -> BOOLEAN]
+  /\ pending \in [Node -> Nat]
+
+-----------------------------------------------------------------------------
+
+Init ==
+    /\ active \in [Node -> BOOLEAN]
+    /\ pending = [i \in Node |-> 0]
+
+-----------------------------------------------------------------------------
+
+System ==
+    UNCHANGED vars \* TODO What shall be the System's actions?
+
+-----------------------------------------------------------------------------
+
+SendMsg(i) ==
+    /\ active[i]
+    /\ UNCHANGED <<>>
+
+\* Wakeup(i) in AsyncTerminationDetection.
+RecvMsg(i) ==
+    /\ pending[i] > 0
+    /\ active' = [active EXCEPT ![i] = TRUE]
+    /\ pending' = [pending EXCEPT ![i] = @ - 1]
+    /\ UNCHANGED <<>>
+
+\* Terminate(i) in AsyncTerminationDetection.
+Deactivate(i) ==
+    /\ active[i]
+    /\ active' = [active EXCEPT ![i] = FALSE]
+    /\ UNCHANGED <<pending, color, counter, token>>
+
+Environment == 
+    \E n \in Node:
+        \/ SendMsg(n)
+        \/ RecvMsg(n)
+        \/ Deactivate(n)
+
+-----------------------------------------------------------------------------
+
+Next ==
+  System \/ Environment
+
+Spec == Init /\ [][Next]_vars
+
 =============================================================================
