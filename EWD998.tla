@@ -138,7 +138,9 @@ RecvMsg(i) ==
     /\ active' = [active EXCEPT ![i] = TRUE]
     /\ pending' = [pending EXCEPT ![i] = @ - 1]
     (* Rule 0 + 3 *)
-    \* TODO Rule 0 + 3
+    /\ counter' = [counter EXCEPT ![i] = @ - 1]
+    /\ color' = [ color EXCEPT ![i] = "black" ]
+    /\ UNCHANGED <<token>>
 
 \* Terminate(i) in AsyncTerminationDetection.
 Deactivate(i) ==
@@ -162,7 +164,6 @@ Spec == Init /\ [][Next]_vars
 -----------------------------------------------------------------------------
 
 HasToken ==
-    CHOOSE n \in Node: token.pos = n \* This was a silly exercise!
-
+    token.pos
 
 =============================================================================
