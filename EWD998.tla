@@ -69,6 +69,25 @@ TypeOK ==
     /\ color \in [Node -> Color]
     /\ counter \in [Node -> Int]
     \* TODO What about  token  ?
+    \* * TLA+ has records which are fuctions whose domain are strings. Since
+     \* * records are functions, the syntax to create a record is that of a
+     \* * function, except that the record key does not get quoted.
+    \* TODO Evaluate the following expressions with `tlcrepl`. Not all of 
+     \* TODO them are valid:
+     \* TODO  [ a |-> 42 ]
+     \* TODO  [ a |-> 42, b |-> 23 ]
+     \* TODO  [ a |-> 42, b |-> {23} ]
+     \* TODO  [ a |-> 42, "b" |-> 23 ]
+     \* TODO  [ a |-> 42, b |-> 23, 1 |-> 4711 ]
+     \* TODO To "access" a record field, the syntax is  ["key"]  or  .key  :
+     \* TODO  [ a |-> 42 ]["a"]
+     \* TODO  [ a |-> 42 ].a
+    \* * Finally, as with function sets we've seen earlier, it is easy
+     \* * to define the set of records.  However, the syntax is not  ->  ,
+     \* * but the  :  (colon),  [ a : {1,2,3} ]  .
+    \* TODO What is the cardinality of the following set?
+     \* TODO  [ a : {1,2,3}, b : {4,5,6} ]
+    \* TODO State  TypeOK  conjunct for  token  .
 
 -----------------------------------------------------------------------------
 
