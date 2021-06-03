@@ -122,7 +122,8 @@ System ==
 SendMsg(i) ==
     (* Rule 0 *)
     /\ active[i]
-    \* TODO Rule 0
+    /\ counter' = [counter EXCEPT ![i] = @ + 1]
+    \* TODO Choose a receipient of the message (we don't care which one gets choosen).
     /\ UNCHANGED <<>>
 
 \* Wakeup(i) in AsyncTerminationDetection.
