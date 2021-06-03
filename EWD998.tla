@@ -188,7 +188,6 @@ Spec == Init /\ [][Next]_vars
  \* more readable.  In other words, when we say  A  step above, we talk about
  \* the formula (the right-hand side of  A == foo).  Thus, the  A  step of  ATD
  \* can be a  B  step of  EWD998  provided that  B  is a step permitted by  A  .
-THEOREM Spec => AsyncTerminationDetection!Spec
 \* This theorem is syntactically incorrect, because we haven't added the module
  \*  AsyncTerminationDetection  to the list of  EXTENDS  at the top of  EWD998.
  \* If we were to add  ATD  to the  EXTENDS  , we would end up with various name
@@ -197,8 +196,10 @@ THEOREM Spec => AsyncTerminationDetection!Spec
  \* term is instantiation, syntactically expressed with  INSTANCE M  where  M  
  \* is a module.  To instantiate module  M  into a namespace, we rely on the
  \* (fundamental) concept of definitions again:  M == INSTANCE M  .
-\* TODO Instantiate  AsyncTerminationDetection  into the "namespaec"  ATD  and
- \* TODO fix the (syntactically broken) theorem  Implements  above.
+\* TODO Dang, this is syntactically still incorrect.
+ATD == INSTANCE AsyncTerminationDetection
+
+THEOREM Implements == Spec => ATD!Spec
 -----------------------------------------------------------------------------
 
 HasToken ==
