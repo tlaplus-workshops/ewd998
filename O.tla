@@ -83,4 +83,10 @@ PROVE ( []<>(ENABLED <<A>>_v) => []<><<A>>_v ) <=>( SF_v(A) )  OMITTED
 THEOREM ASSUME NEW F, NEW G
 PROVE [](F => <>G) <=> (F ~> G)  OMITTED 
 
+------------------
+\* CHOOSE
+
+THEOREM ASSUME NEW P(_), NEW S
+PROVE ( \E c: P(c) ) <=> ( P(CHOOSE c: P(c)) )  OBVIOUS 
+
 ====
