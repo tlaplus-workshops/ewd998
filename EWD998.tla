@@ -161,6 +161,37 @@ Next ==
 
 Spec == Init /\ [][Next]_vars
 
+\* We haven't checked anything except the  TypeOK  invariant above, which does
+ \* not say anything about termination detection.  What we could do, is to
+ \* re-state and check the same theorems  Stable  and  Live  that we checked for
+ \*  AsyncTerminationDetection  -- copy&paste is acceptable with specs after all!
+ \* On the other hand, this is not exactly what we want to check; we don't want
+ \* to check that (an amended)  Stable  and  Live  hold for  EWD998.  What we
+ \* really care about is that the module  EWD998  *implements* the high-level
+ \* specificiation  AsyncTerminationDetection  (ATD).
+ \* With TLA, implementation is (logical) implication.  To state that some spec
+ \*  I  implements  a higher-level specification  A  is formally expressed as
+ \*  I => A  .  This is  equivalent to saying that the behaviors defined by  I
+ \* are a subset of the behaviors defined by  A  .  However, what if  I  declares
+ \* additional variables that don't exist in  A  ?  For spec  EWD998  , the
+ \* variables  color, token, pending  do not appear in  ATD  .  This is where
+ \* the sub-scripts we added to the various temporal formulas in  ATD  start to
+ \* make sense.  Recall that  [][A]_v  is equivalent to  [](A \/ v'=v)  .  This
+ \* formula is true of behaviors in which variables - not appearing in  [A]_v  -
+ \* change in any way they want, as long as the variables in  v  remain unchanged,
+ \* or a  A step happens.  In fact,  [A]_v  does not say anything about variables
+ \* not appearing in it; the formula does not "care" about those variables.  For
+ \*  EWD998  and  ATD  ,  the module  ATD  allows the module  EWD998  to specify
+ \* anything "in line" with  ATD  .
+ \* Remember that an  A  step  above is just an action-level formula.  The
+ \* identifier  A  of its definition is just a syntactic element to make specs
+ \* more readable.  In other words, when we say  A  step above, we talk about
+ \* the formula (the right-hand side of  A == foo).  Thus, the  A  step of  ATD
+ \* can be a  B  step of  EWD998  provided that  B  is a step permitted by  A  .
+\* TODO State that  EWD998  implements  ATD  .  In other words, that the formula
+ \* TODO  Spec of  EWD998  implies  the formula  Spec  of ATD  .  Know that
+ \* TODO the exclamation mark  !  is the namespace separator in TLA.
+
 -----------------------------------------------------------------------------
 
 HasToken ==
