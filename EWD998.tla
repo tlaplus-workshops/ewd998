@@ -160,6 +160,37 @@ Next ==
   System \/ Environment
 
 Spec == Init /\ [][Next]_vars
+\* With the refinement below, TLC produces the following (liveness) violation:
+ \* Error: Temporal properties were violated.
+ \*
+ \* Error: The following behavior constitutes a counter-example:
+ \*
+ \* State 1: <Initial predicate>
+ \* /\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+ \* /\ counter = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+ \* /\ token = [q |-> 0, color |-> "black", pos |-> 0]
+ \* /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
+ \* /\ color = (0 :> "white" @@ 1 :> "white" @@ 2 :> "white")
+ \*
+ \* State 2: <InitiateProbe line 93, col 5 to line 100, col 45 of module EWD998>
+ \* /\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+ \* /\ counter = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+ \* /\ token = [q |-> 0, color |-> "white", pos |-> 2]
+ \* /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
+ \* /\ color = (0 :> "white" @@ 1 :> "white" @@ 2 :> "white")
+ \*
+ \* State 3: <PassToken line 104, col 5 to line 113, col 45 of module EWD998>
+ \* /\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+ \* /\ counter = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+ \* /\ token = [q |-> 0, color |-> "white", pos |-> 1]
+ \* /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
+ \* /\ color = (0 :> "white" @@ 1 :> "white" @@ 2 :> "white")
+ \*
+ \* State 4: Stuttering
+\* This counter-examples makes us realize that we haven't defined a suitable
+ \* fairness property for  EWD998 .
+\* TODO What fairness property should it be?
+
 
 terminationDetected ==
     /\ token.pos = 0
