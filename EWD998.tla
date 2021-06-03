@@ -91,9 +91,13 @@ Init ==
 
 InitiateProbe ==
     (* Rules 1 + 5 + 6 *)
-    \* TODO The enablement condition for this action is that the  token  is at
-     \* TODO the initiator node...
-    \* TODO ...and the previous round was inconclusive.
+    /\ token.pos = 0
+    /\ \* previous round inconclusive:
+        \/ token.color = "black"
+        \/ color[0] = "black"
+        \/ counter[0] + token.q > 0
+    \* TODO Rule 5 + 6
+    \* TODO Rule 6
     /\ UNCHANGED <<>>
 
 PassToken(i) ==
