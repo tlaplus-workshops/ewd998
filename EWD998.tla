@@ -105,8 +105,10 @@ PassToken(i) ==
     /\ ~ active[i]
     /\ token.pos = i
     \* Rule 2 + 4
-    \* TODO The color of  token  in the next state is not quite right!
-    /\ token' = [ pos |-> i - 1, q |-> token.q + counter[i], color |-> color[i] ]
+    \* Wow, TLA+ has an IF-THEN-ELSE expressions.
+    \* TODO This could have been rewritten using  EXCEPT  .
+    /\ token' = [ pos |-> i - 1, q |-> token.q + counter[i], 
+        color |-> IF color[i] = "black" THEN "black" ELSE token.color ]
     \* Rule 7
     /\ color' = [ color EXCEPT ![i] = "white" ]
     /\ UNCHANGED <<>>
