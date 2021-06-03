@@ -123,15 +123,14 @@ SendMsg(i) ==
     (* Rule 0 *)
     /\ active[i]
     /\ counter' = [counter EXCEPT ![i] = @ + 1]
-    \* TODO Choose a receipient of the message (we don't care which one gets choosen).
     \* TLA has a CHOOSE operator that picks a value satisfying some property:  
      \*   CHOOSE x \in S: P(x)   
      \* The choice is deterministic, meaning that CHOOSE always picks the same value.
      \* If no value in  S  satisfies the property  P  , the value of the CHOOSE
      \* expression is undefined.  It is *not* an error in TLA, although TLC will
      \* complain. Likewise, TLC won't choose if  S  is unbound/infinite.
-    \* TODO Define an operator  HasToken  that equals the node currently holding the
-     \* TODO token.
+    /\ pending' = [pending EXCEPT ![ (CHOOSE j \in Node : j # i) ] = @ + 1]
+    /\ UNCHANGED <<active, color, token>>
 
 \* Wakeup(i) in AsyncTerminationDetection.
 RecvMsg(i) ==
@@ -139,7 +138,7 @@ RecvMsg(i) ==
     /\ active' = [active EXCEPT ![i] = TRUE]
     /\ pending' = [pending EXCEPT ![i] = @ - 1]
     (* Rule 0 + 3 *)
-    /\ UNCHANGED <<>>
+    \* TODO Rule 0 + 3
 
 \* Terminate(i) in AsyncTerminationDetection.
 Deactivate(i) ==
@@ -163,6 +162,7 @@ Spec == Init /\ [][Next]_vars
 -----------------------------------------------------------------------------
 
 HasToken ==
-    TRUE \* TODO Replace me!
+    CHOOSE n \in Node: token.pos = n \* This was a silly exercise!
+
 
 =============================================================================
