@@ -330,7 +330,14 @@ F ==
  \* * It is convention to name the behavior spec  Spec  .
 Spec ==
     \* *  F  has been inlined because of    https://github.com/informalsystems/apalache/issues/468#issuecomment-853259723
-    Init /\ [][Next]_vars /\ WF_vars(Next) (*  F  *)
+    \* Wow, liveness (fairness) is subtle.  However, this is not because TLA poorly
+     \* equipped to handle liveness.  "[Instead,] the problem lies in the nature
+     \* of liveness, not in its definition" (Lamport).
+     \* "Narrowing" fairness from  Next  to   DetectTermination  makes sure that
+     \* a  DetectTermination  eventually happens instead of repeated token rounds.
+    \* TODO Convince yourself that  AsyncTerminationDetection  is still correct
+     \* TODO and  EWD998  passes, i.e., rerun TLC.
+    Init /\ [][Next]_vars /\ WF_vars(DetectTermination) (*  F  *)
 
 Terminates ==
     \* * The behavior spec  Spec  asserts that every step/transition is a  Next  step, or
