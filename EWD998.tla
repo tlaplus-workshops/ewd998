@@ -161,6 +161,13 @@ Next ==
 
 Spec == Init /\ [][Next]_vars
 
+terminationDetected ==
+    /\ token.pos = 0
+    /\ token.color = "white"
+    /\ token.q + counter[0] = 0
+    /\ color[0] = "white"
+    /\ ~ active[0]
+
 \* We haven't checked anything except the  TypeOK  invariant above, which does
  \* not say anything about termination detection.  What we could do, is to
  \* re-state and check the same theorems  Stable  and  Live  that we checked for
@@ -204,14 +211,6 @@ Spec == Init /\ [][Next]_vars
  \*  ATD!terminationDetected  .  Syntactically, we append a
  \*  WITH symbol <- substitution  to the INSTANCE statement.
 ATD == INSTANCE AsyncTerminationDetection
-\* TODO Extract the right-hand side of  <-  into a definition  terminationDetected
- \* TODO to remove the  WITH  completely.
-                    WITH terminationDetected <- /\ token.pos = 0
-                                                /\ token.color = "white"
-                                                /\ token.q + counter[0] = 0
-                                                /\ color[0] = "white"
-                                                /\ ~ active[0]
-                                                /\ pending[0] = 0
 
 THEOREM Implements == Spec => ATD!Spec
 
