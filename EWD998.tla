@@ -196,8 +196,16 @@ Spec == Init /\ [][Next]_vars
  \* term is instantiation, syntactically expressed with  INSTANCE M  where  M  
  \* is a module.  To instantiate module  M  into a namespace, we rely on the
  \* (fundamental) concept of definitions again:  M == INSTANCE M  .
-\* TODO Dang, this is syntactically still incorrect.
-ATD == INSTANCE AsyncTerminationDetection
+\* The module  ATD  declares the variables  terminationDetected  that is absent
+ \* in  EWD998  .  In other words,  EWD998  does not define a value of the
+ \* variable  terminationDetected  in its behaviors.  We can define the value of
+ \*  terminationDetected  in  EWD998  by stating with what expression  
+ \*  terminationDetected  should be substituted that is equivalent to  
+ \*  ATD!terminationDetected  .  Syntactically, we append a
+ \*  WITH symbol <- substitution  to the INSTANCE statement.
+\* TODO Will it work if we substitute  terminationDetected  with  TRUE  ?  Find
+ \* TODO out, but don't forget to have TLC check this property.
+ATD == INSTANCE AsyncTerminationDetection WITH terminationDetected <- TRUE
 
 THEOREM Implements == Spec => ATD!Spec
 -----------------------------------------------------------------------------
