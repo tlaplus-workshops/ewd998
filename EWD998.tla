@@ -188,10 +188,17 @@ Spec == Init /\ [][Next]_vars
  \* more readable.  In other words, when we say  A  step above, we talk about
  \* the formula (the right-hand side of  A == foo).  Thus, the  A  step of  ATD
  \* can be a  B  step of  EWD998  provided that  B  is a step permitted by  A  .
-\* TODO State that  EWD998  implements  ATD  .  In other words, that the formula
- \* TODO  Spec of  EWD998  implies  the formula  Spec  of ATD  .  Know that
- \* TODO the exclamation mark  !  is the namespace separator in TLA.
-
+THEOREM Spec => AsyncTerminationDetection!Spec
+\* This theorem is syntactically incorrect, because we haven't added the module
+ \*  AsyncTerminationDetection  to the list of  EXTENDS  at the top of  EWD998.
+ \* If we were to add  ATD  to the  EXTENDS  , we would end up with various name
+ \* clashes.  Think of  EXTENDS  as inlining the extended modulese.
+ \* What we need is to "import"  ATD  under a new namespace, thoug.  In TLA, the
+ \* term is instantiation, syntactically expressed with  INSTANCE M  where  M  
+ \* is a module.  To instantiate module  M  into a namespace, we rely on the
+ \* (fundamental) concept of definitions again:  M == INSTANCE M  .
+\* TODO Instantiate  AsyncTerminationDetection  into the "namespaec"  ATD  and
+ \* TODO fix the (syntactically broken) theorem  Implements  above.
 -----------------------------------------------------------------------------
 
 HasToken ==
