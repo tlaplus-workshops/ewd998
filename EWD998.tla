@@ -96,12 +96,13 @@ InitiateProbe ==
         \/ token.color = "black"
         \/ color[0] = "black"
         \/ counter[0] + token.q > 0
-    \* TODO Rule 5 + 6
-    \* TODO Rule 6
-    /\ UNCHANGED <<>>
+    /\ token' = [ pos |-> N-1, q |-> 0, color |-> "white"]
+    /\ color' = [ color EXCEPT ![0] = "white" ]
+    /\ UNCHANGED <<active, counter, pending>>                            
 
 PassToken(i) ==
     (* Rules 2 + 4 + 7 *)
+    \* TODO Rule 2 + 4 + 7
     /\ UNCHANGED <<>>
 
 System ==
