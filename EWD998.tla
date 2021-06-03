@@ -203,11 +203,15 @@ Spec == Init /\ [][Next]_vars
  \*  terminationDetected  should be substituted that is equivalent to  
  \*  ATD!terminationDetected  .  Syntactically, we append a
  \*  WITH symbol <- substitution  to the INSTANCE statement.
-\* TODO Will it work if we substitute  terminationDetected  with  TRUE  ?  Find
- \* TODO out, but don't forget to have TLC check this property.
+\* TODO TRUE clearly doesn't work.  Under what conditions is termination 
+ \* TODO detected in  EWD998  (look at the Rules above or the paper)? 
 ATD == INSTANCE AsyncTerminationDetection WITH terminationDetected <- TRUE
 
 THEOREM Implements == Spec => ATD!Spec
+
+\* The bang is not a valid token in a config file.
+ATDSpec == ATD!Spec
+
 -----------------------------------------------------------------------------
 
 HasToken ==
