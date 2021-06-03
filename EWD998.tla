@@ -203,9 +203,15 @@ Spec == Init /\ [][Next]_vars
  \*  terminationDetected  should be substituted that is equivalent to  
  \*  ATD!terminationDetected  .  Syntactically, we append a
  \*  WITH symbol <- substitution  to the INSTANCE statement.
-\* TODO TRUE clearly doesn't work.  Under what conditions is termination 
- \* TODO detected in  EWD998  (look at the Rules above or the paper)? 
-ATD == INSTANCE AsyncTerminationDetection WITH terminationDetected <- TRUE
+ATD == INSTANCE AsyncTerminationDetection
+\* TODO Extract the right-hand side of  <-  into a definition  terminationDetected
+ \* TODO to remove the  WITH  completely.
+                    WITH terminationDetected <- /\ token.pos = 0
+                                                /\ token.color = "white"
+                                                /\ token.q + counter[0] = 0
+                                                /\ color[0] = "white"
+                                                /\ ~ active[0]
+                                                /\ pending[0] = 0
 
 THEOREM Implements == Spec => ATD!Spec
 
