@@ -106,12 +106,12 @@ PassToken(i) ==
     /\ token.pos = i
     \* Rule 2 + 4
     \* Wow, TLA+ has an IF-THEN-ELSE expressions.
-    \* TODO This could have been rewritten using  EXCEPT  .
-    /\ token' = [ pos |-> i - 1, q |-> token.q + counter[i], 
-        color |-> IF color[i] = "black" THEN "black" ELSE token.color ]
+    /\ token' = [ token EXCEPT !.pos = @ - 1,
+                               !.q   = @ + counter[i],
+                               !.color = IF color[i] = "black" THEN "black" ELSE @ ]
     \* Rule 7
     /\ color' = [ color EXCEPT ![i] = "white" ]
-    /\ UNCHANGED <<>>
+    /\ UNCHANGED <<active, pending, counter>>
 
 System ==
     \/ InitiateProbe
@@ -122,6 +122,7 @@ System ==
 SendMsg(i) ==
     (* Rule 0 *)
     /\ active[i]
+    \* TODO Rule 0
     /\ UNCHANGED <<>>
 
 \* Wakeup(i) in AsyncTerminationDetection.
