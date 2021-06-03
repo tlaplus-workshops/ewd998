@@ -102,7 +102,13 @@ InitiateProbe ==
 
 PassToken(i) ==
     (* Rules 2 + 4 + 7 *)
-    \* TODO Rule 2 + 4 + 7
+    /\ ~ active[i]
+    /\ token.pos = i
+    \* Rule 2 + 4
+    \* TODO The color of  token  in the next state is not quite right!
+    /\ token' = [ pos |-> i - 1, q |-> token.q + counter[i], color |-> color[i] ]
+    \* Rule 7
+    /\ color' = [ color EXCEPT ![i] = "white" ]
     /\ UNCHANGED <<>>
 
 System ==
