@@ -82,12 +82,18 @@ Init ==
     /\ active \in [Node -> BOOLEAN]
     /\ pending = [i \in Node |-> 0]
     (* Rule 0 *)
-    \* TODO Define the initial states according to Rule 0.
+    /\ color \in [Node -> Color]
+    /\ counter = [i \in Node |-> 0]
+    /\ pending = [i \in Node |-> 0]
+    /\ token = [pos |-> 0, q |-> 0, color |-> "black"]
 
 -----------------------------------------------------------------------------
 
 InitiateProbe ==
     (* Rules 1 + 5 + 6 *)
+    \* TODO The enablement condition for this action is that the  token  is at
+     \* TODO the initiator node...
+    \* TODO ...and the previous round was inconclusive.
     /\ UNCHANGED <<>>
 
 PassToken(i) ==
