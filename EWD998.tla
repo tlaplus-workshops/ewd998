@@ -159,7 +159,7 @@ Environment ==
 Next ==
   System \/ Environment
 
-Spec == Init /\ [][Next]_vars
+Spec == Init /\ [][Next]_vars /\ WF_vars(Next)
 \* With the refinement below, TLC produces the following (liveness) violation:
  \* Error: Temporal properties were violated.
  \*
@@ -189,8 +189,62 @@ Spec == Init /\ [][Next]_vars
  \* State 4: Stuttering
 \* This counter-examples makes us realize that we haven't defined a suitable
  \* fairness property for  EWD998 .
-\* TODO What fairness property should it be?
-
+\* With  WF_vars(Next)  , TLC finds a counter-example where the  Initiator  
+ \* forever initiates new token rounds, but one node never receives a message
+ \* that was send to it.
+ \*
+ \* State 1: <Initial predicate>
+ \* /\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+ \* /\ counter = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+ \* /\ token = [q |-> 0, color |-> "black", pos |-> 0]
+ \* /\ active = (0 :> TRUE @@ 1 :> FALSE @@ 2 :> FALSE)
+ \* /\ color = (0 :> "white" @@ 1 :> "white" @@ 2 :> "white") 
+ \*
+ \* State 2: <SendMsg line 123, col 5 to line 132, col 41 of module EWD998>
+ \* /\ pending = (0 :> 0 @@ 1 :> 1 @@ 2 :> 0)
+ \* /\ counter = (0 :> 1 @@ 1 :> 0 @@ 2 :> 0)
+ \* /\ token = [q |-> 0, color |-> "black", pos |-> 0]
+ \* /\ active = (0 :> TRUE @@ 1 :> FALSE @@ 2 :> FALSE)
+ \* /\ color = (0 :> "white" @@ 1 :> "white" @@ 2 :> "white")
+ \*
+ \* State 3: <InitiateProbe line 93, col 5 to line 100, col 45 of module EWD998>
+ \* /\ pending = (0 :> 0 @@ 1 :> 1 @@ 2 :> 0)
+ \* /\ counter = (0 :> 1 @@ 1 :> 0 @@ 2 :> 0)
+ \* /\ token = [q |-> 0, color |-> "white", pos |-> 2]
+ \* /\ active = (0 :> TRUE @@ 1 :> FALSE @@ 2 :> FALSE)
+ \* /\ color = (0 :> "white" @@ 1 :> "white" @@ 2 :> "white")
+ \*
+ \* State 4: <PassToken line 104, col 5 to line 113, col 45 of module EWD998>
+ \* /\ pending = (0 :> 0 @@ 1 :> 1 @@ 2 :> 0)
+ \* /\ counter = (0 :> 1 @@ 1 :> 0 @@ 2 :> 0)
+ \* /\ token = [q |-> 0, color |-> "white", pos |-> 1]
+ \* /\ active = (0 :> TRUE @@ 1 :> FALSE @@ 2 :> FALSE)
+ \* /\ color = (0 :> "white" @@ 1 :> "white" @@ 2 :> "white")
+ \*
+ \* State 5: <PassToken line 104, col 5 to line 113, col 45 of module EWD998>
+ \* /\ pending = (0 :> 0 @@ 1 :> 1 @@ 2 :> 0)
+ \* /\ counter = (0 :> 1 @@ 1 :> 0 @@ 2 :> 0)
+ \* /\ token = [q |-> 0, color |-> "white", pos |-> 0]
+ \* /\ active = (0 :> TRUE @@ 1 :> FALSE @@ 2 :> FALSE)
+ \* /\ color = (0 :> "white" @@ 1 :> "white" @@ 2 :> "white")
+ \*
+ \* Back to state 3: <InitiateProbe line 93, col 5 to line 100, col 45 of module EWD998>
+ \*
+ \* This hints at the fact that  EWD998  does not handle unreliable message
+ \* delivery.  However, what is really happening is that the  RecvMsg  never
+ \* occurs.  How can that be, since we defined (weak) fairness on the  Next  
+ \* action and its sub-action  RecvMsg  is permanently enabled?
+ \* Fairness does not distribute over the sub-actions of an action such as  Next  .
+ \* If this is what we want, we would have to conjoin multiple fairness 
+ \* conditions to  Spec  ; one for each sub-action.  This isn't really what we
+ \* want, though.  Fundamentally, the algorithm described in EWD998 detects
+ \* termination if and only if all nodes (eventually) terminate.  If the nodes
+ \* never terminate (which subsumes sending messages back and forth), there is
+ \* no termination to detect.  This suggests that we are only interest in
+ \* checking whether or not termination is detected for those behaviors where
+ \* all nodes eventually terminate.
+\* TODO How do we rule out behaviors no termination occurs (while keeping the 
+ \* TODO spec machine-closed)?
 
 terminationDetected ==
     /\ token.pos = 0
