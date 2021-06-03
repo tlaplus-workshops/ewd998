@@ -159,7 +159,7 @@ Environment ==
 Next ==
   System \/ Environment
 
-Spec == Init /\ [][Next]_vars /\ WF_vars(Next)
+Spec == Init /\ [][Next]_vars /\ WF_vars(System)
 \* With the refinement below, TLC produces the following (liveness) violation:
  \* Error: Temporal properties were violated.
  \*
@@ -243,8 +243,6 @@ Spec == Init /\ [][Next]_vars /\ WF_vars(Next)
  \* no termination to detect.  This suggests that we are only interest in
  \* checking whether or not termination is detected for those behaviors where
  \* all nodes eventually terminate.
-\* TODO How do we rule out behaviors no termination occurs (while keeping the 
- \* TODO spec machine-closed)?
 
 terminationDetected ==
     /\ token.pos = 0
