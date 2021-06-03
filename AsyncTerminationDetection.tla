@@ -322,14 +322,14 @@ F ==
      \* *   /\ terminationDetected = FALSE
      \* *   
      \* *   Back to state 1: <Terminate line 122, col 5 to line 131, col 66 of module AsyncTerminationDetection>
-    WF_vars(Next)
+    WF_vars(DetectTermination)
 
 \* * We’ll now define a formula that encompasses our specification of how the system
  \* * behaves. It combines the Initial state predicate, the next-state action, and
  \* * something called a fairness property that we will learn about later.
  \* * It is convention to name the behavior spec  Spec  .
 Spec ==
-    \* *  F  has been inlined because of https://github.com/informalsystems/apalache/issues/468#issuecomment-853259723
+    \* *  F  has been inlined because of    https://github.com/informalsystems/apalache/issues/468#issuecomment-853259723
     Init /\ [][Next]_vars /\ WF_vars(Next) (*  F  *)
 
 Terminates ==
