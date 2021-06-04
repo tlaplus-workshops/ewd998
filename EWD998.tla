@@ -300,6 +300,16 @@ THEOREM Implements == Spec => ATD!Spec
 \* The bang is not a valid token in a config file.
 ATDSpec == ATD!Spec
 
+\* With the refinement done, it is sanity-check time again. As we have learned
+ \* with the state constraint earlier, a good check is to quickly generate a
+ \* small number of behaviors.  If some actions are not covered, we have to look
+ \* closer.
+\* Another useful sanity-check is to verify the spec for a single node, i.e., 
+ \*  N = 1  .  We want termination to detect termination of a single node, no?
+\* TODO 1) Generate (full) statistics with the simulator and sanity-check the
+ \* TODO resulting action graph:  "-simulate num=10000,stats=full"
+ \* TODO 2) Model-check the spec for  N = 1  (remember MCEWD998.tla)
+
 -----------------------------------------------------------------------------
 
 HasToken ==
