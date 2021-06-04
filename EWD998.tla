@@ -137,12 +137,8 @@ SendMsg(i) ==
      \* However, using  CHOOSE  is a common mistake, which is why this topic is
      \* covered in this tutorial.  CHOOSE  usually has the "advantage" to cause
      \* less state-space explosion; but not in a good way.
-    \* TODO Fix this spec and compare the number of distinct states that TLC
-     \* TODO generates before and after the fix.  To get specific statistics
-     \* TODO about the  SendMsg  action (and all other actions of a spec), run
-     \* TODO TLC with the  "-coverage R"  parameter where  R  is the rate in
-     \* TODO minutes at which statistics should be printed.
-    /\ pending' = [pending EXCEPT ![ (CHOOSE j \in Node : j # i) ] = @ + 1]
+    /\ \E recv \in (Node \ {i}):
+            pending' = [pending EXCEPT ![recv] = @ + 1]
     /\ UNCHANGED <<active, color, token>>
 
 \* Wakeup(i) in AsyncTerminationDetection.
