@@ -331,4 +331,24 @@ ATDSpec == ATD!Spec
 HasToken ==
     token.pos
 
+\* Usually, one would find additional invariants and liveness properties at this
+ \* stage and check the spec for different spec parameters.  The second part can
+ \* easily be parallelized and scaled out (hello cloud computing!).
+\* If higher assurances are needed, now would be the start of proving  EWD998
+ \* correct, which requires finding an inductive invariant.  Finding an
+ \* inductive invariant is hard because one has to know *why* the algorithm
+ \* works (model-checking only confirms that algorithms work according to the
+ \* checked properties).
+\* Fortunately, the EWD998 paper gives an inductive invariant in the form of a
+ \* larger formula  P0 /\ (P1 \/ P2 \/ P3 \/ P4)  , with  \S  representing
+ \* "the sum of",  B  to equal the sum of in-flight messages,  and  P0  to  P4 : 
+ \*
+ \* P0: B = Si: 0 <= i < N: c.i)
+ \* P1: (Ai: t < i < N: machine nr.i is passive) /\
+ \*     (Si: t < i < N: c.i) = q
+ \* P2: (Si: 0 <= i <= t: c.i) + q > 0
+ \* P3: Ei: 0 <= i <= t : machine nr.i is black
+ \* P4: The token is black
+\* TODO Translate the informal invariant to TLA+.
+
 =============================================================================
