@@ -129,6 +129,19 @@ SendMsg(i) ==
      \* If no value in  S  satisfies the property  P  , the value of the CHOOSE
      \* expression is undefined.  It is *not* an error in TLA, although TLC will
      \* complain. Likewise, TLC won't choose if  S  is unbound/infinite.
+    \* CHOOSE  is almost always wrong when it appears in the behavior spec
+     \* (except for constant-level operators such as  Min(S)  or when choosing
+     \* what is called model-values).
+     \* In TLA+, non-deteministic choice is expressed with existential
+     \* quantification, like it was done in  Environment  and  System  .
+     \* However, using  CHOOSE  is a common mistake, which is why this topic is
+     \* covered in this tutorial.  CHOOSE  usually has the "advantage" to cause
+     \* less state-space explosion; but not in a good way.
+    \* TODO Fix this spec and compare the number of distinct states that TLC
+     \* TODO generates before and after the fix.  To get specific statistics
+     \* TODO about the  SendMsg  action (and all other actions of a spec), run
+     \* TODO TLC with the  "-coverage R"  parameter where  R  is the rate in
+     \* TODO minutes at which statistics should be printed.
     /\ pending' = [pending EXCEPT ![ (CHOOSE j \in Node : j # i) ] = @ + 1]
     /\ UNCHANGED <<active, color, token>>
 
@@ -316,14 +329,6 @@ ATDSpec == ATD!Spec
  \*  pending[2]  . This might just be exceptional luck, but maybe there is
  \* something more subtle going on.  This is an excellent opportunity to meet
  \* the TLA+ debugger (that has recently been added :-).
-\* TODO Fire up the TLA+ debugger by clicking  Check and debug model with TLC  
- \* TODO on the right upper corner of the spec editor (of  MCEWD998.tla).
- \* TODO Afterwards, set an *in-line* breakpoint (Shift-F9) on the name of the
- \* TODO  SendMsg   action.  Then, resume TLC (F5) and inspect the variables
- \* TODO view once the debugger hits your breakpoint.  Pay special attention to
- \* TODO  Successors  .  How many successors do you expect with  N  nodes?
- \* TODO Alternatively, check  C.tla  with config  CC.cfg  and  CE.cfg  
- \* TODO (how many behaviors does  SpecC  , how many  SpecE  define?).  
 
 -----------------------------------------------------------------------------
 
