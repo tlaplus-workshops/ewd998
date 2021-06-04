@@ -306,9 +306,24 @@ ATDSpec == ATD!Spec
  \* closer.
 \* Another useful sanity-check is to verify the spec for a single node, i.e., 
  \*  N = 1  .  We want termination to detect termination of a single node, no?
-\* TODO 1) Generate (full) statistics with the simulator and sanity-check the
- \* TODO resulting action graph:  "-simulate num=10000,stats=full"
- \* TODO 2) Model-check the spec for  N = 1  (remember MCEWD998.tla)
+\* Generating the graph with "full" statistics reveals the context in which the
+ \* action formulae are evaluated.  In other words, the graph includes the
+ \* parameters that were "passed" to the actions.
+ \* For the graph generated from EWD998, the  RecvMsg  action for the context
+ \*  [i->2]  , which corresponds to node #2 is not covered.  This means that the
+ \* sub-action  RecvMsg  was never enabled when the simulator generated the
+ \* behaviors, which can be the case iff  SendMsg   never incremented
+ \*  pending[2]  . This might just be exceptional luck, but maybe there is
+ \* something more subtle going on.  This is an excellent opportunity to meet
+ \* the TLA+ debugger (that has recently been added :-).
+\* TODO Fire up the TLA+ debugger by clicking  Check and debug model with TLC  
+ \* TODO on the right upper corner of the spec editor (of  MCEWD998.tla).
+ \* TODO Afterwards, set an *in-line* breakpoint (Shift-F9) on the name of the
+ \* TODO  SendMsg   action.  Then, resume TLC (F5) and inspect the variables
+ \* TODO view once the debugger hits your breakpoint.  Pay special attention to
+ \* TODO  Successors  .  How many successors do you expect with  N  nodes?
+ \* TODO Alternatively, check  C.tla  with config  CC.cfg  and  CE.cfg  
+ \* TODO (how many behaviors does  SpecC  , how many  SpecE  define?).  
 
 -----------------------------------------------------------------------------
 
