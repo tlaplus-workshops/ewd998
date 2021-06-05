@@ -349,12 +349,37 @@ HasToken ==
  \* P2: (Si: 0 <= i <= t: c.i) + q > 0
  \* P3: Ei: 0 <= i <= t : machine nr.i is black
  \* P4: The token is black
-\* TODO Translate the informal invariant to TLA+.
-Sum(cntr, from, to) ==
-    42 \* TODO
+
+\* TLA doesn't have for loops with which we could sum the elements of the 
+ \* variables  counter  and  pending  ; TLA+ is not an imperative programming
+ \* language.  Instead, TLA+ has recursive functions.  We could write a
+ \* function to sum the variable  counter  as:
+ \* 
+ \*  SumC == CHOOSE f : f = [ i \in 0..N-1 |-> IF i = 0 
+ \*                                            THEN counter[i]
+ \*                                            ELSE f[i-1] + counter[i]  ]
+ \* 
+ \* The sum of  counter  would then be  SumC[N-1]  .
+ \* TLC does not evaluate unbounded choose.  However, TLA+ has a syntactic
+ \* variant that TLC evaluates:
+ \* 
+ \*  SumC[ i \in 0..N-1 ] == IF i=0 THEN counter[i] ELSE SumC[i-1] + counter[i]
+ \*
+ \* To write a recursive function to sum the elements of a function given a
+ \* (subset) of its domain that is independent of  counter  , and, thus, also
+ \* works for  pending  , we need to see another TLA+ concept.  A let/in
+ \* expression allows us to use locally define operators. A let/in is just a
+ \* syntactic concept, and the expression is equivalent to an expression
+ \* with all locally defined operators in-lined.
+Sum(fun, from, to) ==
+    LET sum[ i \in from..to ] ==
+            IF i = from THEN fun[i]
+            ELSE sum[i-1] + fun[i]
+    IN sum[to]
 
 B ==
-    23 \* TODO
+    \* This spec counts the in-flight messages in the variable  pending  .
+    Sum(pending, 0, N-1)
 
 Inv == 
     /\ P0:: B = Sum(counter, 0, N-1)
