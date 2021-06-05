@@ -371,11 +371,23 @@ HasToken ==
  \* expression allows us to use locally define operators. A let/in is just a
  \* syntactic concept, and the expression is equivalent to an expression
  \* with all locally defined operators in-lined.
-Sum(fun, from, to) ==
+SumF(fun, from, to) ==
     LET sum[ i \in from..to ] ==
             IF i = from THEN fun[i]
             ELSE sum[i-1] + fun[i]
     IN sum[to]
+
+\* Alternatively, one can write recursive operators. What distinguishes a
+ \* recursive operator from an ordinary operator, is a  RECURSIVE  operator
+ \* declaration.
+ \* Compared to recursive functions, TLC usually evaluate recursive operators
+ \* faster.  However, that is not the case for Apalache.  PlusPy, a tool to
+ \* execute TLA+ specifications, doesn't support recursive operators at all.
+RECURSIVE Sum(_,_,_)
+Sum(fun, from, to) ==
+    IF from = to 
+    THEN fun[to]
+    ELSE fun[from] + Sum(fun, from+1, to)
 
 B ==
     \* This spec counts the in-flight messages in the variable  pending  .

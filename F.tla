@@ -129,4 +129,25 @@ Inverse(f) ==
 ASSUME Inverse(("a" :> 0) ++ ("b" :> 1) ++ ("c" :> 2)) =
               ((0 :> "a") ++ (1 :> "b") ++ (2 :> "c"))
 
+--------------------------------------------------------------
+
+\* Mutual recursion becomes possible
+\* with recursive *operators*.
+\* Evaluate in the tlcrepl with:
+\*  LET F == INSTANCE F IN F!IsEven(42)
+----------------------
+RECURSIVE IsEven(_)
+
+RECURSIVE IsOdd(_)
+
+IsEven(n) ==
+    IF n = 0
+    THEN TRUE
+    ELSE IsOdd(n-1)
+
+IsOdd(n) ==
+    IF n = 0
+    THEN FALSE
+    ELSE IsEven(n-1)
+
 ==================
