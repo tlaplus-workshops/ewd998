@@ -350,5 +350,20 @@ HasToken ==
  \* P3: Ei: 0 <= i <= t : machine nr.i is black
  \* P4: The token is black
 \* TODO Translate the informal invariant to TLA+.
+Sum(cntr, from, to) ==
+    42 \* TODO
+
+B ==
+    23 \* TODO
+
+Inv == 
+    /\ P0:: B = Sum(counter, 0, N-1)
+    /\  \/ P1:: /\ \A i \in (token.pos+1)..N-1: ~ active[i]
+            /\ IF token.pos = N-1 
+               THEN token.q = 0 
+               ELSE token.q = Sum(counter, (token.pos+1), N-1)
+        \/ P2:: Sum(counter, 0, token.pos) + token.q > 0
+        \/ P3:: \E i \in 0..token.pos : color[i] = "black"
+        \/ P4:: token.color = "black"
 
 =============================================================================
