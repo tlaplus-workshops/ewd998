@@ -371,7 +371,8 @@ HasToken ==
  \* expression allows us to use locally define operators. A let/in is just a
  \* syntactic concept, and the expression is equivalent to an expression
  \* with all locally defined operators in-lined.
-SumF(fun, from, to) ==
+\* @type: (a -> b, Int, Int) => b;
+Sum(fun, from, to) ==
     LET sum[ i \in from..to ] ==
             IF i = from THEN fun[i]
             ELSE sum[i-1] + fun[i]
@@ -383,19 +384,22 @@ SumF(fun, from, to) ==
  \* Compared to recursive functions, TLC usually evaluate recursive operators
  \* faster.  However, that is not the case for Apalache.  PlusPy, a tool to
  \* execute TLA+ specifications, doesn't support recursive operators at all.
-RECURSIVE SumO(_,_,_)
-SumO(fun, from, to) ==
-    IF from = to 
-    THEN fun[to]
-    ELSE fun[from] + SumO(fun, from+1, to)
+\* Commented because of https://git.io/JGAf7 and mandatory bounds for unrolling
+\* https://apalache.informal.systems/docs/apalache/principles.html#recursion
+\* RECURSIVE SumO(_,_,_)
+\* SumO(fun, from, to) ==
+\*     IF from = to 
+\*     THEN fun[to]
+\*     ELSE fun[from] + SumO(fun, from+1, to)
 
 \* Lastly, we can re-use fold operators from the TLA+ CommunityModules at
  \* https://github.com/tlaplus/CommunityModules that are especially well-known
  \* among functional programmers.  This gives us a chance to show  LAMBDA  
  \* in TLA+.
-Sum(fun, from, to) ==
-    LET F == INSTANCE Functions
-    IN F!FoldFunctionOnSet(LAMBDA a,b: a+b, 0, fun, from..to)
+\* Commented because of https://git.io/JGAf7 and lack of annotations in Utils.tla
+\* Sum(fun, from, to) ==
+\*     LET F == INSTANCE Functions
+\*     IN F!FoldFunctionOnSet(LAMBDA a,b: a+b, 0, fun, from..to)
 
 B ==
     \* This spec counts the in-flight messages in the variable  pending  .
