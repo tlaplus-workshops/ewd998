@@ -80,4 +80,46 @@ THEOREM Stability == Spec => Stable
        DEF TypeOK, Safe, terminated, Next, DetectTermination, Terminate, Wakeup, SendMsg, vars
 <1>. QED  BY <1>1, TypeCorrect, Safety, PTL DEF Spec, Stable, Safe
 
+-----------------------------------------------------------------------------
+
+syncActive == [n \in Node |-> active[n] \/ pending[n] # 0]
+
+STD == INSTANCE SyncTerminationDetection WITH active <- syncActive
+
+(***************************************************************************)
+(* We prove (the safety part of) refinement.                               *)
+(***************************************************************************)
+
+THEOREM Refinement == Spec => STD!Spec
+<1>. USE DEF Node, STD!Node, syncActive, terminated, STD!terminated
+<1>1. Init => STD!Init
+  BY NIsPosNat, Zenon DEF Init, STD!Init
+<1>2. TypeOK /\ Safe /\ [Next]_vars => [STD!Next]_(STD!vars)
+  <2> SUFFICES ASSUME TypeOK, Safe, [Next]_vars
+               PROVE  [STD!Next]_(STD!vars)
+    OBVIOUS
+  <2>. USE NIsPosNat DEF TypeOK, STD!Next, STD!vars
+  <2>1. CASE DetectTermination
+    BY <2>1, Zenon DEF DetectTermination, STD!DetectTermination
+  <2>2. ASSUME NEW i \in Node, Terminate(i)
+        PROVE  [STD!Next]_(STD!vars)
+    BY <2>2, Zenon DEF Terminate, STD!Terminate, Safe
+  <2>3. ASSUME NEW i \in Node, Wakeup(i)
+        PROVE  [STD!Next]_(STD!vars)
+    BY <2>3 DEF Wakeup
+  <2>4. ASSUME NEW i \in Node, NEW j \in Node, SendMsg(i, j)
+        PROVE  [STD!Next]_(STD!vars)
+    <3>1. syncActive[i] /\ UNCHANGED terminationDetected
+      BY <2>4 DEF SendMsg
+    <3>2. syncActive' = [syncActive EXCEPT ![j] = TRUE]
+      BY <2>4, Isa DEF SendMsg
+    <3>. QED  BY <3>1, <3>2, Zenon DEF STD!Wakeup
+  <2>5. CASE UNCHANGED vars
+    BY <2>5 DEF vars
+  <2>6. QED
+    BY <2>1, <2>2, <2>3, <2>4, <2>5 DEF Next
+<1>3. Spec => WF_(STD!vars)(STD!DetectTermination)
+  OMITTED
+<1>. QED  BY <1>1, <1>2, <1>3, TypeCorrect, Safety, PTL DEF Spec, STD!Spec
+
 =============================================================================
