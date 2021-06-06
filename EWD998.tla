@@ -411,4 +411,16 @@ Inv ==
         \/ P3:: \E i \in 0..token.pos : color[i] = "black"
         \/ P4:: token.color = "black"
 
+\* We expect that  Inv  is an inductive invariant that we can eventually prove
+ \* correct with TLAPS.  However, "it is easier to prove something if it's true",
+ \* and, thus, we validate  IInv  for small values of  N  with model-checking.
+ \* For that, we conjoin  TypeOK  with  Inv  to  IInv  , and (logically) check
+ \* the formula with TLC:
+ \*
+ \*  IInv /\ [Next]_vars => IInv'
+ \*
+IInv ==
+    /\ TypeOK
+    /\ Inv
+
 =============================================================================
