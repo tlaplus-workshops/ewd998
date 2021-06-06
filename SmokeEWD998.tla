@@ -1,15 +1,19 @@
 ------------------------------- MODULE SmokeEWD998 -------------------------------
-EXTENDS MCEWD998, TLC
+EXTENDS MCEWD998, TLC, Randomization
+
+k ==
+    10
 
 \* SmokeInit is configured to re-define the initial predicate. We use  SmokeInit
 \* to randomly select a subset of the defined initial states in cases when the
 \* set of all initial states is too expensive to generate during smoke testing.
 SmokeInit ==
-    /\ pending = [i \in Node |-> 0]
-    /\ counter = [i \in Node |-> 0]
-    /\ active = [n \in Node |-> RandomElement(BOOLEAN)]
-    /\ color = [n \in Node |-> RandomElement(Color)]
-    /\ token = [pos |-> 0, q |-> 0, color |-> "black"]
+    /\ pending \in RandomSubset(k, [Node -> 0..(N-1)])
+    /\ counter \in RandomSubset(k, [Node -> -(N-1)..(N-1)])
+    /\ active \in RandomSubset(k, [Node -> BOOLEAN])
+    /\ color \in RandomSubset(k, [Node -> Color])
+    /\ token \in RandomSubset(k, [pos: Node, q: Node, color: Color])
+    /\ Inv \* Reject states with invalid ratio between counter, pending, ...
 
 \* StopAfter  has to be configured as a state constraint. It stops TLC after ~1
 \* second or after generating 100 traces, whatever comes first, unless TLC
