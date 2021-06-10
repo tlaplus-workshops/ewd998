@@ -152,16 +152,22 @@ RecvMsg(i) ==
     /\ UNCHANGED <<token>>
 
 \* Terminate(i) in AsyncTerminationDetection.
-Deactivate(i) ==
-    /\ active[i]
-    /\ active' = [active EXCEPT ![i] = FALSE]
+Deactivate ==
+    \* Modeling variant: Let multiple (logical processes) nodes deactivate at
+     \* the same time/in the same step. This breaks the refinement ATD => STD.
+     \* (Pick a function from the set of functions s.t. the inactive nodes in
+     \* the current step remain inactive and the active nodes in the current
+     \* step non-deterministically deactivate.)
+    /\ active' \in { f \in [ Node -> BOOLEAN] : \A n \in Node: ~active[n] => ~f[n] }
+    \* To avoid generating behaviors that quickly stutter when simulating the spec.
+    \* /\ active' # active
     /\ UNCHANGED <<pending, color, counter, token>>
 
 Environment == 
     \E n \in Node:
         \/ SendMsg(n)
         \/ RecvMsg(n)
-        \/ Deactivate(n)
+        \/ Deactivate
 
 -----------------------------------------------------------------------------
 
