@@ -126,15 +126,8 @@ TypeOK ==
 
 \* * Node i terminates.
 Terminate(i) ==
-    \* * Assuming active is a function (can we be sure?), function application
-     \* * is denoted by square brakets.  A mathmatician would expect parens, but TLA+
-     \* * uses parenthesis for (non-zero-arity) operator application.
-    \* * If node i is active *in this state*, it can terminate...
-    /\ active[i]
-    \* * ...in the next state (the prime operator ').
-    \* * The previous expression didn't say anything about the other values of the
-     \* * function, or even state that active' is a function (function update).
-    /\ active' = [ active EXCEPT ![i] = FALSE ]
+    \* Any subset of *active* nodes can become inactive in the next step.
+    /\ active' \in { f \in [ Node -> BOOLEAN] : \A n \in Node: ~active[n] => ~f[n] }
     \* * Also, the variable active is no longer unchanged.
     /\ pending' = pending
     \* * Possibly (but not necessarily) detect termination, iff all nodes are inactive
