@@ -1,5 +1,5 @@
 ------------------------------- MODULE MCEWD998 -------------------------------
-EXTENDS EWD998
+EXTENDS EWD998, TLC
 
 (***************************************************************************)
 (* Bound the otherwise infinite state space that TLC has to check.         *)
@@ -7,6 +7,35 @@ EXTENDS EWD998
 StateConstraint ==
   /\ \A i \in Node : counter[i] < 3 /\ pending[i] < 3
   /\ token.q < 3
+
+-----------------------------------------------------------------------------
+
+\* Note that the non-property  TLCGet("level") < 42  combined with TLC's
+ \* simulator quickly triggers som "counter-example" for MCEWD998.
+MaxDiameter == TLCGet("level") < 42
+
+\* $ tlc -noTE -simulate -deadlock MCEWD998 | grep -A1 "sim = TRUE"
+Alias ==
+    [
+        active |-> active
+        ,color |-> color
+        ,counter |-> counter
+        ,pending |-> pending
+        ,token |-> token
+        
+        \* Eye-ball test if some nodes simultaneously deactivate. Note that
+         \* the nodes deactive in the *successor* (primed) state.
+        ,sim |-> \E i,j \in Node:
+                        /\ i # j
+                        /\ active[i] # active[i]'
+                        /\ active[j] # active[j]'
+        \* Yes, one can prime  TLCGet("...")  in recent version of TLC! With it,
+         \* we account for the  sim  being true when the nodes deactivate in the
+         \* successor state.  Obviously, .name will be "Deactivate".
+        ,action |-> TLCGet("action")'.name
+    ]
+
+-----------------------------------------------------------------------------
 
 \* With TLC, checking  IInv /\ [Next]_vars => IInv'  translate to a config s.t.
  \*
