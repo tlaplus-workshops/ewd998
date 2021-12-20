@@ -40,18 +40,21 @@ Init ==
     /\ color \in [ Node -> Color ] \* ????
     /\ pending \in [ Node -> {0} ]
     /\ counter \in [ Node -> {0} ]
-    /\ token \in [ pos: {0}, q: {0}, color: Color ] \* ????
+    /\ token \in [ pos: {0}, q: {0}, color: {"black"} ]
 
 -----------------------------------------------------------------------------
 
 InitatesToken ==
+    \*/\ active[0] = FALSE
     /\ token.pos = 0
     /\ \/ token.color = "black" 
        \/ token.q + counter[0] # 0
+       \/ color[0] = "black"
     /\ token' = [ pos |-> N - 1,
                   q |-> 0,
-                  color |-> "white" ] 
-    /\ UNCHANGED <<active, pending, counter, color>>
+                  color |-> "white" ]
+    /\ color' = [color EXCEPT ![0] = "white"]
+    /\ UNCHANGED <<active, pending, counter>>
 
 PassToken(n) ==
     /\ ~active[n]
@@ -59,7 +62,8 @@ PassToken(n) ==
     /\ token' = [ pos |-> token.pos - 1,
                   q |-> token.q + counter[n],
                   color |-> IF color[n] = "black" THEN "black" ELSE token.color ]  \* ????
-    /\ UNCHANGED <<active, pending, counter, color>>
+    /\ color' = [color EXCEPT ![n] = "white"]
+    /\ UNCHANGED <<active, pending, counter>>
 
 System ==
     \/ \E n \in Node \ {0}: PassToken(n)
@@ -71,30 +75,32 @@ System ==
 Terminate(i) ==
     \* /\ active[i] = TRUE
     /\ active' = [ active EXCEPT ![i] = FALSE ]
-    /\ UNCHANGED pending
+    /\ UNCHANGED <<token, pending, counter, color>>
 
 \* * Node i sends a message to node j.
-SendMsg(snd, rcv) ==
+SendMsg(snd) ==
     /\ active[snd] = TRUE
-    /\ pending' = [ pending EXCEPT ![rcv] = @ + 1 ]
-    /\ counter' = [ pending EXCEPT ![snd] = @ + 1 ]
-    /\ UNCHANGED <<active>>
+    /\ \E rcv \in Node: pending' = [ pending EXCEPT ![rcv] = @ + 1 ]
+    \* /\ pending' = [ pending EXCEPT ![CHOOSE n \in Node: TRUE] = @ + 1 ]
+    /\ counter' = [ counter EXCEPT ![snd] = @ + 1 ]
+    /\ UNCHANGED <<active, token, color>>
 
 \* * Node I receives a message.
 Wakeup(rcv) ==
     \* /\ active[rcv] = TRUE \* ????
     /\ pending[rcv] > 0
     /\ pending' = [ pending EXCEPT ![rcv] = @ - 1 ]
-    /\ counter' = [ pending EXCEPT ![rcv] = @ - 1 ]
+    /\ counter' = [ counter EXCEPT ![rcv] = @ - 1 ]
+    /\ color' = [color EXCEPT ![rcv] = "black"]
     /\ active' = [ active EXCEPT ![rcv] = TRUE ]
-    /\ UNCHANGED <<>>
+    /\ UNCHANGED <<token>>
 
 Environment ==
         \E n, m \in Node: 
         \* /\ n # m \* ????
         \* /\ 
            \/ Terminate(n)
-           \/ SendMsg(n, m)
+           \/ SendMsg(n)
            \/ Wakeup(n)
 
 Next ==
@@ -102,8 +108,24 @@ Next ==
     \/ Environment
 
 Spec ==
-    Init /\ [][Next]_vars \*/\ WF_vars(DetectTermination)
+    Init /\ [][Next]_vars \*/\ WF_vars(System)
 
+terminationDetected ==
+    \* Node-0/initiator local knowledge!
+    /\ token.pos = 0
+    /\ token.q + counter[0] = 0
+    /\ token.color = "white"
+    /\ color[0] = "white"
+    /\ active[0] = FALSE
+
+ATD == INSTANCE AsyncTerminationDetection
+
+ATDSpec == ATD!Spec
+
+THEOREM Spec => ATD!Stable
+THEOREM Spec => ATD!Live
+
+THEOREM Spec => ATDSpec \* => ATD!Live & ATD!Stable
 
 =============================================================================
 

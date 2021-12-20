@@ -110,7 +110,7 @@ Next ==
            \/ DetectTermination
 
 Spec ==
-    Init /\ [][Next]_vars /\ WF_vars(DetectTermination)
+    Init /\ [][Next]_vars \* /\ WF_vars(DetectTermination)
 
 Stable ==
     \* Safety:

@@ -1,5 +1,5 @@
 {
-    "tlaplus.tlc.modelChecker.options": "-deadlock -noTE",
+    "tlaplus.tlc.modelChecker.options": "-deadlock -noTE -workers auto",
     "tlaplus.tlc.statisticsSharing": "share",
     "tlaplus.java.options": "-XX:+UseParallelGC",
     "[tlaplus]": {"editor.codeActionsOnSave": {"source": true} },
@@ -32,5 +32,6 @@
         "*.dvi": true,
         "*.log": true,
         "*.tex": true
-    }
+    },
+    "tlaplus.tlc.modelChecker.createOutFiles": false
 }
