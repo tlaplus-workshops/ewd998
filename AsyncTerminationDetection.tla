@@ -42,16 +42,28 @@ Node == 0 .. N-1
  \* * node has yet to receive.
 VARIABLES 
   active,               \* activation status of nodes
-  pending               \* number of messages pending at a node
+  pending,              \* number of messages pending at a node
+  terminationDetected
 
 \* * A definition that lets us refer to the spec's variables (more on it later).
-vars == << active, pending >>
+vars == << active, pending, terminationDetected >>
+
+terminated ==
+    \A n \in Node: /\ ~ active[n]
+                   /\ pending[n] = 0
+
+TypeOK ==
+    /\ active \in [ Node -> BOOLEAN ]
+    /\ pending \in [ Node -> Nat ]
+    /\ terminationDetected \in BOOLEAN
 
 -----------------------------------------------------------------------------
 
 \* * Initially, all nodes are active and no messages are pending.
 Init ==
-
+    /\ active \in [ Node -> BOOLEAN ]
+    /\ pending \in [ Node -> Nat ]
+    /\ terminationDetected \in {FALSE, terminated}
 -----------------------------------------------------------------------------
 
 \* * Each one of the definitions below represent atomic transitions, i.e., define
@@ -64,15 +76,56 @@ Init ==
 
 \* * Node i terminates.
 Terminate(i) ==
-    UNCHANGED vars \* Short-hand saying that the variables do not change.
+    \* /\ active[i] = TRUE
+    /\ active' = [ active EXCEPT ![i] = FALSE ]
+    /\ UNCHANGED pending
+    /\ terminationDetected' \in {terminationDetected, terminated'}
 
 \* * Node i sends a message to node j.
-SendMsg(i, j) ==
-    UNCHANGED vars
+SendMsg(snd, rcv) ==
+    /\ active[snd] = TRUE
+    /\ pending' = [ pending EXCEPT ![rcv] = @ + 1 ]
+    /\ UNCHANGED <<active, terminationDetected>>
 
 \* * Node I receives a message.
-Wakeup(i) ==
-    UNCHANGED vars
+Wakeup(rcv) ==
+    \* /\ active[rcv] = TRUE \* ????
+    /\ pending[rcv] > 0
+    /\ pending' = [ pending EXCEPT ![rcv] = @ - 1 ]
+    /\ active' = [ active EXCEPT ![rcv] = TRUE ]
+    /\ UNCHANGED <<terminationDetected>>
+
+DetectTermination ==
+    /\ terminated
+    /\ terminationDetected' = TRUE
+    /\ UNCHANGED <<active, pending>>
+
+Next ==
+    \E n, m \in Node: 
+        \* /\ n # m \* ????
+        \* /\ 
+           \/ Terminate(n)
+           \/ SendMsg(n, m)
+           \/ Wakeup(n)
+           \/ DetectTermination
+
+Spec ==
+    Init /\ [][Next]_vars /\ WF_vars(DetectTermination)
+
+Stable ==
+    \* Safety:
+    [](terminationDetected => terminated)
+
+THEOREM Spec => Stable
+
+---------------------------------------------------
+
+Live ==
+    \* Liveness:
+    \* [](terminated => <>terminationDetected)
+    terminated ~> terminationDetected
+
+THEOREM Spec => Live
 
 =============================================================================
 \* Modification History
