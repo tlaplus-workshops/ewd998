@@ -371,12 +371,12 @@ HasToken ==
  \* expression allows us to use locally define operators. A let/in is just a
  \* syntactic concept, and the expression is equivalent to an expression
  \* with all locally defined operators in-lined.
-\* @type: (a -> b, Int, Int) => b;
-Sum(fun, from, to) ==
-    LET sum[ i \in from..to ] ==
-            IF i = from THEN fun[i]
-            ELSE sum[i-1] + fun[i]
-    IN sum[to]
+\* @type: (Int -> Int, Int, Int) => Int;
+\* Sum(fun, from, to) ==
+\*     LET sum[ i \in from..to ] ==
+\*             IF i = from THEN fun[i]
+\*             ELSE sum[i-1] + fun[i]
+\*     IN sum[to]
 
 \* Alternatively, one can write recursive operators. What distinguishes a
  \* recursive operator from an ordinary operator, is a  RECURSIVE  operator
@@ -397,9 +397,9 @@ Sum(fun, from, to) ==
  \* among functional programmers.  This gives us a chance to show  LAMBDA  
  \* in TLA+.
 \* Commented because of https://git.io/JGAf7 and lack of annotations in Utils.tla
-\* Sum(fun, from, to) ==
-\*     LET F == INSTANCE Functions
-\*     IN F!FoldFunctionOnSet(LAMBDA a,b: a+b, 0, fun, from..to)
+Sum(fun, from, to) ==
+    LET F == INSTANCE Functions
+    IN F!FoldFunctionOnSet(LAMBDA a,b: a+b, 0, fun, from..to)
 
 B ==
     \* This spec counts the in-flight messages in the variable  pending  .
