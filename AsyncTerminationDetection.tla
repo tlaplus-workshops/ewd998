@@ -7,6 +7,9 @@
  \* * going to need operators for natural numbers.
 EXTENDS Naturals
 
+Range(f) ==
+    { f[x] : x \in DOMAIN f }
+
 \* * A constant is a parameter of a specification. In other words, it is a
  \* * "variable" that cannot change throughout a behavior, i.e., a sequence
  \* * of states. Below, we declares N to be a constant of this spec.
@@ -43,9 +46,13 @@ Node == 0 .. N-1
 VARIABLES 
   active,               \* activation status of nodes
   pending               \* number of messages pending at a node
+  , terminationDetected
 
 \* * A definition that lets us refer to the spec's variables (more on it later).
-vars == << active, pending >>
+vars == << active, pending, terminationDetected >>
+
+terminated ==
+    \A n \in Node: active[n] = FALSE /\ pending[n] = 0
 
 -----------------------------------------------------------------------------
 
@@ -63,8 +70,14 @@ Init ==
      \* * even infinite ones: [n \in Nat |-> n]).
     \* * /\ is logical And (&& in programming). Conjunct lists usually make it easier
      \* * to read. However, indentation is significant!
-    /\ active = [ n \in Node |-> TRUE ]
+    /\ active \in [ Node -> BOOLEAN ]
     /\ pending = [ n \in Node |-> 0 ]
+    /\ terminationDetected \in {FALSE, terminated}
+
+TypeOK ==
+    /\ active \in [ Node -> BOOLEAN ]
+    /\ pending \in [ Node -> Nat ]
+    /\ terminationDetected \in BOOLEAN
 
 -----------------------------------------------------------------------------
 
@@ -82,26 +95,33 @@ Terminate(i) ==
      \* * is denoted by square brakets.  A mathmatician would expect parens, but TLA+
      \* * uses parenthesis for (non-zero-arity) operator application.
     \* * If node i is active *in this state*, it can terminate...
-    /\ active[i]
+    /\ active[i] = TRUE
     \* * ...in the next state (the prime operator ').
     \* * The previous expression didn't say anything about the other values of the
      \* * function, or even state that active' is a function (function update).
     /\ active' = [ active EXCEPT ![i] = FALSE ]
     \* * Also, the variable active is no longer unchanged.
     /\ pending' = pending
+    /\ terminationDetected' \in {terminationDetected, terminated' }
 
 \* * Node i sends a message to node j.
 SendMsg(i, j) ==
     /\ active[i]
     /\ pending' = [pending EXCEPT ![j] = @ + 1]
-    /\ UNCHANGED active
+    /\ UNCHANGED <<active, terminationDetected>>
 
 \* * Node I receives a message.
 Wakeup(i) ==
+    /\ active[i] = FALSE
     /\ pending[i] > 0
     /\ active' = [active EXCEPT ![i] = TRUE]
-    /\ pending' = [pending EXCEPT ![i] = @ - 2]
+    /\ pending' = [pending EXCEPT ![i] = @ - 1]
+    /\ UNCHANGED <<terminationDetected>>
 
+DetectTermination ==
+    /\ terminated
+    /\ terminationDetected' = TRUE
+    /\ UNCHANGED <<active, pending>>
 -----------------------------------------------------------------------------
 
 \* * Here we define the complete next-state action. Recall that it’s a predicate
@@ -125,7 +145,20 @@ Next ==
         \/ Wakeup(i)
         \* ? Is it correct to let node i send a message to node j with i = j?
         \/ SendMsg(i, j)
+        \/ DetectTermination
 
+Spec ==
+    Init /\ [][Next]_vars /\ WF_vars(DetectTermination)
+
+Safe ==
+    terminationDetected => terminated
+
+THEOREM Spec => []Safe
+
+Live ==
+    [](terminated => <>terminationDetected)
+
+THEOREM Spec => Live
 =============================================================================
 \* Modification History
 \* Created Sun Jan 10 15:19:20 CET 2021 by Stephan Merz @muenchnerkindl
