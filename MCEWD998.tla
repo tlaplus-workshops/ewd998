@@ -14,9 +14,7 @@ Alias ==
     score |-> score,
     pending |-> pending,               \* number of messages pending at a node
 
-  token_pos |-> token_pos,
-  token_tainted  |->  token_tainted,
-  token_score |-> token_score,
+  token |-> token,
   td |-> terminationDetected,
   t  |-> terminated
 

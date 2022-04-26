@@ -1,6 +1,14 @@
 ---------------------- MODULE MCAsyncTerminationDetection ---------------------
 EXTENDS AsyncTerminationDetection
 
+Alias ==
+    [
+        active |-> active,
+        pending |-> pending,
+        terminationDetected |-> terminationDetected,
+        eTermianted |-> ENABLED DetectTermination
+    ]
+
 StateConstraint ==
     \* * A (state-) constraint is a boolean-valued state function, i.e. a function
      \* * that is true or false of a state.
