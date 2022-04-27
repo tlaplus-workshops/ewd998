@@ -13,7 +13,7 @@ SmokeInit ==
     /\ active \in RandomSubset(k, [Node -> BOOLEAN])
     /\ color \in RandomSubset(k, [Node -> Color])
     /\ token \in RandomSubset(k, [pos: Node, q: Node, color: (IF 1 \in BugFlags THEN {"white"} ELSE {"black"})])
-    /\ Inv \* Reject states with invalid ratio between counter, pending, ...
+    /\ Inv!P0 \* Reject states with invalid ratio between counter, pending, ...
 
 \* StopAfter  has to be configured as a state constraint. It stops TLC after ~1
 \* second or after generating 100 traces, whatever comes first, unless TLC
