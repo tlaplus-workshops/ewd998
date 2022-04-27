@@ -42,6 +42,9 @@ The remaining concepts this tutorial covers are:
 ------------------------------- MODULE EWD998 -------------------------------
 EXTENDS Integers \* No longer Naturals \* TODO Do you already see why?
 
+BugFlags == 
+    {}
+
 CONSTANT 
     \* @type: Int;
     N
@@ -80,7 +83,6 @@ TypeOK ==
 
 Init ==
     /\ active \in [Node -> BOOLEAN]
-    /\ pending = [i \in Node |-> 0]
     (* Rule 0 *)
     /\ color \in [Node -> Color]
     /\ counter = [i \in Node |-> 0]
@@ -94,23 +96,23 @@ InitiateProbe ==
     /\ token.pos = 0
     /\ \* previous round inconclusive:
         \/ token.color = "black"
-        \/ color[0] = "black"
-        \/ counter[0] + token.q > 0
+        \/ IF 2 \in BugFlags THEN TRUE ELSE color[0] = "black"
+        \/ IF 5 \in BugFlags THEN token.q > 0 ELSE counter[0] + token.q > 0
     /\ token' = [ pos |-> N-1, q |-> 0, color |-> "white"]
     /\ color' = [ color EXCEPT ![0] = "white" ]
     /\ UNCHANGED <<active, counter, pending>>                            
 
 PassToken(i) ==
     (* Rules 2 + 4 + 7 *)
-    /\ ~ active[i]
+    /\ IF 4 \in BugFlags THEN TRUE ELSE ~ active[i]
     /\ token.pos = i
     \* Rule 2 + 4
     \* Wow, TLA+ has an IF-THEN-ELSE expressions.
     /\ token' = [ token EXCEPT !.pos = @ - 1,
                                !.q   = @ + counter[i],
-                               !.color = IF color[i] = "black" THEN "black" ELSE @ ]
+                               !.color = IF 3 \in BugFlags THEN color[i] ELSE IF color[i] = "black" THEN "black" ELSE @ ]
     \* Rule 7
-    /\ color' = [ color EXCEPT ![i] = "white" ]
+    /\ color' = IF 6 \in BugFlags THEN color ELSE [ color EXCEPT ![i] = "white" ]
     /\ UNCHANGED <<active, pending, counter>>
 
 System ==
