@@ -28,6 +28,9 @@ StopAfter ==
 BF ==
     CHOOSE s \in SUBSET (1..6) : ToString(s) = IOEnv.BF
 
+PN ==
+    CHOOSE s \in (1..6) : ToString(s) = IOEnv.PN
+
 PostCondition ==
     LET sts == TLCGet("stats")
     IN CSVWrite("%1$s#%2$s#%3$s#%4$s", 

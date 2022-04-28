@@ -1,5 +1,5 @@
 ------------------------------- MODULE SmokeEWD998_SC -------------------------------
-EXTENDS Naturals, TLC, IOUtils, CSV, Sequences
+EXTENDS Naturals, TLC, IOUtils, CSV, Sequences, FiniteSets
 
 \* Filename for the CSV file that appears also in the R script and is passed
 \* to the nested TLC instances that are forked below.
@@ -23,15 +23,15 @@ Cmd == LET absolutePathOfTLC == TLCGet("config").install
           "-simulate",
           "SmokeEWD998.tla">>
 
-ASSUME \A i \in 1..10 : \A bf \in SUBSET (1..6):
-    LET ret == IOEnvExec([BF |-> bf, Out |-> CSVFile], Cmd).exitValue
+ASSUME \A i \in 1..30 : \A bf \in SUBSET (1..6) : Cardinality(bf) # 1 \/
+    LET ret == IOEnvExec([BF |-> bf, Out |-> CSVFile, PN |-> RandomElement(3..7)], Cmd).exitValue
     IN /\  CASE ret =  0 -> PrintT(<<JavaTime, bf>>)
              [] ret = 10 -> PrintT(<<bf, "Assumption violation">>)
              [] ret = 12 -> PrintT(<<bf, "Safety violation">>)
              [] ret = 13 -> PrintT(<<bf, "Liveness violation">>)
              \* For all other error codes, print TLC's error message.
-             [] OTHER    -> Print(<<bf, IOEnvExec([BF |-> bf, Out |-> CSVFile], Cmd),
-                                    "Error">>, FALSE)
+             [] OTHER    -> TRUE \*Print(<<bf, IOEnvExec([BF |-> bf, Out |-> CSVFile], Cmd),
+                                 \*   "Error">>, FALSE)
        /\  CSVWrite("%1$s#%2$s", <<bf, ret>>, CSVFile)
        
 ===============================================================================
