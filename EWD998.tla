@@ -82,12 +82,15 @@ TypeOK ==
 -----------------------------------------------------------------------------
 
 Init ==
-    /\ active \in [Node -> BOOLEAN]
+    \* /\ active \in [Node -> BOOLEAN]
     (* Rule 0 *)
-    /\ color \in [Node -> Color]
+    \* /\ color \in [Node -> Color]
     /\ counter = [i \in Node |-> 0]
     /\ pending = [i \in Node |-> 0]
-    /\ token = [pos |-> 0, q |-> 0, color |-> "black"]
+    \* /\ token = [pos |-> 0, q |-> 0, color |-> "black"]
+    /\ active \in [Node -> BOOLEAN ]
+    /\ color \in [Node -> Color]
+    /\ token = [pos |-> 0, q |-> 0, color |-> (IF 1 \in BugFlags THEN "white" ELSE "black")]
 
 -----------------------------------------------------------------------------
 
