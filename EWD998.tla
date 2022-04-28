@@ -99,7 +99,7 @@ InitiateProbe ==
     /\ token.pos = 0
     /\ \* previous round inconclusive:
         \/ token.color = "black"
-        \/ IF 2 \in BugFlags THEN TRUE ELSE color[0] = "black"
+        \/ IF 2 \in BugFlags THEN FALSE ELSE color[0] = "black"
         \/ IF 5 \in BugFlags THEN token.q > 0 ELSE counter[0] + token.q > 0
     /\ token' = [ pos |-> N-1, q |-> 0, color |-> "white"]
     /\ color' = [ color EXCEPT ![0] = "white" ]
