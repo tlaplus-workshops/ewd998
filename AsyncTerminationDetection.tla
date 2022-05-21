@@ -43,12 +43,63 @@ Node == 0 .. N-1
 VARIABLES 
   active,               \* activation status of nodes
   pending               \* number of messages pending at a node
+  , terminationDetected
 
 \* * A definition that lets us refer to the spec's variables (more on it later).
-vars == << active, pending >>
+vars == << active, pending, terminationDetected >>
 
 -----------------------------------------------------------------------------
 
+terminated ==
+    \A n \in Node: active[n] = FALSE /\ pending[n] = 0
+
+\* ??? Giffy: isnt this a language to express the algorithms and correctness of the program?
+TypeOK ==
+    /\ pending \in [ Node -> Nat ]
+    /\ active \in [ Node -> BOOLEAN ]
+    /\ terminationDetected \in BOOLEAN
+
+Init ==
+    /\ active \in [ Node -> BOOLEAN ]
+    /\ pending \in [ Node -> Nat ]
+    /\ terminationDetected \in {FALSE, terminated}
+
+Terminates(n) ==
+    /\ pending[n] = 0 \* TODO ???
+    \* /\ active[n] = TRUE  \* TODO ???
+    /\ active' = [ active EXCEPT ![n] = FALSE ]
+    /\ pending' = pending
+    /\ terminationDetected' \in {terminationDetected, terminated'}
+
+SendMsg(snd, rcv) ==
+    /\ active[snd] = TRUE
+    /\ pending' = [pending EXCEPT ![rcv] = @ + 1 ]
+    /\ active' = active
+    /\ UNCHANGED terminationDetected
+
+RecvMsg(rcv) ==
+    /\ pending[rcv] > 0
+    /\ pending' = [ pending EXCEPT ![rcv] = @ - 1 ]
+    /\ active' = [active EXCEPT ![rcv] = TRUE ]
+    /\ UNCHANGED terminationDetected
+
+Next ==
+    \E n, m \in Node:
+       \/ Terminates(n)
+       \/ RecvMsg(n)
+       \/ SendMsg(n, m) \* TODO n#m ???
+
+Safe ==
+    [](terminationDetected => []terminated)
+
+Live ==
+    \* Eventually, we detect termination.
+    \* TODO 
+    \* <>terminationDetected
+    terminated ~> terminationDetected
+
+Spec == 
+    Init /\ [][Next]_vars /\ WF_vars(Next)
 =============================================================================
 \* Modification History
 \* Created Sun Jan 10 15:19:20 CET 2021 by Stephan Merz @muenchnerkindl
