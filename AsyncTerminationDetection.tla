@@ -5,7 +5,7 @@
  \* * standard modules.  Additionally, a community-driven repository has been
  \* * collecting more modules (http://modules.tlapl.us). In our spec, we are
  \* * going to need operators for natural numbers.
-EXTENDS Naturals
+EXTENDS Naturals, TLC
 
 \* * A constant is a parameter of a specification. In other words, it is a
  \* * "variable" that cannot change throughout a behavior, i.e., a sequence
@@ -83,23 +83,43 @@ RecvMsg(rcv) ==
     /\ active' = [active EXCEPT ![rcv] = TRUE ]
     /\ UNCHANGED terminationDetected
 
+DetectTermination ==
+    /\ terminated
+    /\ terminationDetected' = TRUE
+    /\ UNCHANGED <<active, pending>>
+
 Next ==
     \E n, m \in Node:
        \/ Terminates(n)
        \/ RecvMsg(n)
        \/ SendMsg(n, m) \* TODO n#m ???
+       \/ DetectTermination
 
 Safe ==
     [](terminationDetected => []terminated)
 
+---------------------
+
+\* ENABLED A <=> Enablement condition of A evaluate to TRUE, state-level operator.
+\* [A]_v     <=> A \/ UNCHANGED v
+\* <<A>>_v   <=> A /\ v' # v
+\* WF_v(A)   <=> <>[]ENABLED <<A>>_v => []<><<A>>_v
+\* SF_v(A)   <=> []<>ENABLED <<A>>_v => []<><<A>>_v
+
 Live ==
-    \* Eventually, we detect termination.
-    \* TODO 
-    \* <>terminationDetected
-    terminated ~> terminationDetected
+    \* [](terminated => <>[]terminationDetected)
+    terminated ~> []terminationDetected
 
 Spec == 
-    Init /\ [][Next]_vars /\ WF_vars(Next)
+    /\ Init
+    /\ [][Next]_vars
+    \* /\ WF_vars(Next) \* works, because WF_vars isn't distributive.
+    /\ WF_vars(DetectTermination)
+
+THEOREM Spec => Live
+
+THEOREM Spec => Safe
+
 =============================================================================
 \* Modification History
 \* Created Sun Jan 10 15:19:20 CET 2021 by Stephan Merz @muenchnerkindl

@@ -35,8 +35,15 @@ VARIABLES
 
 -----------------------------------------------------------------------------
 
+(*
+
+- Recursion
+- Dijkstra's invariant
+
+*)
+
 terminationDetected ==
-    \* Initiator has token
+    \* Initiator has to have the token
     /\ token.location = 0
     \* Initiator is done
     /\ active[0] = FALSE
@@ -58,7 +65,7 @@ TypeOK ==
 
 Init ==
     /\ pending \in [ Node -> {0} ]
-    /\ token = [location |-> N-1, value |-> 0, tainted |-> TRUE]
+    /\ token = [location |-> 0, value |-> 0, tainted |-> TRUE]
     /\ active \in [ Node -> BOOLEAN ]
     /\ tainted \in [Node-> {FALSE}]
     /\ counter \in [Node-> {0}]
@@ -106,30 +113,79 @@ RecvMsg(rcv) ==
     /\ counter' = [counter EXCEPT ![rcv] = @ - 1]
     /\ UNCHANGED token
 
-Next ==
+Environment ==
     \E n, m \in Node:
        \/ Terminates(n)
        \/ RecvMsg(n)
        \/ SendMsg(n, m)
-       \/ PassToken
-       \/ InitiateToken
+
+System ==
+    \/ PassToken
+    \/ InitiateToken
+
+Next == 
+    System \/ Environment
 
 Spec == 
-    Init /\ [][Next]_vars /\ WF_vars(PassToken \/ InitiateToken)
+    /\ Init
+    /\ [][Next]_vars
+    /\ WF_vars(System)
 
 ATD == INSTANCE AsyncTerminationDetection
 
 ATDSpec == ATD!Spec
 
+THEOREM Spec => ATDSpec
+
 Implements ==
     Spec => ATD!Spec
 
-\* Safe ==
-\*     [](terminationDetected => terminated)
+\* Fortunately, the EWD998 paper gives an inductive invariant in the form of a
+ \* larger formula  P0 /\ (P1 \/ P2 \/ P3 \/ P4)  , with  \S  representing
+ \* "the sum of",  B  to equal the sum of in-flight messages,  and  P0  to  P4 : 
+ \*
+ \* P0: B = Si: 0 <= i < N: counter[i])
+ \* P1: (Ai: token.location < i < N: color[i] is passive) /\
+ \*     (Si: token.location < i < N: counter[i]) = token.value
+ \* P2: (Si: 0 <= i <= token.location: counter[i]) + token.value > 0
+ \* P3: Ei: 0 <= i <= token.location : color[i] is black
+ \* P4: The token is black
 
-\* Live ==
-\*     terminated ~> terminationDetected
+RECURSIVE SumOf(_,_,_)
+SumOf(f, from, to) ==
+    IF from > to THEN 0 ELSE
+    IF from = to
+    THEN 0
+    ELSE f[from] + SumOf(f, from + 1, to)
 
+SumOfFunc(f, from, to) ==
+    LET sum[ i \in from..to ] == 
+        IF i = from THEN f[from] ELSE f[i] + sum[i-1]
+    IN sum[to]
+
+B == 
+    SumOf(pending, 0, N-1)
+
+indInv == 
+    /\ P0:: B = SumOf(counter, 0, N-1)
+    /\ \/ P1:: /\ \A i \in (token.location+1)..N-1 : tainted[i] = FALSE 
+               /\ SumOf(counter, token.location + 1, N-1) = token.value
+       \/ P2:: SumOf(counter, 0, token.location) + token.value > 0
+       \/ P3:: \E i \in 0..token.location : tainted[i] = TRUE
+       \/ P4:: token.tainted = TRUE
+    
+expr ==
+    [
+  pending |-> pending,
+  token |-> token,
+  active |->active,               \* activation status of nodes
+  tainted |->tainted,               \* tainted status of nodes
+  counter    |->counter,
+  td |-> terminationDetected,
+  ENext  |-> ENABLED Next,
+  EPT  |-> ENABLED PassToken
+     ]
+ 
 =============================================================================
 \* Modification History
 \* Created Sun Jan 10 15:19:20 CET 2021 by Stephan Merz @muenchnerkindl
