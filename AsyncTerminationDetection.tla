@@ -42,12 +42,79 @@ Node == 0 .. N-1
  \* * node has yet to receive.
 VARIABLES 
   active,               \* activation status of nodes
-  pending               \* number of messages pending at a node
+  pending,              \* number of messages pending at a node
+  terminationDetected
+
+terminated ==
+    /\ \A n \in DOMAIN active: ~active[n]
+    /\ \A n \in DOMAIN pending: pending[n] = 0
+    \* /\ \A n \in Node: ~active[n] /\ pending[n] = 0
+    \* /\ ~ \E n \in Node: active[n] \/ pending[n] # 0
 
 \* * A definition that lets us refer to the spec's variables (more on it later).
-vars == << active, pending >>
+vars == << active, pending, terminationDetected >>
 
------------------------------------------------------------------------------
+TypeOK ==
+    \* /\ \A n \in Node: active[n] \in BOOLEAN 
+    \* /\ \A n \in DOMAIN active: active[n] \in BOOLEAN 
+    \* /\ DOMAIN active = Node
+    /\ active \in [ Node -> BOOLEAN ]
+    /\ pending \in [ Node -> Nat ]
+
+Init ==
+    /\ active \in [ Node -> BOOLEAN ]
+    /\ pending = [ n \in Node |-> 0 ]
+    /\ terminationDetected = FALSE
+
+Terminate(n) ==
+    /\ pending[n] = 0 \* ???
+    /\ active' = [active EXCEPT ![n] = FALSE]
+    /\ UNCHANGED pending
+    /\ terminationDetected' \in {terminationDetected, terminated'}
+
+SendMsg(snd, rcv) ==
+    /\ active[snd] = TRUE
+    \* /\ active[rcv] = TRUE
+    /\ UNCHANGED active
+    \* /\ active' = [ active EXCEPT ![rcv] = TRUE ]
+    /\ pending' = [pending EXCEPT ![rcv] = @ + 1]
+    /\ UNCHANGED terminationDetected
+
+RecvMsg(rcv) ==
+    /\ active[rcv] = FALSE \* ???
+    /\ pending[rcv] > 0
+    \* /\ active' = [ n \in Node |-> IF n = rcv THEN TRUE ELSE active[n]]
+    /\ active' = [ active EXCEPT ![rcv] = TRUE ]
+    \* /\ pending' = [ n \in Node |-> IF n = rcv THEN pending[n]-1 ELSE pending[n]]
+    \* /\ pending' = [pending EXCEPT ![rcv] = pending[rcv] - 1]
+    /\ pending' = [pending EXCEPT ![rcv] = @ - 1]
+    /\ UNCHANGED terminationDetected
+
+Next ==
+    \* \A n,m \in Node: 
+    \E n,m \in Node: 
+        \/ Terminate(n)
+        \/ RecvMsg(n)
+        \/ SendMsg(n,m)
+
+----------------
+
+Spec ==
+    Init /\ [][Next]_vars /\ WF_vars(\E n \in Node: Terminate(n))
+
+Safe ==
+    \* /\ IF terminationDetected = TRUE THEN terminated = TRUE ELSE TRUE
+    [](terminationDetected => terminated)
+
+THEOREM Spec => Safe
+
+Live ==
+    [](terminated => <>terminationDetected)
+
+THEOREM Spec => Live
+
+Constraint ==
+    \A n \in Node: pending[n] < 3    
 
 =============================================================================
 \* Modification History
