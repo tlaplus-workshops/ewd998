@@ -1,11 +1,11 @@
----------------------- MODULE AsyncTerminationDetection ---------------------
+---------------------- MODULE EWD998 ---------------------
 \* * TLA+ is an expressive language and we usually define operators on-the-fly.
  \* * That said, the TLA+ reference guide "Specifying Systems" (download from:
  \* * https://lamport.azurewebsites.net/tla/book.html) defines a handful of
  \* * standard modules.  Additionally, a community-driven repository has been
  \* * collecting more modules (http://modules.tlapl.us). In our spec, we are
  \* * going to need operators for natural numbers.
-EXTENDS Naturals
+EXTENDS Integers
 
 \* * A constant is a parameter of a specification. In other words, it is a
  \* * "variable" that cannot change throughout a behavior, i.e., a sequence
@@ -42,26 +42,54 @@ Node == 0 .. N-1
  \* * node has yet to receive.
 VARIABLES 
   active,               \* activation status of nodes
+  counter,
+  color,
+
   pending,               \* number of messages pending at a node
-  terminationDetected
+
+  tokenPos,
+  tokenColor, 
+  tokenCounter
+
 
 \* * A definition that lets us refer to the spec's variables (more on it later).
-vars == << active, pending, terminationDetected >>
+vars == << active, pending,counter, color,tokenPos,tokenColor,tokenCounter >>
+
+Color == {"black", "white"}
 
 -----------------------------------------------------------------------------
 
 TypeOK ==
     /\ active \in [ Node -> BOOLEAN ]
     /\ pending \in [ Node -> Nat ]
-    /\ terminationDetected \in BOOLEAN 
+    /\ color \in [ Node -> Color ] 
+    /\ tokenColor \in Color
+    /\ tokenPos \in Node
+    /\ tokenCounter \in Int
+    /\ counter \in [ Node -> Int ]
 
 \* * Initially, all nodes are active and no messages are pending.
 Init ==
     /\ active = [n \in Node |-> TRUE ] 
     /\ pending = [ n \in Node |-> 0] 
-    /\ terminationDetected = FALSE
+    /\ counter = [ n \in Node |-> 0 ]
+    /\ tokenPos = N - 1
+    /\ color = [ n \in Node |-> "white" ]
+    /\ tokenCounter = 0
+    /\ tokenColor = "black"
 
 -----------------------------------------------------------------------------
+
+terminationDetected ==
+    /\ color[0] = "white"
+    /\ active[0] = FALSE
+    /\ tokenColor = "white"
+    /\ tokenPos = 0
+    /\ tokenCounter + counter[0] = 0
+    \* /\ pending[0] = 0
+    \* /\ tokenCounter = 0 \* ????
+    \* /\ counter[0] = 0
+    \* /\ FALSE
 
 terminated == 
     \A n \in Node: pending[n] = 0 /\ ~active[n]
@@ -78,55 +106,76 @@ terminated ==
 Terminate(i)  ==
     /\ active[i] = TRUE \* ???
     /\ active' = [ n \in Node |-> IF i = n THEN FALSE ELSE active[n] ]
-    \* /\ \/ terminationDetected' = terminated'
-    \*    \/ UNCHANGED terminationDetected
     /\ UNCHANGED pending
-    /\ terminationDetected' \in {terminationDetected, terminated'}
+    /\ UNCHANGED <<tokenColor, tokenCounter, tokenPos>>
+    /\ UNCHANGED <<counter, color>>
+    \* /\ tokenPos # i
+
 
 \* * Node i sends a message to node j.
 SendMsg(i, j) ==
     /\ active[i]= TRUE \* ???? Could it be FALSE?
     /\ pending' = [ pending EXCEPT ![j] = @ + 1 ]
-    /\ UNCHANGED active
-    /\ UNCHANGED terminationDetected
-    /\ UNCHANGED <<active, terminationDetected>>
+    /\ counter' = [ counter EXCEPT ![i] = @ + 1 ]
+    /\ UNCHANGED <<active, color>>
+    /\ UNCHANGED <<tokenColor, tokenCounter, tokenPos>>
     
 \* * Node i receives a message.
 Wakeup(i) ==
     /\ active[i] = FALSE \* ???
     /\ pending[i] > 0
     /\ pending' = [ pending EXCEPT ![i] = @ - 1 ]
+    /\ counter' = [ counter EXCEPT ![i] = @ - 1 ]
     /\ active' = [ active EXCEPT ![i] = TRUE ]
-    /\ UNCHANGED terminationDetected
+    /\ color'  = [ color EXCEPT ![i] = "black" ] \* should we change this?
+    /\ UNCHANGED <<tokenColor, tokenCounter, tokenPos>>
 
-DetectTermination ==
-    /\ terminated
-    /\ terminationDetected' = TRUE
-    /\ UNCHANGED <<active, pending>>
+PassToken ==
+    /\ tokenPos # 0
+    /\ active[tokenPos] =  FALSE
+    \* /\ counter[tokenPos] = 0 \* ???
+    /\ tokenCounter' = tokenCounter + counter[tokenPos]
+    /\ tokenColor' = IF color[tokenPos] = "black" THEN "black" ELSE tokenColor
+    /\ tokenPos' = tokenPos - 1
+    \* /\ UNCHANGED color \* ???
+    /\ color'  = [ color EXCEPT ![tokenPos] = "white" ] \* should we change this?
+    /\ UNCHANGED <<active, pending, counter>>
 
+InitiateToken ==
+    /\ ~terminationDetected
+    /\ tokenPos = 0
+    /\ tokenColor' = "white"
+    /\ tokenCounter' = 0
+    /\ tokenPos' = N - 1
+    \* /\ UNCHANGED color \* ??? \* shouldn't we reset colour?
+    /\ color' = [color EXCEPT ![0] = "white"]
+    /\ UNCHANGED <<active, pending, counter>>
+    \* /\ counter' = [counter EXCEPT ![0] = 0]
+    
 Next ==
     \E n,m \in Node:
          \/ Terminate(n)
          \/ Wakeup(n)
          \/ SendMsg(n,m)
-        \*  \/ DetectTermination
+         \/ PassToken
+         \/ InitiateToken
     
 Constraint ==
-    \A n \in Node: pending[n] < 4
-
-Spec == 
-    Init /\ [][Next]_vars /\ WF_vars(DetectTermination)
+    \A n \in Node: pending[n] < 4 /\ counter[n] \in -3..3
 
 Safe ==
     \* IF terminationDetected THEN terminated ELSE TRUE
     [](terminationDetected => terminated)
 
-THEOREM Spec => Safe
+ATD == INSTANCE AsyncTerminationDetection
 
-Live ==
-    [](terminated => <>(terminationDetected))
+ATDSpec == ATD!Spec
 
-THEOREM Spec => Live
+Spec ==
+    Init /\ [][Next]_vars /\ WF_vars(PassToken \/ InitiateToken)
+
+THEOREM Implements == Spec => ATDSpec
+
 =============================================================================
 \* Modification History
 \* Created Sun Jan 10 15:19:20 CET 2021 by Stephan Merz @muenchnerkindl
