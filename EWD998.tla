@@ -47,15 +47,14 @@ VARIABLES
 
   pending,               \* number of messages pending at a node
 
-  tokenPos,
-  tokenColor, 
-  tokenCounter
-
+  token
 
 \* * A definition that lets us refer to the spec's variables (more on it later).
-vars == << active, pending,counter, color,tokenPos,tokenColor,tokenCounter >>
+vars == << active, pending,counter, color,token >>
 
 Color == {"black", "white"}
+
+Initiator == CHOOSE n \in Node: TRUE
 
 -----------------------------------------------------------------------------
 
@@ -63,9 +62,11 @@ TypeOK ==
     /\ active \in [ Node -> BOOLEAN ]
     /\ pending \in [ Node -> Nat ]
     /\ color \in [ Node -> Color ] 
-    /\ tokenColor \in Color
-    /\ tokenPos \in Node
-    /\ tokenCounter \in Int
+    \* /\ token.color \in Color
+    \* /\ token.pos \in Node
+    \* /\ token.counter \in Int
+    \* /\ DOMAIN token = {"pos", "color", "counter"}
+    /\ token \in [ pos: Node, color: Color, counter: Int ] 
     /\ counter \in [ Node -> Int ]
 
 \* * Initially, all nodes are active and no messages are pending.
@@ -73,19 +74,17 @@ Init ==
     /\ active = [n \in Node |-> TRUE ] 
     /\ pending = [ n \in Node |-> 0] 
     /\ counter = [ n \in Node |-> 0 ]
-    /\ tokenPos = N - 1
+    /\ token = [ pos |-> 0, color |-> "black", counter|-> 0 ]
     /\ color = [ n \in Node |-> "white" ]
-    /\ tokenCounter = 0
-    /\ tokenColor = "black"
 
 -----------------------------------------------------------------------------
 
 terminationDetected ==
     /\ color[0] = "white"
     /\ active[0] = FALSE
-    /\ tokenColor = "white"
-    /\ tokenPos = 0
-    /\ tokenCounter + counter[0] = 0
+    /\ token.color = "white"
+    /\ token.pos = 0
+    /\ token.counter + counter[0] = 0
     \* /\ pending[0] = 0
     \* /\ tokenCounter = 0 \* ????
     \* /\ counter[0] = 0
@@ -104,53 +103,44 @@ terminated ==
 
 \* * Node i terminates.
 Terminate(i)  ==
-    /\ active[i] = TRUE \* ???
     /\ active' = [ n \in Node |-> IF i = n THEN FALSE ELSE active[n] ]
     /\ UNCHANGED pending
-    /\ UNCHANGED <<tokenColor, tokenCounter, tokenPos>>
+    /\ UNCHANGED <<token>>
     /\ UNCHANGED <<counter, color>>
-    \* /\ tokenPos # i
-
 
 \* * Node i sends a message to node j.
 SendMsg(i, j) ==
-    /\ active[i]= TRUE \* ???? Could it be FALSE?
+    /\ active[i]= TRUE
     /\ pending' = [ pending EXCEPT ![j] = @ + 1 ]
     /\ counter' = [ counter EXCEPT ![i] = @ + 1 ]
     /\ UNCHANGED <<active, color>>
-    /\ UNCHANGED <<tokenColor, tokenCounter, tokenPos>>
+    /\ UNCHANGED <<token>>
     
 \* * Node i receives a message.
 Wakeup(i) ==
-    /\ active[i] = FALSE \* ???
+    \* /\ active[i] = FALSE \* ???/
     /\ pending[i] > 0
     /\ pending' = [ pending EXCEPT ![i] = @ - 1 ]
     /\ counter' = [ counter EXCEPT ![i] = @ - 1 ]
     /\ active' = [ active EXCEPT ![i] = TRUE ]
     /\ color'  = [ color EXCEPT ![i] = "black" ] \* should we change this?
-    /\ UNCHANGED <<tokenColor, tokenCounter, tokenPos>>
+    /\ UNCHANGED <<token>>
 
 PassToken ==
-    /\ tokenPos # 0
-    /\ active[tokenPos] =  FALSE
-    \* /\ counter[tokenPos] = 0 \* ???
-    /\ tokenCounter' = tokenCounter + counter[tokenPos]
-    /\ tokenColor' = IF color[tokenPos] = "black" THEN "black" ELSE tokenColor
-    /\ tokenPos' = tokenPos - 1
-    \* /\ UNCHANGED color \* ???
-    /\ color'  = [ color EXCEPT ![tokenPos] = "white" ] \* should we change this?
+    /\ token.pos # 0
+    /\ active[token.pos] =  FALSE
+    /\ token' = [ pos |-> token.pos - 1,
+                  counter |-> token.counter + counter[token.pos],
+                  color |-> IF color[token.pos] = "black" THEN "black" ELSE token.color ]
+    /\ color'  = [ color EXCEPT ![token.pos] = "white" ] \* should we change this?
     /\ UNCHANGED <<active, pending, counter>>
 
 InitiateToken ==
     /\ ~terminationDetected
-    /\ tokenPos = 0
-    /\ tokenColor' = "white"
-    /\ tokenCounter' = 0
-    /\ tokenPos' = N - 1
-    \* /\ UNCHANGED color \* ??? \* shouldn't we reset colour?
+    /\ token.pos = 0
+    /\ token' = [ token EXCEPT !.pos = N - 1, !.counter = 0, !.color = "white"]
     /\ color' = [color EXCEPT ![0] = "white"]
     /\ UNCHANGED <<active, pending, counter>>
-    \* /\ counter' = [counter EXCEPT ![0] = 0]
     
 Next ==
     \E n,m \in Node:
@@ -175,6 +165,19 @@ Spec ==
     Init /\ [][Next]_vars /\ WF_vars(PassToken \/ InitiateToken)
 
 THEOREM Implements == Spec => ATDSpec
+
+Alias ==
+    [
+active |-> active,               \* activation status of nodes
+  counter |-> counter,
+  color  |-> color,
+
+  pending |-> pending,               \* number of messages pending at a node
+
+  token  |->  token,
+  t  |->  terminated,
+  td  |-> terminationDetected       
+    ]
 
 =============================================================================
 \* Modification History

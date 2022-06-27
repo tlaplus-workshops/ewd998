@@ -76,7 +76,7 @@ terminated ==
 
 \* * Node i terminates.
 Terminate(i)  ==
-    /\ active[i] = TRUE \* ???
+    \* /\ active[i] = TRUE \* ???
     /\ active' = [ n \in Node |-> IF i = n THEN FALSE ELSE active[n] ]
     \* /\ \/ terminationDetected' = terminated'
     \*    \/ UNCHANGED terminationDetected
@@ -93,7 +93,7 @@ SendMsg(i, j) ==
     
 \* * Node i receives a message.
 Wakeup(i) ==
-    /\ active[i] = FALSE \* ???
+    \* /\ active[i] = FALSE \* ???
     /\ pending[i] > 0
     /\ pending' = [ pending EXCEPT ![i] = @ - 1 ]
     /\ active' = [ active EXCEPT ![i] = TRUE ]
@@ -109,7 +109,7 @@ Next ==
          \/ Terminate(n)
          \/ Wakeup(n)
          \/ SendMsg(n,m)
-        \*  \/ DetectTermination
+         \/ DetectTermination
     
 Constraint ==
     \A n \in Node: pending[n] < 4
