@@ -71,11 +71,14 @@ TypeOK ==
 
 \* * Initially, all nodes are active and no messages are pending.
 Init ==
-    /\ active = [n \in Node |-> TRUE ] 
-    /\ pending = [ n \in Node |-> 0] 
+    /\ active \in [ Node -> BOOLEAN ]
+    /\ color \in [ Node -> Color ] 
     /\ counter = [ n \in Node |-> 0 ]
-    /\ token = [ pos |-> 0, color |-> "black", counter|-> 0 ]
-    /\ color = [ n \in Node |-> "white" ]
+
+    /\ pending = [ n \in Node |-> 0] 
+
+    \* /\ token = [ pos |-> 0, color |-> "black", counter|-> 0 ]
+    /\ token \in [ pos: Node, color: {"black"}, counter: -3..3 ] 
 
 -----------------------------------------------------------------------------
 
@@ -166,18 +169,61 @@ Spec ==
 
 THEOREM Implements == Spec => ATDSpec
 
+-----------------------------------------------
+
 Alias ==
     [
-active |-> active,               \* activation status of nodes
-  counter |-> counter,
-  color  |-> color,
+      active |-> active,
+      counter |-> counter,
+      color  |-> color,
 
-  pending |-> pending,               \* number of messages pending at a node
+      pending |-> pending,
 
-  token  |->  token,
-  t  |->  terminated,
-  td  |-> terminationDetected       
+      token  |->  token,
+
+      t  |->  terminated,
+      td  |-> terminationDetected       
     ]
+
+-----------------------------------------------
+
+\* \S 
+SumF(func, from, to) ==
+    LET sum[ n \in from..to ] ==
+            IF n = from
+            THEN func[n]
+            ELSE func[n] + sum[n-1]
+    IN IF from > to THEN 0 ELSE sum[to]
+
+RECURSIVE Sum(_,_,_)
+Sum(func, from, to) ==
+    IF from > to THEN 0 ELSE func[from] + Sum(func, from+1, to)
+    
+\* SumF(func, from, to) ==
+\*     Fold(+, func, 0, from..to)
+
+\* B  to equal the sum of in-flight messages
+B ==
+    Sum(pending, 0, N-1)
+
+t == token.pos
+q == token.counter
+
+ \* Inv == P0 /\ (P1 \/ P2 \/ P3 \/ P4)
+ \*
+ \* P0 == B = (Si: 0 <= i < N: counter[i])
+ \* P1 == (\Ai: t < i < N: ~active[i]) /\ (Si: t < i < N: counter[i]) = q
+ \* P2 == (\Si: 0 <= i <= t: counter[i]) + q > 0
+ \* P3 == \Ei: 0 <= i <= t : color[i] = black
+ \* P4 == The token.color = black
+Inv ==
+    /\ P0:: B = Sum(counter, 0, N-1)
+    /\ \/ P1:: /\ \A n \in t+1 .. N-1: ~active[n] 
+               /\ (Sum(counter, t+1, N-1) = q)
+       \/ P2:: Sum(counter, 0, t) + q > 0       
+       \/ P3:: \E n \in 0..t:  color[n] = "black"
+       \/ P4:: token.color = "black" 
+
 
 =============================================================================
 \* Modification History

@@ -57,7 +57,7 @@ TypeOK ==
 
 \* * Initially, all nodes are active and no messages are pending.
 Init ==
-    /\ active = [n \in Node |-> TRUE ] 
+    /\ active \in [ Node -> BOOLEAN ]
     /\ pending = [ n \in Node |-> 0] 
     /\ terminationDetected = FALSE
 
@@ -115,7 +115,14 @@ Constraint ==
     \A n \in Node: pending[n] < 4
 
 Spec == 
-    Init /\ [][Next]_vars /\ WF_vars(DetectTermination)
+    /\ Init
+    /\ [][Next]_vars
+    \* /\ <>terminationDetected
+    \* /\ WF_vars(Next)
+    /\ WF_vars(DetectTermination)
+    \* /\ <>[] ENABLED <<DetectTermination>>_vars => []<><<DetectTermination>>_vars
+
+    \* <<A>>_v  <=>  A /\ v' # v
 
 Safe ==
     \* IF terminationDetected THEN terminated ELSE TRUE
@@ -124,7 +131,8 @@ Safe ==
 THEOREM Spec => Safe
 
 Live ==
-    [](terminated => <>(terminationDetected))
+    \* [](terminated => <>(terminationDetected))
+    terminated ~> terminationDetected
 
 THEOREM Spec => Live
 =============================================================================
