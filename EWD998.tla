@@ -1,11 +1,11 @@
----------------------- MODULE AsyncTerminationDetection ---------------------
+---------------------- MODULE EWD998 ---------------------
 \* * TLA+ is an expressive language and we usually define operators on-the-fly.
  \* * That said, the TLA+ reference guide "Specifying Systems" (download from:
  \* * https://lamport.azurewebsites.net/tla/book.html) defines a handful of
  \* * standard modules.  Additionally, a community-driven repository has been
  \* * collecting more modules (http://modules.tlapl.us). In our spec, we are
  \* * going to need operators for natural numbers.
-EXTENDS Naturals
+EXTENDS Integers
 
 \* * A constant is a parameter of a specification. In other words, it is a
  \* * "variable" that cannot change throughout a behavior, i.e., a sequence
@@ -42,70 +42,112 @@ Node == 0 .. N-1
  \* * node has yet to receive.
 VARIABLES 
   active,               \* activation status of nodes
-  pending,               \* number of messages pending at a node
-  terminationDetected
+  pending,
+  processed,
+  tokenPosition,
+  tokenValue,
+  tokenTainted,
+  msgSentNotTainted \* per-node boolean to track if a node has sent a message but not yet marked the token as tainted
+  
 
 \* * A definition that lets us refer to the spec's variables (more on it later).
-vars == << active, pending, terminationDetected >>
+vars == << active, pending, processed, tokenPosition, tokenValue, tokenTainted, msgSentNotTainted >>
 
 terminated ==
     \A n \in Node: pending[n] = 0 /\ ~active[n]
 
 -----------------------------------------------------------------------------
 
-InitiateToken ==
-    TRUE
+\* Happens each time the token makes a full loop back to the initiator (Node 0)
+\* Create a new, fresh token
+InitiateToken(n) ==
+    /\ n = 0
+    /\ tokenPosition = n
+    /\ active[n] = FALSE \* Is this needed?
+    /\ tokenTainted' = (msgSentNotTainted[n] \/ tokenValue # 0) \* taint the token if this node sent a msg    
+    /\ tokenValue' = processed[n]
+    \* /\ processed' = [ processed EXCEPT ![n] = 0 ] \* why does `processed` change here when passing a token?
+    /\ msgSentNotTainted' = [ msgSentNotTainted EXCEPT ![n] = FALSE ] \* reset the msg-sent status for the node passing the token
+    /\ tokenPosition' = (tokenPosition + 1) % N
+    /\ UNCHANGED << active, pending, processed >>
 
-PassToken ==
-    TRUE
-
+PassToken(n) ==
+    /\ active[n] = FALSE
+    /\ tokenPosition = n
+    /\ tokenPosition # 0
+    /\ tokenValue' = tokenValue + processed[n]
+    \* /\ processed' = [ processed EXCEPT ![n] = 0 ] \* why does `processed` change here when passing a token?
+    /\ tokenPosition' = (tokenPosition + 1) % N
+    /\ tokenTainted' = (tokenTainted \/ msgSentNotTainted[n]) \* taint the token if this node sent a msg
+    /\ msgSentNotTainted' = [ msgSentNotTainted EXCEPT ![n] = FALSE ] \* reset the msg-sent status for the node passing the token
+    /\ UNCHANGED << active, pending, processed  >>
 -----------
 
 Init ==
     /\ active \in [ Node -> BOOLEAN ]
-    /\ pending \in [ Node -> Nat ] 
-    /\ terminationDetected \in {FALSE, terminationDetected}
+    /\ pending \in [ Node -> {0} ] 
+    /\ processed = [ n \in Node |-> 0 ] 
+    /\ tokenPosition = 0
+    /\ tokenTainted = TRUE
+    /\ tokenValue = 0
+    /\ msgSentNotTainted = [ n \in Node |-> FALSE ]
 
 RecvMsg(rcv) ==
     /\ pending[rcv] > 0
     /\ active' = [ active EXCEPT ![rcv] = TRUE ] 
     /\ pending' = [ pending EXCEPT ![rcv] = @ - 1 ]
-    /\ UNCHANGED terminationDetected
+    /\ processed' = [ processed EXCEPT ![rcv] = @ + 1 ]
+    /\ UNCHANGED << tokenPosition, tokenValue, tokenTainted, msgSentNotTainted >>
+
 
 SendMsg(snd, rcv) ==
     /\ pending' = [ pending EXCEPT ![rcv] = @ + 1]
     /\ active[snd] = TRUE
     \* /\ active' = [ active EXCEPT ![rcv] = FALSE ] 
+    /\ processed' = [ processed EXCEPT ![snd] = @ - 1 ]
+    /\ msgSentNotTainted' = [ msgSentNotTainted EXCEPT ![snd] = TRUE ]
     /\ UNCHANGED active \* ??? Should a node deactivate after sending?
-    /\ UNCHANGED terminationDetected
+    /\ UNCHANGED << tokenPosition, tokenValue, tokenTainted >>
+
 
 Terminate(n) ==
     \* /\ active[n] = TRUE 
     /\ active' = [ active EXCEPT ![n] = FALSE ]
-    /\ UNCHANGED pending
-    /\ pending' = pending
-    \* /\ \/ terminationDetected' = terminated'
-    \*    \/ terminationDetected' = FALSE
-    /\ terminationDetected' \in {terminated', FALSE}
+    /\ UNCHANGED << pending, processed, tokenPosition, tokenValue, tokenTainted, msgSentNotTainted >>
 
 Next ==
     \E i,j \in Node:
         \/ SendMsg(i,j)
         \/ RecvMsg(i)
         \/ Terminate(i)
+        \/ InitiateToken(i)
+        \/ PassToken(i)
 
 -------------------
 
 Spec ==
     Init /\ [][Next]_vars /\ WF_vars(Next)
 
+\* vars == << active, pending, processed, tokenPosition, tokenValue, tokenTainted, msgSentNotTainted >>
+
 TypeOK ==
-    \* /\ \A i \in Node: pending[i] \in Nat
-    \* /\ DOMAIN pending = Node
     /\ pending \in [ Node -> Nat]
     /\ active \in [ Node -> BOOLEAN ]
-    \* /\ \A i \in Node: active[i] \in BOOLEAN 
-    /\ terminationDetected \in BOOLEAN 
+    /\ processed \in [ Node -> Int]
+    /\ msgSentNotTainted \in [ Node -> BOOLEAN ]
+    /\ tokenPosition \in Node
+    /\ tokenValue \in Int 
+    /\ tokenTainted \in BOOLEAN
+
+---------------------
+
+terminationDetected ==
+    /\ tokenPosition = 0
+    /\ tokenTainted = FALSE
+    /\ tokenValue = 0
+    /\ ~active[0]
+    /\ ~msgSentNotTainted[0]
+    \* /\ pending[0] = 0
 
 Safe ==
     \* IF terminationDetected THEN terminated ELSE TRUE
@@ -113,19 +155,19 @@ Safe ==
 
 Live ==
     [](terminated => <>terminationDetected)
----------------------
 
 
 Constraint ==
-    \A i \in Node: pending[i] < 3
+    \A i \in Node: pending[i] < 3 /\ processed[i] \in (-2..2)
 
 
 MCInit ==
     /\ active \in [ Node -> BOOLEAN ]
-    /\ pending \in [ Node -> 0..3 ] 
-    /\ terminationDetected \in {FALSE, terminated}
-
+    /\ pending \in [ Node -> {0} ] 
+    /\ processed = [ n \in Node |-> 0 ] 
+    /\ tokenPosition = 0
+    /\ tokenTainted = TRUE
+    /\ tokenValue = 0
+    /\ msgSentNotTainted = [ n \in Node |-> FALSE ]
 
 =============================================================================
-\* Modification History
-\* Created Sun Jan 10 15:19:20 CET 2021 by Stephan Merz @muenchnerkindl
