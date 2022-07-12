@@ -2,23 +2,34 @@
 TLC2 Version 2.18 of Day Month 20?? (rev: 6ee6e9f)
 @!@!@ENDMSG 2262 @!@!@
 @!@!@STARTMSG 2187:0 @!@!@
-Running breadth-first search Model-Checking with fp 7 and seed 1470879686198987554 with 1 worker on 8 cores with 3559MB heap and 64MB offheap memory [pid: 17591] (Linux 5.4.0-1074-azure amd64, Oracle Corporation 17.0.2 x86_64, MSBDiskFPSet, DiskStateQueue).
+Running breadth-first search Model-Checking with fp 46 and seed 7528897163723597087 with 1 worker on 8 cores with 3559MB heap and 64MB offheap memory [pid: 9164] (Linux 5.4.0-1074-azure amd64, Oracle Corporation 17.0.2 x86_64, MSBDiskFPSet, DiskStateQueue).
 @!@!@ENDMSG 2187 @!@!@
 @!@!@STARTMSG 2220:0 @!@!@
 Starting SANY...
 @!@!@ENDMSG 2220 @!@!@
 Parsing file /workspaces/ewd998/EWD998.tla
-Parsing file /tmp/tlc-10372935247810207288/Integers.tla (jar:file:/home/codespace/.vscode-remote/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/Integers.tla)
-Parsing file /tmp/tlc-10372935247810207288/Naturals.tla (jar:file:/home/codespace/.vscode-remote/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/Naturals.tla)
+Parsing file /tmp/tlc-8984331708763874482/Integers.tla (jar:file:/home/codespace/.vscode-remote/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/Integers.tla)
+Parsing file /tmp/tlc-8984331708763874482/TLC.tla (jar:file:/home/codespace/.vscode-remote/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/TLC.tla)
+Parsing file /tmp/tlc-8984331708763874482/Naturals.tla (jar:file:/home/codespace/.vscode-remote/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/Naturals.tla)
+Parsing file /workspaces/ewd998/AsyncTerminationDetection.tla
+Parsing file /tmp/tlc-8984331708763874482/Sequences.tla (jar:file:/home/codespace/.vscode-remote/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/Sequences.tla)
+Parsing file /tmp/tlc-8984331708763874482/FiniteSets.tla (jar:file:/home/codespace/.vscode-remote/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/FiniteSets.tla)
 Semantic processing of module Naturals
 Semantic processing of module Integers
+Semantic processing of module Sequences
+Semantic processing of module FiniteSets
+Semantic processing of module TLC
+Semantic processing of module AsyncTerminationDetection
 Semantic processing of module EWD998
 @!@!@STARTMSG 2219:0 @!@!@
 SANY finished.
 @!@!@ENDMSG 2219 @!@!@
 @!@!@STARTMSG 2185:0 @!@!@
-Starting... (2022-07-11 23:41:10)
+Starting... (2022-07-12 22:11:51)
 @!@!@ENDMSG 2185 @!@!@
+@!@!@STARTMSG 2212:0 @!@!@
+Implied-temporal checking--satisfiability problem has 1 branches.
+@!@!@ENDMSG 2212 @!@!@
 @!@!@STARTMSG 2189:0 @!@!@
 Computing initial states...
 @!@!@ENDMSG 2189 @!@!@
@@ -29,166 +40,149 @@ Computed 2 initial states...
 Computed 4 initial states...
 @!@!@ENDMSG 2269 @!@!@
 @!@!@STARTMSG 2190:0 @!@!@
-Finished computing initial states: 8 distinct states generated at 2022-07-11 23:41:10.
+Finished computing initial states: 8 distinct states generated at 2022-07-12 22:11:52.
 @!@!@ENDMSG 2190 @!@!@
 @!@!@STARTMSG 2110:1 @!@!@
-Invariant Safe is violated.
+Invariant IInv is violated.
 @!@!@ENDMSG 2110 @!@!@
 @!@!@STARTMSG 2121:1 @!@!@
 The behavior up to this point is:
 @!@!@ENDMSG 2121 @!@!@
 @!@!@STARTMSG 2217:4 @!@!@
 1: <Initial predicate>
-/\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ tokenValue = 0
-/\ processed = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ tokenPosition = 0
 /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ tokenTainted = TRUE
+/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+/\ inflight = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+/\ token = [pos |-> 0, tainted |-> TRUE, value |-> 0]
+/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
+/\ p0 = TRUE
+/\ p1 = FALSE
+/\ p2 = FALSE
+/\ p3 = FALSE
+/\ p4 = TRUE
 
 @!@!@ENDMSG 2217 @!@!@
 @!@!@STARTMSG 2217:4 @!@!@
-2: <InitiateToken line 64, col 5 to line 72, col 49 of module EWD998>
-/\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ tokenValue = 0
-/\ processed = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ tokenPosition = 1
+2: <SendMsg line 107, col 5 to line 113, col 28 of module EWD998>
 /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ tokenTainted = FALSE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-3: <PassToken line 75, col 5 to line 83, col 50 of module EWD998>
-/\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ tokenValue = 0
-/\ processed = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ tokenPosition = 2
-/\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ tokenTainted = FALSE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-4: <SendMsg line 104, col 5 to line 110, col 62 of module EWD998>
-/\ pending = (0 :> 0 @@ 1 :> 1 @@ 2 :> 0)
-/\ tokenValue = 0
-/\ processed = (0 :> 0 @@ 1 :> 0 @@ 2 :> -1)
+/\ network = (0 :> 1 @@ 1 :> 0 @@ 2 :> 0)
+/\ inflight = (0 :> 0 @@ 1 :> 0 @@ 2 :> 1)
+/\ token = [pos |-> 0, tainted |-> TRUE, value |-> 0]
 /\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ tokenPosition = 2
-/\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ tokenTainted = FALSE
+/\ p0 = TRUE
+/\ p1 = FALSE
+/\ p2 = FALSE
+/\ p3 = FALSE
+/\ p4 = TRUE
 
 @!@!@ENDMSG 2217 @!@!@
 @!@!@STARTMSG 2217:4 @!@!@
-5: <Terminate line 115, col 5 to line 116, col 101 of module EWD998>
-/\ pending = (0 :> 0 @@ 1 :> 1 @@ 2 :> 0)
-/\ tokenValue = 0
-/\ processed = (0 :> 0 @@ 1 :> 0 @@ 2 :> -1)
+3: <RecvMsg line 99, col 5 to line 103, col 47 of module EWD998>
+/\ active = (0 :> TRUE @@ 1 :> FALSE @@ 2 :> TRUE)
+/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+/\ inflight = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)
+/\ token = [pos |-> 0, tainted |-> TRUE, value |-> 0]
 /\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ tokenPosition = 2
+/\ p0 = TRUE
+/\ p1 = FALSE
+/\ p2 = FALSE
+/\ p3 = FALSE
+/\ p4 = TRUE
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+4: <Terminate line 117, col 5 to line 118, col 66 of module EWD998>
+/\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
+/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+/\ inflight = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)
+/\ token = [pos |-> 0, tainted |-> TRUE, value |-> 0]
+/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
+/\ p0 = TRUE
+/\ p1 = FALSE
+/\ p2 = FALSE
+/\ p3 = FALSE
+/\ p4 = TRUE
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+5: <InitiateToken line 67, col 5 to line 75, col 48 of module EWD998>
+/\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
+/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+/\ inflight = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)
+/\ token = [pos |-> 2, tainted |-> FALSE, value |-> -1]
+/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
+/\ p0 = TRUE
+/\ p1 = FALSE
+/\ p2 = FALSE
+/\ p3 = TRUE
+/\ p4 = FALSE
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+6: <Terminate line 117, col 5 to line 118, col 66 of module EWD998>
 /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ tokenTainted = FALSE
+/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+/\ inflight = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)
+/\ token = [pos |-> 2, tainted |-> FALSE, value |-> -1]
+/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
+/\ p0 = TRUE
+/\ p1 = FALSE
+/\ p2 = FALSE
+/\ p3 = TRUE
+/\ p4 = FALSE
 
 @!@!@ENDMSG 2217 @!@!@
 @!@!@STARTMSG 2217:4 @!@!@
-6: <PassToken line 75, col 5 to line 83, col 50 of module EWD998>
-/\ pending = (0 :> 0 @@ 1 :> 1 @@ 2 :> 0)
-/\ tokenValue = -1
-/\ processed = (0 :> 0 @@ 1 :> 0 @@ 2 :> -1)
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ tokenPosition = 0
+7: <PassToken line 78, col 5 to line 87, col 49 of module EWD998>
 /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ tokenTainted = TRUE
+/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+/\ inflight = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)
+/\ token = [pos |-> 1, tainted |-> TRUE, value |-> 0]
+/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
+/\ p0 = TRUE
+/\ p1 = FALSE
+/\ p2 = FALSE
+/\ p3 = FALSE
+/\ p4 = TRUE
 
 @!@!@ENDMSG 2217 @!@!@
 @!@!@STARTMSG 2217:4 @!@!@
-7: <InitiateToken line 64, col 5 to line 72, col 49 of module EWD998>
-/\ pending = (0 :> 0 @@ 1 :> 1 @@ 2 :> 0)
-/\ tokenValue = 0
-/\ processed = (0 :> 0 @@ 1 :> 0 @@ 2 :> -1)
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ tokenPosition = 1
+8: <PassToken line 78, col 5 to line 87, col 49 of module EWD998>
 /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ tokenTainted = FALSE
+/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+/\ inflight = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)
+/\ token = [pos |-> 0, tainted |-> TRUE, value |-> 0]
+/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
+/\ p0 = TRUE
+/\ p1 = FALSE
+/\ p2 = FALSE
+/\ p3 = FALSE
+/\ p4 = TRUE
 
 @!@!@ENDMSG 2217 @!@!@
 @!@!@STARTMSG 2217:4 @!@!@
-8: <PassToken line 75, col 5 to line 83, col 50 of module EWD998>
-/\ pending = (0 :> 0 @@ 1 :> 1 @@ 2 :> 0)
-/\ tokenValue = 0
-/\ processed = (0 :> 0 @@ 1 :> 0 @@ 2 :> -1)
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ tokenPosition = 2
+9: <InitiateToken line 67, col 5 to line 75, col 48 of module EWD998>
 /\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ tokenTainted = FALSE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-9: <RecvMsg line 96, col 5 to line 100, col 81 of module EWD998>
-/\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ tokenValue = 0
-/\ processed = (0 :> 0 @@ 1 :> 1 @@ 2 :> -1)
+/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
+/\ inflight = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)
+/\ token = [pos |-> 2, tainted |-> FALSE, value |-> -1]
 /\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ tokenPosition = 2
-/\ active = (0 :> FALSE @@ 1 :> TRUE @@ 2 :> FALSE)
-/\ tokenTainted = FALSE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-10: <SendMsg line 104, col 5 to line 110, col 62 of module EWD998>
-/\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 1)
-/\ tokenValue = 0
-/\ processed = (0 :> 0 @@ 1 :> 0 @@ 2 :> -1)
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> TRUE @@ 2 :> FALSE)
-/\ tokenPosition = 2
-/\ active = (0 :> FALSE @@ 1 :> TRUE @@ 2 :> FALSE)
-/\ tokenTainted = FALSE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-11: <RecvMsg line 96, col 5 to line 100, col 81 of module EWD998>
-/\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ tokenValue = 0
-/\ processed = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> TRUE @@ 2 :> FALSE)
-/\ tokenPosition = 2
-/\ active = (0 :> FALSE @@ 1 :> TRUE @@ 2 :> TRUE)
-/\ tokenTainted = FALSE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-12: <Terminate line 115, col 5 to line 116, col 101 of module EWD998>
-/\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ tokenValue = 0
-/\ processed = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> TRUE @@ 2 :> FALSE)
-/\ tokenPosition = 2
-/\ active = (0 :> FALSE @@ 1 :> TRUE @@ 2 :> FALSE)
-/\ tokenTainted = FALSE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-13: <PassToken line 75, col 5 to line 83, col 50 of module EWD998>
-/\ pending = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ tokenValue = 0
-/\ processed = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> TRUE @@ 2 :> FALSE)
-/\ tokenPosition = 0
-/\ active = (0 :> FALSE @@ 1 :> TRUE @@ 2 :> FALSE)
-/\ tokenTainted = FALSE
+/\ p0 = TRUE
+/\ p1 = FALSE
+/\ p2 = FALSE
+/\ p3 = FALSE
+/\ p4 = FALSE
 
 @!@!@ENDMSG 2217 @!@!@
 @!@!@STARTMSG 2200:0 @!@!@
-Progress(13) at 2022-07-11 23:41:12: 630,160 states generated (15,388,522 s/min), 48,781 distinct states found (1,191,233 ds/min), 15,771 states left on queue.
+Progress(9) at 2022-07-12 22:11:53: 103,207 states generated (2,937,580 s/min), 8,905 distinct states found (253,462 ds/min), 3,541 states left on queue.
 @!@!@ENDMSG 2200 @!@!@
 @!@!@STARTMSG 2199:0 @!@!@
-630160 states generated, 48781 distinct states found, 15771 states left on queue.
+103207 states generated, 8905 distinct states found, 3541 states left on queue.
 @!@!@ENDMSG 2199 @!@!@
 @!@!@STARTMSG 2194:0 @!@!@
-The depth of the complete state graph search is 13.
+The depth of the complete state graph search is 9.
 @!@!@ENDMSG 2194 @!@!@
 @!@!@STARTMSG 2186:0 @!@!@
-Finished in 2463ms at (2022-07-11 23:41:12)
+Finished in 2112ms at (2022-07-12 22:11:53)
 @!@!@ENDMSG 2186 @!@!@

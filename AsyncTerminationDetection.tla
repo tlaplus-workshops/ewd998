@@ -110,11 +110,14 @@ TypeOK ==
 Safe ==
     \* IF terminationDetected THEN terminated ELSE TRUE
     [](terminationDetected => terminated)
+THEOREM Spec => Safe
 
 Live ==
-    [](terminated => <>terminationDetected)
----------------------
+    \* [](terminated => <>terminationDetected)
+    terminated ~> []terminationDetected
 
+THEOREM Spec => Live
+---------------------
 
 Constraint ==
     \A i \in Node: pending[i] < 3
