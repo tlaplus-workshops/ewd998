@@ -73,31 +73,35 @@ RecvMsg(rcv) ==
     /\ UNCHANGED terminationDetected
 
 SendMsg(snd, rcv) ==
-    /\ pending' = [ pending EXCEPT ![rcv] = @ + 1]
     /\ active[snd] = TRUE
-    \* /\ active' = [ active EXCEPT ![rcv] = FALSE ] 
-    /\ UNCHANGED active \* ??? Should a node deactivate after sending?
-    /\ UNCHANGED terminationDetected
+    /\ pending' = [ pending EXCEPT ![rcv] = @ + 1]
+    /\ UNCHANGED <<active, terminationDetected>>
 
 Terminate(n) ==
-    \* /\ active[n] = TRUE 
     /\ active' = [ active EXCEPT ![n] = FALSE ]
-    /\ UNCHANGED pending
-    /\ pending' = pending
-    \* /\ \/ terminationDetected' = terminated'
-    \*    \/ terminationDetected' = FALSE
-    /\ terminationDetected' \in {terminated', FALSE}
+    /\ UNCHANGED <<pending, terminationDetected>>
+
+DetectTermination ==
+    /\ ~terminationDetected
+    /\ terminated
+    /\ terminationDetected' = TRUE
+    /\ UNCHANGED  <<pending, active>>
 
 Next ==
-    \E i,j \in Node:
-        \/ SendMsg(i,j)
-        \/ RecvMsg(i)
-        \/ Terminate(i)
+    \/ DetectTermination
+    \/ \E i,j \in Node:
+      \/ SendMsg(i,j)
+      \/ RecvMsg(i)
+      \/ Terminate(i)
 
 -------------------
 
 Spec ==
-    Init /\ [][Next]_vars /\ WF_vars(Next)
+    \* TODO is it okay to remove the `WF_vars(Next)` here?
+    \*      It seems necessary to match the fairness provided by EWD998 which does
+    \*      not require us to Send/Rcv messages, only pass/initiate tokens.
+    Init /\ [][Next]_vars /\ WF_vars(DetectTermination)
+    \* Init /\ [][Next]_vars /\ \A i \in Node: WF_vars(Terminate(i))
 
 TypeOK ==
     \* /\ \A i \in Node: pending[i] \in Nat
@@ -125,7 +129,8 @@ Constraint ==
 
 MCInit ==
     /\ active \in [ Node -> BOOLEAN ]
-    /\ pending \in [ Node -> 0..3 ] 
+    \* /\ pending \in [ Node -> 0..3 ] 
+    /\ pending \in [ Node -> {0} ] 
     /\ terminationDetected \in {FALSE, terminated}
 
 

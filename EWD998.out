@@ -2,18 +2,18 @@
 TLC2 Version 2.18 of Day Month 20?? (rev: 6ee6e9f)
 @!@!@ENDMSG 2262 @!@!@
 @!@!@STARTMSG 2187:0 @!@!@
-Running breadth-first search Model-Checking with fp 46 and seed 7528897163723597087 with 1 worker on 8 cores with 3559MB heap and 64MB offheap memory [pid: 9164] (Linux 5.4.0-1074-azure amd64, Oracle Corporation 17.0.2 x86_64, MSBDiskFPSet, DiskStateQueue).
+Running breadth-first search Model-Checking with fp 15 and seed -6063647850722052270 with 1 worker on 16 cores with 7282MB heap and 64MB offheap memory [pid: 94682] (Mac OS X 12.4 x86_64, Microsoft 11.0.13 x86_64, MSBDiskFPSet, DiskStateQueue).
 @!@!@ENDMSG 2187 @!@!@
 @!@!@STARTMSG 2220:0 @!@!@
 Starting SANY...
 @!@!@ENDMSG 2220 @!@!@
-Parsing file /workspaces/ewd998/EWD998.tla
-Parsing file /tmp/tlc-8984331708763874482/Integers.tla (jar:file:/home/codespace/.vscode-remote/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/Integers.tla)
-Parsing file /tmp/tlc-8984331708763874482/TLC.tla (jar:file:/home/codespace/.vscode-remote/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/TLC.tla)
-Parsing file /tmp/tlc-8984331708763874482/Naturals.tla (jar:file:/home/codespace/.vscode-remote/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/Naturals.tla)
-Parsing file /workspaces/ewd998/AsyncTerminationDetection.tla
-Parsing file /tmp/tlc-8984331708763874482/Sequences.tla (jar:file:/home/codespace/.vscode-remote/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/Sequences.tla)
-Parsing file /tmp/tlc-8984331708763874482/FiniteSets.tla (jar:file:/home/codespace/.vscode-remote/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/FiniteSets.tla)
+Parsing file /Users/ekrogen/dev/tlaplus-workshop/EWD998.tla
+Parsing file /private/var/folders/n2/jm3shyv54sn4rf9mbr_6_k14000gvs/T/tlc-8672769385536952761/Integers.tla (jar:file:/Users/ekrogen/.vscode/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/Integers.tla)
+Parsing file /private/var/folders/n2/jm3shyv54sn4rf9mbr_6_k14000gvs/T/tlc-8672769385536952761/TLC.tla (jar:file:/Users/ekrogen/.vscode/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/TLC.tla)
+Parsing file /private/var/folders/n2/jm3shyv54sn4rf9mbr_6_k14000gvs/T/tlc-8672769385536952761/Naturals.tla (jar:file:/Users/ekrogen/.vscode/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/Naturals.tla)
+Parsing file /Users/ekrogen/dev/tlaplus-workshop/AsyncTerminationDetection.tla
+Parsing file /private/var/folders/n2/jm3shyv54sn4rf9mbr_6_k14000gvs/T/tlc-8672769385536952761/Sequences.tla (jar:file:/Users/ekrogen/.vscode/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/Sequences.tla)
+Parsing file /private/var/folders/n2/jm3shyv54sn4rf9mbr_6_k14000gvs/T/tlc-8672769385536952761/FiniteSets.tla (jar:file:/Users/ekrogen/.vscode/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/FiniteSets.tla)
 Semantic processing of module Naturals
 Semantic processing of module Integers
 Semantic processing of module Sequences
@@ -25,7 +25,7 @@ Semantic processing of module EWD998
 SANY finished.
 @!@!@ENDMSG 2219 @!@!@
 @!@!@STARTMSG 2185:0 @!@!@
-Starting... (2022-07-12 22:11:51)
+Starting... (2022-07-13 15:20:51)
 @!@!@ENDMSG 2185 @!@!@
 @!@!@STARTMSG 2212:0 @!@!@
 Implied-temporal checking--satisfiability problem has 1 branches.
@@ -40,149 +40,45 @@ Computed 2 initial states...
 Computed 4 initial states...
 @!@!@ENDMSG 2269 @!@!@
 @!@!@STARTMSG 2190:0 @!@!@
-Finished computing initial states: 8 distinct states generated at 2022-07-12 22:11:52.
+Finished computing initial states: 8 distinct states generated at 2022-07-13 15:20:51.
 @!@!@ENDMSG 2190 @!@!@
-@!@!@STARTMSG 2110:1 @!@!@
-Invariant IInv is violated.
-@!@!@ENDMSG 2110 @!@!@
-@!@!@STARTMSG 2121:1 @!@!@
-The behavior up to this point is:
-@!@!@ENDMSG 2121 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-1: <Initial predicate>
-/\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ inflight = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ token = [pos |-> 0, tainted |-> TRUE, value |-> 0]
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ p0 = TRUE
-/\ p1 = FALSE
-/\ p2 = FALSE
-/\ p3 = FALSE
-/\ p4 = TRUE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-2: <SendMsg line 107, col 5 to line 113, col 28 of module EWD998>
-/\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ network = (0 :> 1 @@ 1 :> 0 @@ 2 :> 0)
-/\ inflight = (0 :> 0 @@ 1 :> 0 @@ 2 :> 1)
-/\ token = [pos |-> 0, tainted |-> TRUE, value |-> 0]
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ p0 = TRUE
-/\ p1 = FALSE
-/\ p2 = FALSE
-/\ p3 = FALSE
-/\ p4 = TRUE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-3: <RecvMsg line 99, col 5 to line 103, col 47 of module EWD998>
-/\ active = (0 :> TRUE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ inflight = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)
-/\ token = [pos |-> 0, tainted |-> TRUE, value |-> 0]
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ p0 = TRUE
-/\ p1 = FALSE
-/\ p2 = FALSE
-/\ p3 = FALSE
-/\ p4 = TRUE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-4: <Terminate line 117, col 5 to line 118, col 66 of module EWD998>
-/\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ inflight = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)
-/\ token = [pos |-> 0, tainted |-> TRUE, value |-> 0]
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ p0 = TRUE
-/\ p1 = FALSE
-/\ p2 = FALSE
-/\ p3 = FALSE
-/\ p4 = TRUE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-5: <InitiateToken line 67, col 5 to line 75, col 48 of module EWD998>
-/\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ inflight = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)
-/\ token = [pos |-> 2, tainted |-> FALSE, value |-> -1]
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ p0 = TRUE
-/\ p1 = FALSE
-/\ p2 = FALSE
-/\ p3 = TRUE
-/\ p4 = FALSE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-6: <Terminate line 117, col 5 to line 118, col 66 of module EWD998>
-/\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ inflight = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)
-/\ token = [pos |-> 2, tainted |-> FALSE, value |-> -1]
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ p0 = TRUE
-/\ p1 = FALSE
-/\ p2 = FALSE
-/\ p3 = TRUE
-/\ p4 = FALSE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-7: <PassToken line 78, col 5 to line 87, col 49 of module EWD998>
-/\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ inflight = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)
-/\ token = [pos |-> 1, tainted |-> TRUE, value |-> 0]
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ p0 = TRUE
-/\ p1 = FALSE
-/\ p2 = FALSE
-/\ p3 = FALSE
-/\ p4 = TRUE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-8: <PassToken line 78, col 5 to line 87, col 49 of module EWD998>
-/\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ inflight = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)
-/\ token = [pos |-> 0, tainted |-> TRUE, value |-> 0]
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ p0 = TRUE
-/\ p1 = FALSE
-/\ p2 = FALSE
-/\ p3 = FALSE
-/\ p4 = TRUE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-9: <InitiateToken line 67, col 5 to line 75, col 48 of module EWD998>
-/\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ inflight = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)
-/\ token = [pos |-> 2, tainted |-> FALSE, value |-> -1]
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ p0 = TRUE
-/\ p1 = FALSE
-/\ p2 = FALSE
-/\ p3 = FALSE
-/\ p4 = FALSE
-
-@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 13857 total distinct states at (2022-07-13 15:20:54)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 00s at 2022-07-13 15:20:54
+@!@!@ENDMSG 2267 @!@!@
 @!@!@STARTMSG 2200:0 @!@!@
-Progress(9) at 2022-07-12 22:11:53: 103,207 states generated (2,937,580 s/min), 8,905 distinct states found (253,462 ds/min), 3,541 states left on queue.
+Progress(10) at 2022-07-13 15:20:54: 272,520 states generated (272,520 s/min), 22,315 distinct states found (22,315 ds/min), 8,458 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(27) at 2022-07-13 15:21:18: 3,257,010 states generated, 165,457 distinct states found, 0 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the complete state space with 165457 total distinct states at (2022-07-13 15:21:18)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 01s at 2022-07-13 15:21:19
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2193:0 @!@!@
+Model checking completed. No error has been found.
+  Estimates of the probability that TLC did not check all reachable states
+  because two distinct states had the same fingerprint:
+  calculated (optimistic):  val = 2.8E-8
+  based on the actual fingerprints:  val = 1.7E-11
+@!@!@ENDMSG 2193 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(27) at 2022-07-13 15:21:20: 3,257,010 states generated (6,799,130 s/min), 165,457 distinct states found (345,397 ds/min), 0 states left on queue.
 @!@!@ENDMSG 2200 @!@!@
 @!@!@STARTMSG 2199:0 @!@!@
-103207 states generated, 8905 distinct states found, 3541 states left on queue.
+3257010 states generated, 165457 distinct states found, 0 states left on queue.
 @!@!@ENDMSG 2199 @!@!@
 @!@!@STARTMSG 2194:0 @!@!@
-The depth of the complete state graph search is 9.
+The depth of the complete state graph search is 27.
 @!@!@ENDMSG 2194 @!@!@
+@!@!@STARTMSG 2268:0 @!@!@
+The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 11 and the 95th percentile is 3).
+@!@!@ENDMSG 2268 @!@!@
 @!@!@STARTMSG 2186:0 @!@!@
-Finished in 2112ms at (2022-07-12 22:11:53)
+Finished in 28748ms at (2022-07-13 15:21:20)
 @!@!@ENDMSG 2186 @!@!@
