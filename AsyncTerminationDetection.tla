@@ -79,11 +79,17 @@ SendMsg(snd, rcv) ==
 
 Terminate(n) ==
     /\ active' = [ active EXCEPT ![n] = FALSE ]
-    /\ UNCHANGED <<pending>>
-    /\ terminationDetected' \in {terminated', terminationDetected}
+    /\ UNCHANGED <<pending, terminationDetected>>
+
+DetectTermination ==
+    /\ ~terminationDetected
+    /\ terminated
+    /\ terminationDetected' = TRUE
+    /\ UNCHANGED  <<pending, active>>
 
 Next ==
-    \E i,j \in Node:
+    \/ DetectTermination
+    \/ \E i,j \in Node:
       \/ SendMsg(i,j)
       \/ RecvMsg(i)
       \/ Terminate(i)
@@ -94,8 +100,8 @@ Spec ==
     \* TODO is it okay to remove the `WF_vars(Next)` here?
     \*      It seems necessary to match the fairness provided by EWD998 which does
     \*      not require us to Send/Rcv messages, only pass/initiate tokens.
-    \* Init /\ [][Next]_vars /\ WF_vars(Next)
-    Init /\ [][Next]_vars /\ \E i \in Node: WF_vars(Terminate(i))
+    Init /\ [][Next]_vars /\ WF_vars(DetectTermination)
+    \* Init /\ [][Next]_vars /\ \A i \in Node: WF_vars(Terminate(i))
 
 TypeOK ==
     \* /\ \A i \in Node: pending[i] \in Nat

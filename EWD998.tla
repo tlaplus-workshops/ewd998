@@ -46,17 +46,18 @@ N0 == 0
 VARIABLES 
   active,               \* activation status of nodes
   network,
+  terminationDetected,
   inflight,
   token,
   nodeTainted \* per-node boolean to track if a node has become tainted
   
 
 \* * A definition that lets us refer to the spec's variables (more on it later).
-vars == << active, network, inflight, token, nodeTainted >>
+vars == << active, network, inflight, token, nodeTainted, terminationDetected >>
 
 -----------------------------------------------------------------------------
 
-terminationDetected ==
+terminationDetectedOp ==
     /\ token.pos = N0
     /\ token.tainted = FALSE
     /\ token.value + inflight[N0] = 0
@@ -69,13 +70,13 @@ InitiateToken(n) ==
     /\ n = N0
     /\ token.pos = N0
     /\ ~active[N0]
-    /\ ~terminationDetected
+    /\ ~terminationDetectedOp
    \* Rule 1
     /\ token' = [ token EXCEPT !["tainted"] = FALSE, \* Rule 6
                                !["value"] = 0,
                                !["pos"] = N - 1]  
     /\ nodeTainted' = [ nodeTainted EXCEPT ![N0] = FALSE ] \* Rule 6
-    /\ UNCHANGED << active, network, inflight >>
+    /\ UNCHANGED << active, network, inflight, terminationDetected >>
 
 PassToken(n) ==
     /\ ~active[n]
@@ -88,7 +89,7 @@ PassToken(n) ==
                                !["pos"] = @ - 1] 
    \* Rule 7                           
     /\ nodeTainted' = [ nodeTainted EXCEPT ![n] = FALSE ]
-    /\ UNCHANGED << active, network, inflight  >>
+    /\ UNCHANGED << active, network, inflight, terminationDetected  >>
 
 -----------
 
@@ -99,6 +100,7 @@ Init ==
     \* Initialize the token into a state as if it had just been initiated by n0
     /\ token = [ tainted |-> FALSE, pos |-> N - 1, value |-> 0 ]
     /\ nodeTainted = [ n \in Node |-> FALSE ]
+    /\ terminationDetected = FALSE
 
 RecvMsg(rcv) ==
     /\ network[rcv] > 0
@@ -107,21 +109,29 @@ RecvMsg(rcv) ==
     /\ inflight' = [ inflight EXCEPT ![rcv] = @ - 1 ]
     \* Rule 3
     /\ nodeTainted' = [ nodeTainted EXCEPT ![rcv] = TRUE ]
-    /\ UNCHANGED << token >>
+    /\ UNCHANGED << token, terminationDetected >>
 
 
 SendMsg(snd, rcv) ==
     /\ active[snd] = TRUE
     /\ network' = [ network EXCEPT ![rcv] = @ + 1]
     /\ inflight' = [ inflight EXCEPT ![snd] = @ + 1 ]
-    /\ UNCHANGED << active, token, nodeTainted >>
+    /\ UNCHANGED << active, token, nodeTainted, terminationDetected >>
 
 Terminate(n) ==
     /\ active' = [ active EXCEPT ![n] = FALSE ]
-    /\ UNCHANGED << network, inflight, token, nodeTainted >>
+    /\ UNCHANGED << network, inflight, token, nodeTainted, terminationDetected >>
+
+DetectTermination ==
+    /\ ~terminationDetected
+    /\ terminationDetectedOp
+    /\ terminationDetected' = TRUE
+    /\ UNCHANGED <<network, inflight, token, nodeTainted, active>>
 
 Next ==
-    \E i,j \in Node:
+    \/ DetectTermination
+    \/
+      \E i,j \in Node:
         \/ SendMsg(i,j)
         \/ RecvMsg(i)
         \/ Terminate(i)
@@ -134,7 +144,9 @@ Next ==
 Spec ==
     /\ Init
     /\ [][Next]_vars
-    /\ (\A i \in Node: WF_vars(PassToken(i) \/ InitiateToken(i) \/ Terminate(i))) 
+    /\ WF_vars(DetectTermination)
+    /\ (\A i \in Node: WF_vars(PassToken(i) \/ InitiateToken(i))) 
+    \* /\ (\A i \in Node: WF_vars(PassToken(i) \/ InitiateToken(i) \/ Terminate(i))) 
 
 
 ATD == INSTANCE AsyncTerminationDetection WITH pending <- network 
@@ -168,6 +180,7 @@ MCInit ==
     \* Initialize the token into a state as if it had just been initiated by n0
     /\ token = [ tainted |-> FALSE, pos |-> N - 1, value |-> 0 ]
     /\ nodeTainted = [ n \in Node |-> FALSE ]
+    /\ terminationDetected = FALSE
 
 --------
 
@@ -210,6 +223,7 @@ Alias == [
   p2  |-> IInv!P2,
   p3  |-> IInv!P3,
   p4  |-> IInv!P4,
-  term |-> terminationDetected
+  termination |-> terminationDetectedOp,
+  terminationDetected |-> terminationDetected
 ]
 =============================================================================
