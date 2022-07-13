@@ -2,18 +2,18 @@
 TLC2 Version 2.18 of Day Month 20?? (rev: 6ee6e9f)
 @!@!@ENDMSG 2262 @!@!@
 @!@!@STARTMSG 2187:0 @!@!@
-Running breadth-first search Model-Checking with fp 46 and seed 7528897163723597087 with 1 worker on 8 cores with 3559MB heap and 64MB offheap memory [pid: 9164] (Linux 5.4.0-1074-azure amd64, Oracle Corporation 17.0.2 x86_64, MSBDiskFPSet, DiskStateQueue).
+Running breadth-first search Model-Checking with fp 57 and seed 3965354632801637035 with 1 worker on 16 cores with 7282MB heap and 64MB offheap memory [pid: 78154] (Mac OS X 12.4 x86_64, Microsoft 11.0.13 x86_64, MSBDiskFPSet, DiskStateQueue).
 @!@!@ENDMSG 2187 @!@!@
 @!@!@STARTMSG 2220:0 @!@!@
 Starting SANY...
 @!@!@ENDMSG 2220 @!@!@
-Parsing file /workspaces/ewd998/EWD998.tla
-Parsing file /tmp/tlc-8984331708763874482/Integers.tla (jar:file:/home/codespace/.vscode-remote/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/Integers.tla)
-Parsing file /tmp/tlc-8984331708763874482/TLC.tla (jar:file:/home/codespace/.vscode-remote/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/TLC.tla)
-Parsing file /tmp/tlc-8984331708763874482/Naturals.tla (jar:file:/home/codespace/.vscode-remote/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/Naturals.tla)
-Parsing file /workspaces/ewd998/AsyncTerminationDetection.tla
-Parsing file /tmp/tlc-8984331708763874482/Sequences.tla (jar:file:/home/codespace/.vscode-remote/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/Sequences.tla)
-Parsing file /tmp/tlc-8984331708763874482/FiniteSets.tla (jar:file:/home/codespace/.vscode-remote/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/FiniteSets.tla)
+Parsing file /Users/ekrogen/dev/tlaplus-workshop/EWD998.tla
+Parsing file /private/var/folders/n2/jm3shyv54sn4rf9mbr_6_k14000gvs/T/tlc-13028608698643914715/Integers.tla (jar:file:/Users/ekrogen/.vscode/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/Integers.tla)
+Parsing file /private/var/folders/n2/jm3shyv54sn4rf9mbr_6_k14000gvs/T/tlc-13028608698643914715/TLC.tla (jar:file:/Users/ekrogen/.vscode/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/TLC.tla)
+Parsing file /private/var/folders/n2/jm3shyv54sn4rf9mbr_6_k14000gvs/T/tlc-13028608698643914715/Naturals.tla (jar:file:/Users/ekrogen/.vscode/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/Naturals.tla)
+Parsing file /Users/ekrogen/dev/tlaplus-workshop/AsyncTerminationDetection.tla
+Parsing file /private/var/folders/n2/jm3shyv54sn4rf9mbr_6_k14000gvs/T/tlc-13028608698643914715/Sequences.tla (jar:file:/Users/ekrogen/.vscode/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/Sequences.tla)
+Parsing file /private/var/folders/n2/jm3shyv54sn4rf9mbr_6_k14000gvs/T/tlc-13028608698643914715/FiniteSets.tla (jar:file:/Users/ekrogen/.vscode/extensions/alygin.vscode-tlaplus-nightly-2022.5.2815/tools/tla2tools.jar!/tla2sany/StandardModules/FiniteSets.tla)
 Semantic processing of module Naturals
 Semantic processing of module Integers
 Semantic processing of module Sequences
@@ -25,7 +25,7 @@ Semantic processing of module EWD998
 SANY finished.
 @!@!@ENDMSG 2219 @!@!@
 @!@!@STARTMSG 2185:0 @!@!@
-Starting... (2022-07-12 22:11:51)
+Starting... (2022-07-12 18:06:50)
 @!@!@ENDMSG 2185 @!@!@
 @!@!@STARTMSG 2212:0 @!@!@
 Implied-temporal checking--satisfiability problem has 1 branches.
@@ -39,150 +39,559 @@ Computed 2 initial states...
 @!@!@STARTMSG 2269:0 @!@!@
 Computed 4 initial states...
 @!@!@ENDMSG 2269 @!@!@
+@!@!@STARTMSG 2269:0 @!@!@
+Computed 8 initial states...
+@!@!@ENDMSG 2269 @!@!@
 @!@!@STARTMSG 2190:0 @!@!@
-Finished computing initial states: 8 distinct states generated at 2022-07-12 22:11:52.
+Finished computing initial states: 16 distinct states generated at 2022-07-12 18:06:50.
 @!@!@ENDMSG 2190 @!@!@
-@!@!@STARTMSG 2110:1 @!@!@
-Invariant IInv is violated.
-@!@!@ENDMSG 2110 @!@!@
-@!@!@STARTMSG 2121:1 @!@!@
-The behavior up to this point is:
-@!@!@ENDMSG 2121 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-1: <Initial predicate>
-/\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ inflight = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ token = [pos |-> 0, tainted |-> TRUE, value |-> 0]
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ p0 = TRUE
-/\ p1 = FALSE
-/\ p2 = FALSE
-/\ p3 = FALSE
-/\ p4 = TRUE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-2: <SendMsg line 107, col 5 to line 113, col 28 of module EWD998>
-/\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ network = (0 :> 1 @@ 1 :> 0 @@ 2 :> 0)
-/\ inflight = (0 :> 0 @@ 1 :> 0 @@ 2 :> 1)
-/\ token = [pos |-> 0, tainted |-> TRUE, value |-> 0]
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ p0 = TRUE
-/\ p1 = FALSE
-/\ p2 = FALSE
-/\ p3 = FALSE
-/\ p4 = TRUE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-3: <RecvMsg line 99, col 5 to line 103, col 47 of module EWD998>
-/\ active = (0 :> TRUE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ inflight = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)
-/\ token = [pos |-> 0, tainted |-> TRUE, value |-> 0]
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ p0 = TRUE
-/\ p1 = FALSE
-/\ p2 = FALSE
-/\ p3 = FALSE
-/\ p4 = TRUE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-4: <Terminate line 117, col 5 to line 118, col 66 of module EWD998>
-/\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ inflight = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)
-/\ token = [pos |-> 0, tainted |-> TRUE, value |-> 0]
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ p0 = TRUE
-/\ p1 = FALSE
-/\ p2 = FALSE
-/\ p3 = FALSE
-/\ p4 = TRUE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-5: <InitiateToken line 67, col 5 to line 75, col 48 of module EWD998>
-/\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ inflight = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)
-/\ token = [pos |-> 2, tainted |-> FALSE, value |-> -1]
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ p0 = TRUE
-/\ p1 = FALSE
-/\ p2 = FALSE
-/\ p3 = TRUE
-/\ p4 = FALSE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-6: <Terminate line 117, col 5 to line 118, col 66 of module EWD998>
-/\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ inflight = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)
-/\ token = [pos |-> 2, tainted |-> FALSE, value |-> -1]
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE)
-/\ p0 = TRUE
-/\ p1 = FALSE
-/\ p2 = FALSE
-/\ p3 = TRUE
-/\ p4 = FALSE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-7: <PassToken line 78, col 5 to line 87, col 49 of module EWD998>
-/\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ inflight = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)
-/\ token = [pos |-> 1, tainted |-> TRUE, value |-> 0]
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ p0 = TRUE
-/\ p1 = FALSE
-/\ p2 = FALSE
-/\ p3 = FALSE
-/\ p4 = TRUE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-8: <PassToken line 78, col 5 to line 87, col 49 of module EWD998>
-/\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ inflight = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)
-/\ token = [pos |-> 0, tainted |-> TRUE, value |-> 0]
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ p0 = TRUE
-/\ p1 = FALSE
-/\ p2 = FALSE
-/\ p3 = FALSE
-/\ p4 = TRUE
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-9: <InitiateToken line 67, col 5 to line 75, col 48 of module EWD998>
-/\ active = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ network = (0 :> 0 @@ 1 :> 0 @@ 2 :> 0)
-/\ inflight = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)
-/\ token = [pos |-> 2, tainted |-> FALSE, value |-> -1]
-/\ msgSentNotTainted = (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE)
-/\ p0 = TRUE
-/\ p1 = FALSE
-/\ p2 = FALSE
-/\ p3 = FALSE
-/\ p4 = FALSE
-
-@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 2834 total distinct states at (2022-07-12 18:06:53)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 00s at 2022-07-12 18:06:53
+@!@!@ENDMSG 2267 @!@!@
 @!@!@STARTMSG 2200:0 @!@!@
-Progress(9) at 2022-07-12 22:11:53: 103,207 states generated (2,937,580 s/min), 8,905 distinct states found (253,462 ds/min), 3,541 states left on queue.
+Progress(5) at 2022-07-12 18:06:53: 90,980 states generated (90,980 s/min), 9,131 distinct states found (9,131 ds/min), 6,296 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 96397 total distinct states at (2022-07-12 18:07:53)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 01s at 2022-07-12 18:07:55
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(9) at 2022-07-12 18:07:55: 3,289,870 states generated (3,198,890 s/min), 188,656 distinct states found (179,525 ds/min), 92,259 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 191499 total distinct states at (2022-07-12 18:08:55)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 02s at 2022-07-12 18:08:58
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(10) at 2022-07-12 18:08:58: 6,557,037 states generated (3,267,167 s/min), 345,207 distinct states found (156,551 ds/min), 153,707 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 288690 total distinct states at (2022-07-12 18:09:58)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 04s at 2022-07-12 18:10:02
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(11) at 2022-07-12 18:10:02: 9,914,417 states generated (3,357,380 s/min), 497,396 distinct states found (152,189 ds/min), 208,705 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 387203 total distinct states at (2022-07-12 18:11:02)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 06s at 2022-07-12 18:11:08
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(11) at 2022-07-12 18:11:08: 13,311,693 states generated (3,397,276 s/min), 644,445 distinct states found (147,049 ds/min), 257,241 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 485667 total distinct states at (2022-07-12 18:12:08)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 07s at 2022-07-12 18:12:16
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(12) at 2022-07-12 18:12:16: 16,688,225 states generated (3,376,532 s/min), 789,593 distinct states found (145,148 ds/min), 303,925 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 587148 total distinct states at (2022-07-12 18:13:16)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 09s at 2022-07-12 18:13:26
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(12) at 2022-07-12 18:13:26: 20,148,733 states generated (3,460,508 s/min), 938,838 distinct states found (149,245 ds/min), 351,689 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 682257 total distinct states at (2022-07-12 18:14:26)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 11s at 2022-07-12 18:14:37
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(12) at 2022-07-12 18:14:37: 23,474,134 states generated (3,325,401 s/min), 1,071,337 distinct states found (132,499 ds/min), 389,079 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 784090 total distinct states at (2022-07-12 18:15:37)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 13s at 2022-07-12 18:15:51
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(13) at 2022-07-12 18:15:51: 26,932,765 states generated (3,458,631 s/min), 1,217,307 distinct states found (145,970 ds/min), 433,216 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 880483 total distinct states at (2022-07-12 18:16:51)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 15s at 2022-07-12 18:17:06
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(13) at 2022-07-12 18:17:06: 30,211,485 states generated (3,278,720 s/min), 1,348,614 distinct states found (131,307 ds/min), 468,130 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 981851 total distinct states at (2022-07-12 18:18:06)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 16s at 2022-07-12 18:18:22
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(13) at 2022-07-12 18:18:22: 33,671,297 states generated (3,459,812 s/min), 1,491,317 distinct states found (142,703 ds/min), 509,465 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(13) at 2022-07-12 18:19:22: 37,040,704 states generated (3,369,407 s/min), 1,616,699 distinct states found (125,382 ds/min), 539,731 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 1180522 total distinct states at (2022-07-12 18:20:22)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 19s at 2022-07-12 18:20:42
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(14) at 2022-07-12 18:20:42: 40,547,368 states generated (3,506,664 s/min), 1,761,290 distinct states found (144,591 ds/min), 580,767 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(14) at 2022-07-12 18:21:42: 44,089,528 states generated (3,542,160 s/min), 1,904,276 distinct states found (142,986 ds/min), 618,071 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 1386495 total distinct states at (2022-07-12 18:22:42)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 23s at 2022-07-12 18:23:06
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(14) at 2022-07-12 18:23:06: 47,545,033 states generated (3,455,505 s/min), 2,032,274 distinct states found (127,998 ds/min), 645,778 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(14) at 2022-07-12 18:24:06: 51,006,898 states generated (3,461,865 s/min), 2,167,244 distinct states found (134,970 ds/min), 679,070 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 1584364 total distinct states at (2022-07-12 18:25:06)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 27s at 2022-07-12 18:25:33
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(14) at 2022-07-12 18:25:33: 54,390,249 states generated (3,383,351 s/min), 2,286,019 distinct states found (118,775 ds/min), 701,654 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(15) at 2022-07-12 18:26:33: 57,851,328 states generated (3,461,079 s/min), 2,409,271 distinct states found (123,252 ds/min), 726,042 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 1790988 total distinct states at (2022-07-12 18:27:33)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 28s at 2022-07-12 18:28:01
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(15) at 2022-07-12 18:28:01: 61,420,437 states generated (3,569,109 s/min), 2,551,394 distinct states found (142,123 ds/min), 760,405 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(15) at 2022-07-12 18:29:01: 64,970,434 states generated (3,549,997 s/min), 2,686,187 distinct states found (134,793 ds/min), 790,166 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 1998672 total distinct states at (2022-07-12 18:30:01)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 34s at 2022-07-12 18:30:35
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(15) at 2022-07-12 18:30:35: 68,493,609 states generated (3,523,175 s/min), 2,803,950 distinct states found (117,763 ds/min), 805,277 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(15) at 2022-07-12 18:31:35: 72,006,912 states generated (3,513,303 s/min), 2,938,862 distinct states found (134,912 ds/min), 837,926 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(15) at 2022-07-12 18:32:35: 75,357,722 states generated (3,350,810 s/min), 3,053,615 distinct states found (114,753 ds/min), 855,341 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 2297810 total distinct states at (2022-07-12 18:33:35)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 37s at 2022-07-12 18:34:13
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(15) at 2022-07-12 18:34:13: 78,865,399 states generated (3,507,677 s/min), 3,160,888 distinct states found (107,273 ds/min), 863,077 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(16) at 2022-07-12 18:35:13: 82,426,345 states generated (3,560,946 s/min), 3,284,034 distinct states found (123,146 ds/min), 883,340 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(16) at 2022-07-12 18:36:13: 85,910,510 states generated (3,484,165 s/min), 3,416,589 distinct states found (132,555 ds/min), 911,022 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 2606545 total distinct states at (2022-07-12 18:37:13)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 47s at 2022-07-12 18:38:00
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2195:0 @!@!@
+Checkpointing of run states/22-07-12-18-06-49.957
+@!@!@ENDMSG 2195 @!@!@
+@!@!@STARTMSG 2196:0 @!@!@
+Checkpointing completed at (2022-07-12 18:38:00)
+@!@!@ENDMSG 2196 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(16) at 2022-07-12 18:38:00: 89,332,764 states generated (3,422,254 s/min), 3,539,058 distinct states found (122,469 ds/min), 932,505 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(16) at 2022-07-12 18:39:00: 92,806,428 states generated (3,473,664 s/min), 3,659,737 distinct states found (120,679 ds/min), 949,997 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(16) at 2022-07-12 18:40:00: 96,212,324 states generated (3,405,896 s/min), 3,762,910 distinct states found (103,173 ds/min), 953,981 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 2908751 total distinct states at (2022-07-12 18:41:00)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 50s at 2022-07-12 18:41:51
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(16) at 2022-07-12 18:41:51: 99,625,833 states generated (3,413,509 s/min), 3,883,070 distinct states found (120,160 ds/min), 974,318 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(16) at 2022-07-12 18:42:51: 103,067,380 states generated (3,441,547 s/min), 3,994,049 distinct states found (110,979 ds/min), 986,607 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(16) at 2022-07-12 18:43:51: 106,599,180 states generated (3,531,800 s/min), 4,095,119 distinct states found (101,070 ds/min), 986,608 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 3209671 total distinct states at (2022-07-12 18:44:51)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 53s at 2022-07-12 18:45:44
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(16) at 2022-07-12 18:45:44: 110,117,493 states generated (3,518,313 s/min), 4,188,535 distinct states found (93,416 ds/min), 978,863 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(17) at 2022-07-12 18:46:44: 113,565,234 states generated (3,447,741 s/min), 4,323,240 distinct states found (134,705 ds/min), 1,012,050 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(17) at 2022-07-12 18:47:44: 117,113,744 states generated (3,548,510 s/min), 4,442,130 distinct states found (118,890 ds/min), 1,024,599 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(17) at 2022-07-12 18:48:44: 120,759,895 states generated (3,646,151 s/min), 4,564,141 distinct states found (122,011 ds/min), 1,038,352 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 3629154 total distinct states at (2022-07-12 18:49:44)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 01min 00s at 2022-07-12 18:50:45
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(17) at 2022-07-12 18:50:45: 124,298,885 states generated (3,538,990 s/min), 4,673,747 distinct states found (109,606 ds/min), 1,044,592 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(17) at 2022-07-12 18:51:45: 127,969,488 states generated (3,670,603 s/min), 4,775,882 distinct states found (102,135 ds/min), 1,038,927 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(17) at 2022-07-12 18:52:45: 131,486,502 states generated (3,517,014 s/min), 4,890,193 distinct states found (114,311 ds/min), 1,051,237 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(17) at 2022-07-12 18:53:45: 135,077,612 states generated (3,591,110 s/min), 5,000,356 distinct states found (110,163 ds/min), 1,057,244 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 4047717 total distinct states at (2022-07-12 18:54:45)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 01min 07s at 2022-07-12 18:55:52
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(17) at 2022-07-12 18:55:52: 138,686,684 states generated (3,609,072 s/min), 5,097,852 distinct states found (97,496 ds/min), 1,050,134 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(17) at 2022-07-12 18:56:52: 142,345,422 states generated (3,658,738 s/min), 5,185,666 distinct states found (87,814 ds/min), 1,032,791 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(18) at 2022-07-12 18:57:52: 145,961,584 states generated (3,616,162 s/min), 5,303,398 distinct states found (117,732 ds/min), 1,047,725 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(18) at 2022-07-12 18:58:52: 149,531,628 states generated (3,570,044 s/min), 5,423,744 distinct states found (120,346 ds/min), 1,059,499 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 4474700 total distinct states at (2022-07-12 18:59:52)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 01min 15s at 2022-07-12 19:01:08
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(18) at 2022-07-12 19:01:08: 153,246,393 states generated (3,714,765 s/min), 5,532,791 distinct states found (109,047 ds/min), 1,058,090 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(18) at 2022-07-12 19:02:08: 156,946,714 states generated (3,700,321 s/min), 5,646,839 distinct states found (114,048 ds/min), 1,065,177 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(18) at 2022-07-12 19:03:08: 160,661,476 states generated (3,714,762 s/min), 5,748,079 distinct states found (101,240 ds/min), 1,055,956 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(18) at 2022-07-12 19:04:08: 164,320,016 states generated (3,658,540 s/min), 5,849,401 distinct states found (101,322 ds/min), 1,049,173 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(18) at 2022-07-12 19:05:08: 167,946,428 states generated (3,626,412 s/min), 5,953,493 distinct states found (104,092 ds/min), 1,048,493 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 5011793 total distinct states at (2022-07-12 19:06:08)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 01min 23s at 2022-07-12 19:07:31
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(18) at 2022-07-12 19:07:31: 171,643,409 states generated (3,696,981 s/min), 6,050,468 distinct states found (96,975 ds/min), 1,038,674 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2195:0 @!@!@
+Checkpointing of run states/22-07-12-18-06-49.957
+@!@!@ENDMSG 2195 @!@!@
+@!@!@STARTMSG 2196:0 @!@!@
+Checkpointing completed at (2022-07-12 19:08:31)
+@!@!@ENDMSG 2196 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(18) at 2022-07-12 19:08:31: 175,426,404 states generated (3,782,995 s/min), 6,144,857 distinct states found (94,389 ds/min), 1,023,304 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(19) at 2022-07-12 19:09:31: 179,099,549 states generated (3,673,145 s/min), 6,237,508 distinct states found (92,651 ds/min), 1,009,288 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(19) at 2022-07-12 19:10:31: 182,755,788 states generated (3,656,239 s/min), 6,350,397 distinct states found (112,889 ds/min), 1,017,534 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(19) at 2022-07-12 19:11:31: 186,370,475 states generated (3,614,687 s/min), 6,458,608 distinct states found (108,211 ds/min), 1,017,158 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 5553406 total distinct states at (2022-07-12 19:12:31)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 01min 31s at 2022-07-12 19:14:03
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(19) at 2022-07-12 19:14:03: 190,149,298 states generated (3,778,823 s/min), 6,559,979 distinct states found (101,371 ds/min), 1,006,572 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2195:0 @!@!@
+Checkpointing of run states/22-07-12-18-06-49.957
+@!@!@ENDMSG 2195 @!@!@
+@!@!@STARTMSG 2196:0 @!@!@
+Checkpointing completed at (2022-07-12 22:45:34)
+@!@!@ENDMSG 2196 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(19) at 2022-07-12 22:45:34: 192,631,120 states generated (2,481,822 s/min), 6,632,487 distinct states found (72,508 ds/min), 1,005,829 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2195:0 @!@!@
+Checkpointing of run states/22-07-12-18-06-49.957
+@!@!@ENDMSG 2195 @!@!@
+@!@!@STARTMSG 2196:0 @!@!@
+Checkpointing completed at (2022-07-12 23:48:29)
+@!@!@ENDMSG 2196 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(19) at 2022-07-12 23:48:29: 194,443,796 states generated (1,812,676 s/min), 6,672,694 distinct states found (40,207 ds/min), 993,583 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(19) at 2022-07-12 23:49:29: 195,517,310 states generated (1,073,514 s/min), 6,702,907 distinct states found (30,213 ds/min), 990,854 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2195:0 @!@!@
+Checkpointing of run states/22-07-12-18-06-49.957
+@!@!@ENDMSG 2195 @!@!@
+@!@!@STARTMSG 2196:0 @!@!@
+Checkpointing completed at (2022-07-13 00:50:01)
+@!@!@ENDMSG 2196 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(19) at 2022-07-13 00:50:01: 197,121,342 states generated (1,604,032 s/min), 6,743,757 distinct states found (40,850 ds/min), 984,468 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2195:0 @!@!@
+Checkpointing of run states/22-07-12-18-06-49.957
+@!@!@ENDMSG 2195 @!@!@
+@!@!@STARTMSG 2196:0 @!@!@
+Checkpointing completed at (2022-07-13 01:50:33)
+@!@!@ENDMSG 2196 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(19) at 2022-07-13 01:50:33: 198,826,731 states generated (1,705,389 s/min), 6,788,943 distinct states found (45,186 ds/min), 978,558 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2195:0 @!@!@
+Checkpointing of run states/22-07-12-18-06-49.957
+@!@!@ENDMSG 2195 @!@!@
+@!@!@STARTMSG 2196:0 @!@!@
+Checkpointing completed at (2022-07-13 02:51:04)
+@!@!@ENDMSG 2196 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(19) at 2022-07-13 02:51:04: 200,365,796 states generated (1,539,065 s/min), 6,834,853 distinct states found (45,910 ds/min), 979,370 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2195:0 @!@!@
+Checkpointing of run states/22-07-12-18-06-49.957
+@!@!@ENDMSG 2195 @!@!@
+@!@!@STARTMSG 2196:0 @!@!@
+Checkpointing completed at (2022-07-13 03:51:36)
+@!@!@ENDMSG 2196 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(19) at 2022-07-13 03:51:36: 201,743,740 states generated (1,377,944 s/min), 6,869,747 distinct states found (34,894 ds/min), 976,065 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2195:0 @!@!@
+Checkpointing of run states/22-07-12-18-06-49.957
+@!@!@ENDMSG 2195 @!@!@
+@!@!@STARTMSG 2196:0 @!@!@
+Checkpointing completed at (2022-07-13 04:52:34)
+@!@!@ENDMSG 2196 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(19) at 2022-07-13 04:52:34: 203,785,443 states generated (2,041,703 s/min), 6,920,093 distinct states found (50,346 ds/min), 966,350 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2195:0 @!@!@
+Checkpointing of run states/22-07-12-18-06-49.957
+@!@!@ENDMSG 2195 @!@!@
+@!@!@STARTMSG 2196:0 @!@!@
+Checkpointing completed at (2022-07-13 05:53:32)
+@!@!@ENDMSG 2196 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(19) at 2022-07-13 05:53:32: 205,598,088 states generated (1,812,645 s/min), 6,966,087 distinct states found (45,994 ds/min), 960,172 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(19) at 2022-07-13 06:09:28: 207,252,873 states generated (1,654,785 s/min), 7,004,616 distinct states found (38,529 ds/min), 949,877 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the current state space with 6111073 total distinct states at (2022-07-13 06:12:44)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 02h 20min at 2022-07-13 08:33:07
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(19) at 2022-07-13 08:33:07: 209,186,962 states generated (1,934,089 s/min), 7,052,935 distinct states found (48,319 ds/min), 941,861 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2195:0 @!@!@
+Checkpointing of run states/22-07-12-18-06-49.957
+@!@!@ENDMSG 2195 @!@!@
+@!@!@STARTMSG 2196:0 @!@!@
+Checkpointing completed at (2022-07-13 08:34:07)
+@!@!@ENDMSG 2196 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(20) at 2022-07-13 08:34:07: 213,910,512 states generated (4,723,550 s/min), 7,175,400 distinct states found (122,465 ds/min), 927,038 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(20) at 2022-07-13 08:35:07: 218,555,885 states generated (4,645,373 s/min), 7,296,759 distinct states found (121,359 ds/min), 914,251 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(20) at 2022-07-13 08:36:07: 223,213,065 states generated (4,657,180 s/min), 7,410,507 distinct states found (113,748 ds/min), 888,746 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(20) at 2022-07-13 08:37:07: 228,207,222 states generated (4,994,157 s/min), 7,542,402 distinct states found (131,895 ds/min), 873,709 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(20) at 2022-07-13 08:38:07: 233,111,864 states generated (4,904,642 s/min), 7,679,762 distinct states found (137,360 ds/min), 863,882 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(20) at 2022-07-13 08:39:07: 238,307,783 states generated (5,195,919 s/min), 7,802,894 distinct states found (123,132 ds/min), 836,746 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(20) at 2022-07-13 08:40:07: 243,095,682 states generated (4,787,899 s/min), 7,924,431 distinct states found (121,537 ds/min), 816,430 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(21) at 2022-07-13 08:41:07: 247,852,676 states generated (4,756,994 s/min), 8,035,675 distinct states found (111,244 ds/min), 793,564 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(21) at 2022-07-13 08:42:07: 252,952,948 states generated (5,100,272 s/min), 8,152,914 distinct states found (117,239 ds/min), 757,140 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(21) at 2022-07-13 08:43:07: 257,689,047 states generated (4,736,099 s/min), 8,275,478 distinct states found (122,564 ds/min), 739,375 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(21) at 2022-07-13 08:44:07: 262,502,548 states generated (4,813,501 s/min), 8,409,358 distinct states found (133,880 ds/min), 728,246 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(21) at 2022-07-13 08:45:07: 267,455,750 states generated (4,953,202 s/min), 8,525,785 distinct states found (116,427 ds/min), 699,959 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(22) at 2022-07-13 08:46:07: 272,422,833 states generated (4,967,083 s/min), 8,649,899 distinct states found (124,114 ds/min), 676,747 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(22) at 2022-07-13 08:47:07: 277,352,531 states generated (4,929,698 s/min), 8,753,623 distinct states found (103,724 ds/min), 636,717 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(22) at 2022-07-13 08:48:07: 282,470,796 states generated (5,118,265 s/min), 8,878,893 distinct states found (125,270 ds/min), 609,678 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(22) at 2022-07-13 08:49:07: 287,336,812 states generated (4,866,016 s/min), 9,007,833 distinct states found (128,940 ds/min), 592,112 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(22) at 2022-07-13 08:50:07: 292,303,956 states generated (4,967,144 s/min), 9,128,375 distinct states found (120,542 ds/min), 565,378 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(23) at 2022-07-13 08:51:07: 297,243,328 states generated (4,939,372 s/min), 9,235,471 distinct states found (107,096 ds/min), 528,303 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(23) at 2022-07-13 08:52:07: 302,338,880 states generated (5,095,552 s/min), 9,355,524 distinct states found (120,053 ds/min), 494,937 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(23) at 2022-07-13 08:53:07: 307,288,773 states generated (4,949,893 s/min), 9,475,405 distinct states found (119,881 ds/min), 466,327 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(23) at 2022-07-13 08:54:07: 312,162,317 states generated (4,873,544 s/min), 9,595,868 distinct states found (120,463 ds/min), 441,442 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(24) at 2022-07-13 08:55:07: 317,017,421 states generated (4,855,104 s/min), 9,694,170 distinct states found (98,302 ds/min), 394,681 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(24) at 2022-07-13 08:56:07: 321,991,267 states generated (4,973,846 s/min), 9,808,185 distinct states found (114,015 ds/min), 359,664 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(24) at 2022-07-13 08:57:07: 326,695,259 states generated (4,703,992 s/min), 9,920,565 distinct states found (112,380 ds/min), 331,548 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(25) at 2022-07-13 08:58:07: 331,743,168 states generated (5,047,909 s/min), 10,027,677 distinct states found (107,112 ds/min), 287,165 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(25) at 2022-07-13 08:59:07: 336,603,728 states generated (4,860,560 s/min), 10,131,901 distinct states found (104,224 ds/min), 245,706 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(26) at 2022-07-13 09:00:07: 341,377,473 states generated (4,773,745 s/min), 10,233,229 distinct states found (101,328 ds/min), 202,580 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(26) at 2022-07-13 09:01:07: 346,168,712 states generated (4,791,239 s/min), 10,338,601 distinct states found (105,372 ds/min), 163,790 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(27) at 2022-07-13 09:02:07: 351,116,470 states generated (4,947,758 s/min), 10,434,714 distinct states found (96,113 ds/min), 110,216 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(29) at 2022-07-13 09:03:07: 355,834,008 states generated (4,717,538 s/min), 10,532,678 distinct states found (97,964 ds/min), 65,050 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2195:0 @!@!@
+Checkpointing of run states/22-07-12-18-06-49.957
+@!@!@ENDMSG 2195 @!@!@
+@!@!@STARTMSG 2196:0 @!@!@
+Checkpointing completed at (2022-07-13 09:04:08)
+@!@!@ENDMSG 2196 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(32) at 2022-07-13 09:04:08: 360,659,672 states generated (4,825,664 s/min), 10,629,235 distinct states found (96,557 ds/min), 17,243 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(49) at 2022-07-13 09:04:25: 362,113,272 states generated, 10,656,918 distinct states found, 0 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the complete state space with 10656918 total distinct states at (2022-07-13 09:04:25)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 02min 36s at 2022-07-13 09:07:01
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2193:0 @!@!@
+Model checking completed. No error has been found.
+  Estimates of the probability that TLC did not check all reachable states
+  because two distinct states had the same fingerprint:
+  calculated (optimistic):  val = 2.0E-4
+  based on the actual fingerprints:  val = 6.6E-9
+@!@!@ENDMSG 2193 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(49) at 2022-07-13 09:07:02: 362,113,272 states generated (402,253 s/min), 10,656,918 distinct states found (11,838 ds/min), 0 states left on queue.
 @!@!@ENDMSG 2200 @!@!@
 @!@!@STARTMSG 2199:0 @!@!@
-103207 states generated, 8905 distinct states found, 3541 states left on queue.
+362113272 states generated, 10656918 distinct states found, 0 states left on queue.
 @!@!@ENDMSG 2199 @!@!@
 @!@!@STARTMSG 2194:0 @!@!@
-The depth of the complete state graph search is 9.
+The depth of the complete state graph search is 49.
 @!@!@ENDMSG 2194 @!@!@
+@!@!@STARTMSG 2268:0 @!@!@
+The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 18 and the 95th percentile is 3).
+@!@!@ENDMSG 2268 @!@!@
 @!@!@STARTMSG 2186:0 @!@!@
-Finished in 2112ms at (2022-07-12 22:11:53)
+Finished in 54013024ms at (2022-07-13 09:07:02)
 @!@!@ENDMSG 2186 @!@!@

@@ -35,10 +35,8 @@ ASSUME NIsPosNat == N \in Nat \ {0}
  \* * Note that the definition Node is a zero-arity (parameter-less) operator.
 Node == 0 .. N-1
 
-Max2(S) == CHOOSE n \in S: \A m \in S: n>=m  
-
-Initiator ==
-    CHOOSE n \in Node: TRUE
+\* Hard-coded to 0. This can't be changed; other parts will break.
+N0 == 0
 
 \* * Contrary to constants above, variables may change value in a behavior:
  \* * The value of active may be 23 in one state and "frob" in another.
@@ -50,40 +48,46 @@ VARIABLES
   network,
   inflight,
   token,
-  msgSentNotTainted \* per-node boolean to track if a node has sent a message but not yet marked the token as tainted
+  nodeTainted \* per-node boolean to track if a node has become tainted
   
 
 \* * A definition that lets us refer to the spec's variables (more on it later).
-vars == << active, network, inflight, token, msgSentNotTainted >>
-
-\* z ==
-\*     \A n \in Node: network[n] = 0 /\ ~active[n]
+vars == << active, network, inflight, token, nodeTainted >>
 
 -----------------------------------------------------------------------------
 
-\* Happens each time the token makes a full loop back to the initiator (Node 0)
+terminationDetected ==
+    /\ token.pos = N0
+    /\ token.tainted = FALSE
+    /\ token.value + inflight[N0] = 0
+    /\ ~active[N0]
+    /\ ~nodeTainted[N0]
+
+\* Happens each time the token makes a full loop back to the N0 (Node 0)
 \* Create a new, fresh token
 InitiateToken(n) ==
-    /\ n = Initiator
-    /\ token.pos = n
-    /\ active[n] = FALSE \* Is this needed?
-    /\ token' = [ tainted |-> msgSentNotTainted[n] \/ token.value # 0, value |-> inflight[n], pos |-> N-1]
-    /\ token' = [ token EXCEPT !["tainted"] = msgSentNotTainted[n] \/ token.value # 0 ,
-                               !["value"] = inflight[n],
-                               !["pos"] = N-1] 
-    /\ msgSentNotTainted' = [ msgSentNotTainted EXCEPT ![n] = FALSE ] \* reset the msg-sent status for the node passing the token
+    /\ n = N0
+    /\ token.pos = N0
+    /\ ~active[N0]
+    /\ ~terminationDetected
+   \* Rule 1
+    /\ token' = [ token EXCEPT !["tainted"] = FALSE, \* Rule 6
+                               !["value"] = 0,
+                               !["pos"] = N - 1]  
+    /\ nodeTainted' = [ nodeTainted EXCEPT ![N0] = FALSE ] \* Rule 6
     /\ UNCHANGED << active, network, inflight >>
 
 PassToken(n) ==
-    /\ active[n] = FALSE
+    /\ ~active[n]
     /\ token.pos = n
-    /\ token.pos # Initiator
-    \* /\ token.value' = token.value + inflight[n]
-    \* /\ token.pos' = (token.pos + 1) % N
-    
-    /\ token' = [ tainted |-> token.tainted \/ msgSentNotTainted[n], value |-> token.value + inflight[n], pos |-> (token.pos - 1)]
-    \* /\ token.tainted' = (token.tainted \/ msgSentNotTainted[n]) \* taint the token if this node sent a msg
-    /\ msgSentNotTainted' = [ msgSentNotTainted EXCEPT ![n] = FALSE ] \* reset the msg-sent status for the node passing the token
+    /\ token.pos # N0    
+                               \* Rule 4
+    /\ token' = [ token EXCEPT !["tainted"] = token.tainted \/ nodeTainted[n],
+                               \* Rule 2
+                               !["value"] = @ + inflight[n],
+                               !["pos"] = @ - 1] 
+   \* Rule 7                           
+    /\ nodeTainted' = [ nodeTainted EXCEPT ![n] = FALSE ]
     /\ UNCHANGED << active, network, inflight  >>
 
 -----------
@@ -92,30 +96,29 @@ Init ==
     /\ active \in [ Node -> BOOLEAN ]
     /\ network \in [ Node -> {0} ] 
     /\ inflight = [ n \in Node |-> 0 ] 
-    /\ token = [ tainted |-> TRUE, pos |-> 0, value |-> 0 ]
-    /\ msgSentNotTainted = [ n \in Node |-> FALSE ]
+    \* Initialize the token into a state as if it had just been initiated by n0
+    /\ token = [ tainted |-> FALSE, pos |-> N - 1, value |-> 0 ]
+    /\ nodeTainted = [ n \in Node |-> FALSE ]
 
 RecvMsg(rcv) ==
     /\ network[rcv] > 0
     /\ active' = [ active EXCEPT ![rcv] = TRUE ] 
     /\ network' = [ network EXCEPT ![rcv] = @ - 1 ]
     /\ inflight' = [ inflight EXCEPT ![rcv] = @ - 1 ]
-    /\ UNCHANGED << token, msgSentNotTainted >>
+    \* Rule 3
+    /\ nodeTainted' = [ nodeTainted EXCEPT ![rcv] = TRUE ]
+    /\ UNCHANGED << token >>
 
 
 SendMsg(snd, rcv) ==
-    /\ network' = [ network EXCEPT ![rcv] = @ + 1]
     /\ active[snd] = TRUE
-    \* /\ active' = [ active EXCEPT ![rcv] = FALSE ] 
+    /\ network' = [ network EXCEPT ![rcv] = @ + 1]
     /\ inflight' = [ inflight EXCEPT ![snd] = @ + 1 ]
-    /\ msgSentNotTainted' = [ msgSentNotTainted EXCEPT ![snd] = TRUE ]
-    /\ UNCHANGED active \* ??? Should a node deactivate after sending?
-    /\ UNCHANGED << token >>
+    /\ UNCHANGED << active, token, nodeTainted >>
 
 Terminate(n) ==
-    \* /\ active[n] = TRUE 
     /\ active' = [ active EXCEPT ![n] = FALSE ]
-    /\ UNCHANGED << network, inflight, token, msgSentNotTainted >>
+    /\ UNCHANGED << network, inflight, token, nodeTainted >>
 
 Next ==
     \E i,j \in Node:
@@ -125,40 +128,14 @@ Next ==
         \/ InitiateToken(i)
         \/ PassToken(i)
 
-Invariant ==
-    \A n \in Node: network[n] = 0
 
-Property2 ==
-    [Next]_vars
-
-    \*  ( [A]_v )  <=>  (A \/ UNCHANGED v)
 -------------------
-
-terminationDetected ==
-    /\ token.pos = 0
-    /\ token.tainted = FALSE
-    /\ token.value = 0
-    /\ ~active[0]
-    /\ ~msgSentNotTainted[0]
 
 Spec ==
     /\ Init
     /\ [][Next]_vars
-    \* /\ <>terminationDetected
-    \* /\ WF_vars(Next)
-    /\ \A i \in Node: WF_vars(PassToken(i) \/ InitiateToken(i))
-    
+    /\ (\A i \in Node: WF_vars(PassToken(i) \/ InitiateToken(i) \/ Terminate(i))) 
 
-\*   [A]_v   <=>   A \/ UNCHANGED v
-\*  <<A>>_v  <=>   A /\ v # v'
-
-\*  ENABLED <<A>>_v
-
-\* <>[]P
-\* []<>P
-
-\* WF_v(A)  <=>   <>[] ENABLED <<A>>_v  =>  []<> <<A>>_v
-\* SF_v(A)  <=>   []<> ENABLED <<A>>_v  =>  []<> <<A>>_v
 
 ATD == INSTANCE AsyncTerminationDetection WITH pending <- network 
 
@@ -171,12 +148,7 @@ TypeOK ==
     /\ network \in [ Node -> Nat]
     /\ active \in [ Node -> BOOLEAN ]
     /\ inflight \in [ Node -> Int]
-    /\ msgSentNotTainted \in [ Node -> BOOLEAN ]
-    \* /\ token \in [pos: Node, tainted: BOOLEAN, value: Int]
-    \* /\ DOMAIN token = {"pos", "tainted", "value"}
-    \* /\ token.pos \in Node
-    \* /\ token.tainted \in BOOLEAN
-    \* /\ token.value \in Int
+    /\ nodeTainted \in [ Node -> BOOLEAN ]
     /\ token \in [ pos: Node, value: Int, tainted: BOOLEAN ]
 
 
@@ -184,9 +156,7 @@ THEOREM Spec => []TypeOK
 
 ---------------------------------
 
-Fooo ==
-    TLCGet("level") < 10
-
+\* Bound pending messages to constrain the state
 Constraint ==
     \A i \in Node: network[i] < 3 /\ inflight[i] \in (-2..2)
 
@@ -195,17 +165,11 @@ MCInit ==
     /\ active \in [ Node -> BOOLEAN ]
     /\ network \in [ Node -> {0} ] 
     /\ inflight = [ n \in Node |-> 0 ] 
-    /\ token = [ tainted |-> TRUE, pos |-> 0, value |-> 0 ]
-    /\ msgSentNotTainted = [ n \in Node |-> FALSE ]
+    \* Initialize the token into a state as if it had just been initiated by n0
+    /\ token = [ tainted |-> FALSE, pos |-> N - 1, value |-> 0 ]
+    /\ nodeTainted = [ n \in Node |-> FALSE ]
 
 --------
-
-Sum2(fun, from, to) ==
-    \*TODO
-    LET sum[ i \in from..to ] == 
-            IF i = from THEN fun[i]
-            ELSE fun[i] + sum[i-1]
-    IN IF from > to THEN 0 ELSE sum[to]
 
 RECURSIVE Sum(_,_,_)
 Sum(fun, from, to) ==
@@ -230,8 +194,8 @@ IInv ==
     /\ P0:: B = Sum(inflight, 0, N-1)
     /\ \/ P1:: /\ \A i \in token.pos+1..N-1: active[i] = FALSE
                /\ Sum(inflight, token.pos+1, N-1) = token.value
-       \/ P2:: Sum(inflight, 0, token.pos) + token.value > 0 \* P2
-       \/ P3:: \E i \in 0..token.pos: msgSentNotTainted[i] \* P3
+       \/ P2:: Sum(inflight, 0, token.pos) + token.value > 0
+       \/ P3:: \E i \in 0..token.pos: nodeTainted[i]
        \/ P4:: token.tainted = TRUE
 
 
@@ -240,11 +204,12 @@ Alias == [
   network |-> network,
   inflight |-> inflight,
   token  |->  token,
-  msgSentNotTainted |-> msgSentNotTainted,
+  nodeTainted |-> nodeTainted,
   p0  |-> IInv!P0,
   p1  |-> IInv!P1,
   p2  |-> IInv!P2,
   p3  |-> IInv!P3,
-  p4  |-> IInv!P4
+  p4  |-> IInv!P4,
+  term |-> terminationDetected
 ]
 =============================================================================
