@@ -1,17 +1,12 @@
-safdhsahu
 
-
----------------------- MODULE AsyncTerminationDetection ---------------------
+---------------------- MODULE EWD998 ---------------------
 \* * TLA+ is an expressive language and we usually define operators on-the-fly.
  \* * That said, the TLA+ reference guide "Specifying Systems" (download from:
  \* * https://lamport.azurewebsites.net/tla/book.html) defines a handful of
  \* * standard modules.  Additionally, a community-driven repository has been
  \* * collecting more modules (http://modules.tlapl.us). In our spec, we are
  \* * going to need operators for natural numbers.
-EXTENDS Naturals, TLC
-
-Foo ==
-    TLCGet("level") < 10
+EXTENDS Naturals
 
 \* * A constant is a parameter of a specification. In other words, it is a
  \* * "variable" that cannot change throughout a behavior, i.e., a sequence
@@ -30,10 +25,15 @@ CONSTANT N
  \* * upon startup.
 ASSUME NIsPosNat == N \in Nat \ {0}
 
+black == "black"
+white == "white"
+
+Color == {white, black}
+
 Node == 0 .. N-1
 
-VARIABLE active, network, terminationDetected
-vars == <<active, network, terminationDetected>>
+VARIABLE active, color, counter, network, tokenPos, tokenColor, tokenCounter
+vars == <<active, color, counter, network, tokenPos, tokenColor, tokenCounter>>
 
 terminated ==
     \A n \in Node: ~active[n] /\ network[n] = 0
@@ -41,30 +41,28 @@ terminated ==
 TypeOK ==
     /\ active \in [ Node -> BOOLEAN ]
     /\ network \in [ Node -> Nat ]
-    /\ terminationDetected \in BOOLEAN 
 
 Init ==
     /\ active \in [ Node -> BOOLEAN ]
     /\ network \in [ Node -> 0..3 ]
-    /\ terminationDetected \in {FALSE, terminated}
 
 \* wakeup
 RecvMsg(rcv) ==
     /\ network[rcv] > 0
     /\ network' = [ m \in Node |-> IF rcv = m THEN network[m] - 1 ELSE network[m] ]
     /\ active' = [ m \in Node |-> IF rcv = m THEN TRUE ELSE active[m] ]
-    /\ UNCHANGED terminationDetected
 
 Terminate(n) ==
     /\ active' = [ m \in Node |-> IF n = m THEN FALSE ELSE active[m] ]
     /\ UNCHANGED network
-    /\ \/ terminationDetected' = terminated'
-       \/ UNCHANGED terminationDetected
 
 SendMsg(snd, rcv) ==
     /\ active[snd] = TRUE
     /\ network' = [ network EXCEPT ![rcv] = @ + 1 ]
-    /\ UNCHANGED <<active, terminationDetected>>
+    /\ UNCHANGED <<active>>
+
+PassToken ==
+    TRUE
 
 Next ==
     \E n,m \in Node:
@@ -77,17 +75,17 @@ Spec ==
 
 THEOREM Spec => []TypeOK
 
-Safe ==
-    \* /\ IF terminationDetected THEN terminated ELSE TRUE
-    (terminationDetected => terminated)
+\* Safe ==
+\*     \* /\ IF terminationDetected THEN terminated ELSE TRUE
+\*     (terminationDetected => terminated)
 
-THEOREM Spec => Safe
+\* THEOREM Spec => Safe
 
-Live ==
-    \* [](terminated => <>terminationDetected)
-    terminated ~> terminationDetected
+\* Live ==
+\*     \* [](terminated => <>terminationDetected)
+\*     terminated ~> terminationDetected
 
-THEOREM Spec => Live
+\* THEOREM Spec => Live
 
 ---------
 
@@ -95,5 +93,3 @@ Constraint ==
     \A n \in Node: network[n] < 3
 
 =============================================================================
-\* Modification History
-\* Created Sun Jan 10 15:19:20 CET 2021 by Stephan Merz @muenchnerkindl
