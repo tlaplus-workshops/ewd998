@@ -1,11 +1,11 @@
----------------------- MODULE AsyncTerminationDetection ---------------------
+---------------------- MODULE EWD998 ---------------------
 \* * TLA+ is an expressive language and we usually define operators on-the-fly.
  \* * That said, the TLA+ reference guide "Specifying Systems" (download from:
  \* * https://lamport.azurewebsites.net/tla/book.html) defines a handful of
  \* * standard modules.  Additionally, a community-driven repository has been
  \* * collecting more modules (http://modules.tlapl.us). In our spec, we are
  \* * going to need operators for natural numbers.
-EXTENDS Naturals
+EXTENDS Integers
 
 \* * A constant is a parameter of a specification. In other words, it is a
  \* * "variable" that cannot change throughout a behavior, i.e., a sequence
@@ -28,69 +28,114 @@ ASSUME NIsPosNat == N \in Nat \ {0}
 
 Node == 0 .. N-1
 
-VARIABLE active, network, terminationDetected
+VARIABLE
+         active,
+         color,
+         counter,
+
+         network,
+         
+         tokenPos,
+         tokenQ,
+         tokenColor
+
 
 terminated ==
     \A n \in Node: network[n] = 0 /\ ~ active[n]
 
+terminationDetected ==
+    /\ tokenColor = "w"
+    /\ tokenPos = 0
+    \* /\ counter[0] = 0
+    /\ tokenQ + counter[0] = 0
+    \* \* 
+    \* /\ \A n \in Node: network[n] = 0
+
 TypeOK ==
     /\ active \in [ Node -> BOOLEAN ]
+    /\ counter \in [Node -> Int]
+    /\ color \in [ Node -> {"w","b"} ]
     /\ network \in [ Node -> Nat ]
-    /\ terminationDetected \in BOOLEAN 
+    /\ tokenPos \in Node
+    /\ tokenColor \in {"w","b"}
+    /\ tokenQ \in Int
 
 Init ==
     /\ active \in [ Node -> BOOLEAN ]
-    /\ network \in [ Node -> 0..3 ]
-    /\ terminationDetected \in {FALSE, terminated}
+    /\ counter \in [Node -> {0}]
+    /\ color \in [ Node -> {"w","b"} ]
+ 
+    /\ network \in [ Node -> {0} ]
+ 
+    /\ tokenPos \in Node
+    /\ tokenColor \in {"w","b"}
+    /\ tokenQ \in {0}
+
+PassToken(n) ==
+    /\ tokenPos # 0
+    /\ tokenPos = n
+    /\ ~active[n]
+    /\ tokenPos' = tokenPos - 1
+    /\ tokenColor' = IF color[n] = "b" THEN "b" ELSE tokenColor
+    /\ tokenQ' = counter[n] + tokenQ
+    /\ color' =  [ color EXCEPT ![n] = "w" ]
+    /\ UNCHANGED <<network, counter, active>>
+
+InitiateToken ==
+    /\ ~active[0] \* ???
+    /\ tokenPos = 0
+    /\ tokenPos' = N-1
+    /\ tokenQ' = 0
+    /\ tokenColor' = color[0]
+    /\ color' = [ color EXCEPT ![0] = "w" ]
+    /\ UNCHANGED <<network, counter, active>>
 
 Idle(n) ==
     \* /\ network[n] = 0 \* a node uses global knowledge
     \* /\ active' = [ i \in Node |-> IF i = n THEN FALSE ELSE active[i] ]
     /\ active' = [ active EXCEPT ![n] = FALSE ]
-    /\ UNCHANGED network
-    /\ \/ terminationDetected' = terminated'
-       \/ UNCHANGED terminationDetected
-    \*    \/ terminationDetected' = TRUE
-    \* /\ terminationDetected' \in {terminationDetected, terminated'}
+    /\ UNCHANGED <<tokenColor, tokenQ, tokenPos, network, color, counter>>
 
 RecvMsg(rcv) ==
     /\ network' = [ network EXCEPT ![rcv] = @ - 1  ]
     /\ network[rcv] > 0
     /\ active' = [ i \in Node |-> IF i = rcv THEN TRUE ELSE active[i] ]
-    /\ UNCHANGED terminationDetected
-    \* /\ active' # active
-    \* /\ network' = 42
+    /\ color' = [ color EXCEPT ![rcv] = "b"]
+    /\ counter' = [ counter EXCEPT ![rcv] = @ - 1]
+    /\ UNCHANGED <<tokenColor, tokenQ, tokenPos>>
 
 SendMsg(snd, rcv) ==
-    /\ network' = [ i \in Node |-> IF i = rcv THEN network[i] + 1 ELSE network[i] ]
+    /\ network' = [ network EXCEPT ![rcv] = @ + 1 ]
+    /\ counter' = [ counter EXCEPT ![snd] = @ + 1]
     /\ active' = active
-    /\ UNCHANGED active
+    /\ UNCHANGED <<tokenColor, tokenQ, tokenPos, active, color>>
     /\ active[snd]
-    /\ UNCHANGED terminationDetected
    
 Next ==
     \E i,j \in Node:
         \/ SendMsg(j,i)
         \/ RecvMsg(j)
         \/ Idle(i)
+        \/ PassToken(i)
+        \/ InitiateToken
 
-Safety ==
-    \* IF terminationDetected THEN terminated ELSE TRUE
-    [](terminationDetected => terminated)
-    \* terminationDetected = terminated
-
-vars == <<active, network,terminationDetected>>
+vars == <<active, network, tokenColor, tokenQ, tokenPos, color, counter>>
 Spec ==
     Init /\ [][Next]_vars
 
+\* EWD998 implemented ATD
+ATD == INSTANCE AsyncTerminationDetection
+Implements ==
+    Spec => ATD!Spec
 
-THEOREM Spec => Safety
+ATDSpec == ATD!Spec
 ---------
 
 Constraint ==
     \* Onlyl for model-checking!!!
-    \A n \in Node: network[n] < 4
+    \A n \in Node: network[n] < 3 /\ counter[n] \in -2..2 /\ tokenQ \in -2..2
 
 =============================================================================
-\* Modification History
-\* Created Sun Jan 10 15:19:20 CET 2021 by Stephan Merz @muenchnerkindl
+Safety ==
+    [](terminationDetected => terminated)
+
