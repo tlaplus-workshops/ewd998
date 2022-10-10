@@ -24,8 +24,6 @@ CONSTANT N
  \* * upon startup.
 ASSUME NIsPosNat == N \in Nat \ {0}
 
-
-
 Node == 0 .. N-1
 
 VARIABLE
@@ -39,6 +37,8 @@ VARIABLE
          tokenQ,
          tokenColor
 
+vars == <<active, network, tokenColor, tokenQ, tokenPos, color, counter>>
+
 
 terminated ==
     \A n \in Node: network[n] = 0 /\ ~ active[n]
@@ -48,6 +48,7 @@ terminationDetected ==
     /\ tokenPos = 0
     \* /\ counter[0] = 0
     /\ tokenQ + counter[0] = 0
+    /\ color[0] = "w"
     \* \* 
     \* /\ \A n \in Node: network[n] = 0
 
@@ -68,7 +69,7 @@ Init ==
     /\ network \in [ Node -> {0} ]
  
     /\ tokenPos \in Node
-    /\ tokenColor \in {"w","b"}
+    /\ tokenColor \in {"b"}
     /\ tokenQ \in {0}
 
 PassToken(n) ==
@@ -82,11 +83,13 @@ PassToken(n) ==
     /\ UNCHANGED <<network, counter, active>>
 
 InitiateToken ==
+    /\ ~terminationDetected
     /\ ~active[0] \* ???
     /\ tokenPos = 0
     /\ tokenPos' = N-1
     /\ tokenQ' = 0
-    /\ tokenColor' = color[0]
+    \* /\ color[0] = "w"
+    /\ tokenColor' = color[0] \* ???? Should this white?
     /\ color' = [ color EXCEPT ![0] = "w" ]
     /\ UNCHANGED <<network, counter, active>>
 
@@ -119,17 +122,21 @@ Next ==
         \/ PassToken(i)
         \/ InitiateToken
 
-vars == <<active, network, tokenColor, tokenQ, tokenPos, color, counter>>
 Spec ==
     Init /\ [][Next]_vars
 
-\* EWD998 implemented ATD
+\* ---------------------------
+
+\* \* EWD998 implemented ATD
 ATD == INSTANCE AsyncTerminationDetection
-Implements ==
-    Spec => ATD!Spec
+
+Implements == Spec => ATD!Spec
+
+
 
 ATDSpec == ATD!Spec
----------
+
+---------------------------
 
 Constraint ==
     \* Onlyl for model-checking!!!

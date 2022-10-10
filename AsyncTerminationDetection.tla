@@ -46,6 +46,8 @@ Init ==
 Idle(n) ==
     \* /\ network[n] = 0 \* a node uses global knowledge
     \* /\ active' = [ i \in Node |-> IF i = n THEN FALSE ELSE active[i] ]
+    \* /\ \E m \in Node: active[m] = TRUE
+    \* /\ active[n]
     /\ active' = [ active EXCEPT ![n] = FALSE ]
     /\ UNCHANGED network
     /\ \/ terminationDetected' = terminated'
@@ -74,18 +76,55 @@ Next ==
         \/ RecvMsg(j)
         \/ Idle(i)
 
-Safety ==
-    \* IF terminationDetected THEN terminated ELSE TRUE
-    [](terminationDetected => terminated)
-    \* terminationDetected = terminated
+NeverUndetects ==
+    terminationDetected => terminationDetected'
 
-vars == <<active, network,terminationDetected>>
+vars == <<active, network, terminationDetected>>
+
+\* []<>Something   ("repeatedly")
+
+\* <>[]Something   (" from somepoint forever ")
+
+\* <>Something     (" once or more in the future")
+
 Spec ==
-    Init /\ [][Next]_vars
+    \* WHat is allowed to happen
+    /\ Init
+    /\ [][Next]_vars
+    
+    \* What must happen
+    \* /\ <>[](ENABLED <<A>>_vars) => []<><<A>>_vars
+    /\ WF_vars(\E n \in Node: Idle(n))
 
+    \* /\ []<>(ENABLED <<A>>_vars) => []<><<\E n \in Node: Idle(n)>>_vars
+    \* /\ SF_vars(\E n \in Node: Idle(n))
+
+    \* /\ WF_vars(Next)
+    \* /\ <>terminationDetected
+
+
+    \* <<Next>>_vars  <=>      Next /\ vars' # vars
+    \* [Next]_vars    <=>      Next \/ UNCHANGED vars
+
+Safety ==
+    [](terminationDetected => terminated)
 
 THEOREM Spec => Safety
+
+Live ==
+    \* [](terminated => <>terminationDetected)
+    terminated ~> []terminationDetected
+
+THEOREM Spec => Live
 ---------
+
+Alias ==
+    [
+        active |-> active, network |-> network
+        , terminationDetected |-> terminationDetected,
+        eIdle |-> \E n \in Node: ENABLED Idle(n)
+    ]
+
 
 Constraint ==
     \* Onlyl for model-checking!!!
