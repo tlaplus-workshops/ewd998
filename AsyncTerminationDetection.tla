@@ -7,6 +7,7 @@ ASSUME NIsPosNat == N \in Nat \ {0}
 Node == 0 .. N-1
 
 VARIABLE network, active, terminationDetected
+vars == <<network, active, terminationDetected>> 
 
 terminated == \A m \in Node: active[m] = FALSE /\ network[m] = 0
 
@@ -60,6 +61,9 @@ Next ==
         \/ Terminate(n)
         \/ RecvMsg(n)
         \/ SendMsg(n,m)
+
+Spec ==
+    Init /\ [][Next]_vars    \* [A]_v   <=>    A \/ v = v' 
 
 Safe ==
     \*IF terminationDetected THEN terminated ELSE TRUE
