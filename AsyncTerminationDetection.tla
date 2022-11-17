@@ -44,7 +44,6 @@ Terminate(n) ==
     \* /\ terminationDetected' \in {terminationDetected, terminated'}
     /\ \/ terminationDetected' = terminated'
        \/ UNCHANGED terminationDetected
-       \/ terminationDetected' = TRUE
 
 (*
     if (active[snd] > TRUE) 
@@ -62,7 +61,6 @@ Next ==
         \/ RecvMsg(n)
         \/ SendMsg(n,m)
 
-\* TODO What is a correctness property of this specification?
 Safe ==
     \*IF terminationDetected THEN terminated ELSE TRUE
     [](terminationDetected => terminated)
