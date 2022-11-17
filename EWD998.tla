@@ -6,7 +6,7 @@ ASSUME NIsPosNat == N \in Nat \ {0}
 
 Node == 0 .. N-1
 
-VARIABLE network, active, terminationDetected
+VARIABLE network, active
 
 terminated == \A m \in Node: active[m] = FALSE /\ network[m] = 0
 
@@ -15,14 +15,10 @@ TypeOK ==
     \* /\ DOMAIN network = Node
     /\ network \in [ Node -> Nat ]
     /\ active \in [ Node -> BOOLEAN ]
-    /\ terminationDetected \in BOOLEAN 
 
 Init ==
     /\ active \in [ Node -> BOOLEAN ]
     /\ network = [ n \in Node |-> 0 ] 
-    /\ \/ terminationDetected = terminated
-       \/ terminationDetected = FALSE
-    \* /\ terminatedDetected \in {FALSE, terminated}
 
 (*
     if (network[rcv] > 0) 
@@ -33,7 +29,6 @@ RecvMsg(rcv) ==
     /\ network[rcv] > 0
     /\ active' = [ active EXCEPT ![rcv] = TRUE ] 
     /\ network' = [ network EXCEPT ![rcv] = @ - 1 ]
-    /\ UNCHANGED terminationDetected
 
 (*
     active[n] := FALSE
@@ -41,10 +36,6 @@ RecvMsg(rcv) ==
 Terminate(n) ==
     /\ UNCHANGED network
     /\ active' = [ active EXCEPT ![n] = FALSE ]
-    \* /\ terminationDetected' \in {terminationDetected, terminated'}
-    /\ \/ terminationDetected' = terminated'
-       \/ UNCHANGED terminationDetected
-       \/ terminationDetected' = TRUE
 
 (*
     if (active[snd] > TRUE) 
@@ -53,7 +44,6 @@ Terminate(n) ==
 SendMsg(snd, rcv) ==
     /\ active[snd] = TRUE
     /\ UNCHANGED active
-    /\ UNCHANGED terminationDetected
     /\ network' = [ network EXCEPT ![rcv] = @ + 1 ]
 
 Next ==
@@ -62,16 +52,16 @@ Next ==
         \/ RecvMsg(n)
         \/ SendMsg(n,m)
 
-\* TODO What is a correctness property of this specification?
-Safe ==
-    \*IF terminationDetected THEN terminated ELSE TRUE
-    [](terminationDetected => terminated)
-
 ---------
 
 Constraint ==
     \A n \in Node: network[n] < 3
 =============================================================================
+
+
+Safe ==
+    \*IF terminationDetected THEN terminated ELSE TRUE
+    [](terminationDetected => terminated)
 
 Live ==
     "Eventually" terminationDetected
