@@ -35,6 +35,7 @@ ASSUME NIsPosNat == N \in Nat \ {0}
 Node == 0 .. N-1                           \* == pp'ed as ≜
 
 VARIABLE (*bool[]*) active, network, terminationDetected
+vars == << active, network, terminationDetected >>
 
 terminated ==
     \A n \in Node: ~ active[n] /\ network[n] = 0
@@ -43,15 +44,16 @@ Init ==
     /\ network \in [ Node -> 0..3 ]
     \* /\ network = [ n \in Node |-> 0 ]
     /\ active \in [ Node -> BOOLEAN ]
-    /\ terminationDetected = FALSE
+    /\ \/ terminationDetected = FALSE
+       \/ terminationDetected = terminated
 
 SendMsg(snd, rcv) ==
     \* /\ network[rcv]++
     /\ network' = [ n \in Node |-> IF n = rcv THEN network[n] + 1 ELSE network[n] ]
     /\ UNCHANGED active
-    /\ UNCHANGED terminationDetected
     \* ??? Sender becomes active ???
     /\ active[snd] = TRUE
+    /\ UNCHANGED terminationDetected
 
 RecvMsg(rcv) ==
     /\ UNCHANGED terminationDetected
@@ -61,7 +63,8 @@ RecvMsg(rcv) ==
 
 Idle(m) ==
     \* ??? Should we check network for empty? 
-    /\ active' = [ n \in Node |-> IF n = m THEN FALSE ELSE active[n] ]
+    \* /\ active' = [ n \in Node |-> IF n = m THEN FALSE ELSE active[n] ]
+    /\ active' = [ active EXCEPT ![m] = FALSE ]
     /\ UNCHANGED network
     /\ \/ terminationDetected' = terminated'
        \/ terminationDetected' = terminationDetected
@@ -73,7 +76,7 @@ Next ==
         \/ RecvMsg(n)
         \/ SendMsg(n,m)
 
-\* Spec == Init /\ [][Next]_vars /\ WF_vars(Next)
+Spec == Init /\ [][Next]_vars \*/\ WF_vars(Next)
 
 ---------------------
 
@@ -94,7 +97,7 @@ Safe ==
 Live  ==
     \* Eventually detect termination.
     \* "Eventually" terminationDetected
-    TRUE
+    <>terminationDetected
 
 ---------------------
 
