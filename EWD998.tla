@@ -1,4 +1,22 @@
----------------------- MODULE AsyncTerminationDetection ---------------------
+Rules copied from top of
+https://github.com/tlaplus-workshops/ewd998/blob/main/EWD998.tla
+
+Let q  equal  tokenCounter
+
+0) Sending a message by node  i  increments a counter at  i  , the receipt of a
+   message decrements i's counter
+3) Receiving a *message* (not token) blackens the (receiver) node
+2) An active node j -owning the token- keeps the token.  When j becomes inactive,
+   it passes the token to its neighbor with  q = q + counter[j] 
+4) A black node taints the token
+7) Passing the token whitens the sender node
+1) The initiator sends the token with a counter  q  initialized to  0  and color
+   white
+5) The initiator starts a new round iff the current round is inconclusive
+6) The initiator whitens itself and the token when initiating a new round
+
+
+---------------------- MODULE EWD998 ---------------------
 \* * TLA+ is an expressive language and we usually define operators on-the-fly.
  \* * That said, the TLA+ reference guide "Specifying Systems" (download from:
  \* * https://lamport.azurewebsites.net/tla/book.html) defines a handful of
@@ -34,41 +52,62 @@ ASSUME NIsPosNat == N \in Nat \ {0}
  \* * Note that the definition Node is a zero-arity (parameter-less) operator.
 Node == 0 .. N-1                           \* == pp'ed as ≜
 
-VARIABLE (*bool[]*) active, network, terminationDetected
+Initiator == 0
+
+VARIABLE
+    active,
+    counter,
+    \* Why color???
+    color,
+
+    network, 
+    
+    tokenPosition,
+    tokenCounter,
+    tokenColor
 
 terminated ==
     \A n \in Node: ~ active[n] /\ network[n] = 0
 
 Init ==
     /\ network \in [ Node -> 0..3 ]
-    \* /\ network = [ n \in Node |-> 0 ]
     /\ active \in [ Node -> BOOLEAN ]
-    /\ terminationDetected = FALSE
+    /\ tokenPosition \in Node
+
+InitiateToken ==
+    /\ tokenPosition = 0
+    /\ tokenPosition' = N - 1
+
+PassToken ==
+    \* Pass the token to the neighbor.
+    /\ active[tokenPosition] = FALSE
+    /\ tokenPosition' = tokenPosition - 1
+    /\ tokenPosition # 0
+    /\ tokenCounter' = tokenCounter + counter[tokenPosition]
 
 SendMsg(snd, rcv) ==
     \* /\ network[rcv]++
     /\ network' = [ n \in Node |-> IF n = rcv THEN network[n] + 1 ELSE network[n] ]
+    /\ counter' = [ n \in Node |-> IF n = snd THEN counter[n] + 1 ELSE counter[n] ] 
     /\ UNCHANGED active
-    /\ UNCHANGED terminationDetected
     \* ??? Sender becomes active ???
     /\ active[snd] = TRUE
 
 RecvMsg(rcv) ==
-    /\ UNCHANGED terminationDetected
     /\ network[rcv] > 0
     /\ network' = [ n \in Node |-> IF n = rcv THEN network[n] - 1 ELSE network[n] ]
+    /\ counter' = [ n \in Node |-> IF n = rcv THEN counter[n] - 1 ELSE counter[n] ] 
     /\ active' = [ n \in Node |-> IF n = rcv THEN TRUE ELSE active[n] ]
 
 Idle(m) ==
     \* ??? Should we check network for empty? 
     /\ active' = [ n \in Node |-> IF n = m THEN FALSE ELSE active[n] ]
     /\ UNCHANGED network
-    /\ \/ terminationDetected' = terminated'
-       \/ terminationDetected' = terminationDetected
-    \*    \/ terminationDetected' = TRUE
        
 Next ==
     \E n,m \in Node:
+        \/ PassToken
+        \/ InitiateToken 
         \/ Idle(n)
         \/ RecvMsg(n)
         \/ SendMsg(n,m)
@@ -78,13 +117,14 @@ Next ==
 ---------------------
 
 TypeOK ==
-    /\ terminationDetected \in BOOLEAN 
     \* /\ \A n \in Node: active[n] \in BOOLEAN
     \* /\ Node = DOMAIN active
     /\ active \in [ Node -> BOOLEAN ]
     \* /\ \A n \in Node: network[n] \in Nat
     \* /\ Node = DOMAIN network
     /\ network \in [ Node -> Nat ]
+
+======
 
 Safe ==
     \* If we detect termination, there is termination.
@@ -105,5 +145,3 @@ Constraint ==
 \* Modification History
 \* Created Sun Jan 10 15:19:20 CET 2021 by Stephan Merz @muenchnerkindl
 
-counter, tokenPosition, 
-PassToken
