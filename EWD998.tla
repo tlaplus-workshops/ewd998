@@ -23,7 +23,7 @@ Let q  equal  tokenCounter
  \* * standard modules.  Additionally, a community-driven repository has been
  \* * collecting more modules (http://modules.tlapl.us). In our spec, we are
  \* * going to need operators for natural numbers.
-EXTENDS Naturals
+EXTENDS Naturals, Integers
 
 \* * A constant is a parameter of a specification. In other words, it is a
  \* * "variable" that cannot change throughout a behavior, i.e., a sequence
@@ -54,6 +54,8 @@ Node == 0 .. N-1                           \* == pp'ed as ≜
 
 Initiator == 0
 
+Color == { "white", "black" }
+
 VARIABLE
     active,
     counter,
@@ -66,24 +68,47 @@ VARIABLE
     tokenCounter,
     tokenColor
 
+vars ==<<active, counter, color, network, tokenPosition, tokenCounter, tokenColor>>
+
 terminated ==
     \A n \in Node: ~ active[n] /\ network[n] = 0
 
+terminationDetected ==
+    /\ tokenPosition = 0
+    /\ counter[tokenPosition] + tokenCounter = 0
+    /\ tokenColor = "white"
+    /\ color[tokenPosition] = "white"
+    /\ active[tokenPosition] = FALSE
+    \* /\ terminated
+
 Init ==
-    /\ network \in [ Node -> 0..3 ]
+    /\ network \in [ Node -> 0..0 ]
     /\ active \in [ Node -> BOOLEAN ]
+    /\ color \in [ Node -> Color ]
+    /\ counter \in [ Node -> 0..0 ]
     /\ tokenPosition \in Node
+    \* ???
+    /\ tokenColor = "black"
+    /\ tokenCounter = 0
 
 InitiateToken ==
     /\ tokenPosition = 0
     /\ tokenPosition' = N - 1
+    /\ tokenCounter' = 0
+    /\ tokenColor' = "white"
+    /\ color' = [ color EXCEPT ![0] = "white" ]
+    /\ UNCHANGED <<active, counter, network>>
 
 PassToken ==
     \* Pass the token to the neighbor.
     /\ active[tokenPosition] = FALSE
-    /\ tokenPosition' = tokenPosition - 1
     /\ tokenPosition # 0
+    /\ tokenPosition' = tokenPosition - 1
     /\ tokenCounter' = tokenCounter + counter[tokenPosition]
+    /\ tokenColor' = IF color[tokenPosition] = "black" THEN "black" ELSE tokenColor
+    \* /\ color' = [ color EXCEPT ![tokenPosition] = "white" ]
+    /\ UNCHANGED color
+    /\ UNCHANGED <<active, counter, network>>
 
 SendMsg(snd, rcv) ==
     \* /\ network[rcv]++
@@ -92,17 +117,21 @@ SendMsg(snd, rcv) ==
     /\ UNCHANGED active
     \* ??? Sender becomes active ???
     /\ active[snd] = TRUE
+    /\ UNCHANGED <<tokenPosition, tokenCounter, tokenColor, color>>
 
 RecvMsg(rcv) ==
     /\ network[rcv] > 0
     /\ network' = [ n \in Node |-> IF n = rcv THEN network[n] - 1 ELSE network[n] ]
     /\ counter' = [ n \in Node |-> IF n = rcv THEN counter[n] - 1 ELSE counter[n] ] 
     /\ active' = [ n \in Node |-> IF n = rcv THEN TRUE ELSE active[n] ]
+    /\ color' = [ n \in Node |-> IF n = rcv THEN "black" ELSE color[n] ]
+    /\ UNCHANGED <<tokenPosition, tokenCounter, tokenColor>>
 
 Idle(m) ==
     \* ??? Should we check network for empty? 
     /\ active' = [ n \in Node |-> IF n = m THEN FALSE ELSE active[n] ]
     /\ UNCHANGED network
+    /\ UNCHANGED <<tokenPosition, tokenCounter, tokenColor, color, counter>>
        
 Next ==
     \E n,m \in Node:
@@ -112,19 +141,32 @@ Next ==
         \/ RecvMsg(n)
         \/ SendMsg(n,m)
 
-\* Spec == Init /\ [][Next]_vars /\ WF_vars(Next)
+Spec == Init /\ [][Next]_vars                  \*/\ WF_vars(Next)
 
+ATD == INSTANCE AsyncTerminationDetection
+ATDSpec == ATD!Spec
+
+Implements == Spec => ATD!Spec
 ---------------------
 
 TypeOK ==
-    \* /\ \A n \in Node: active[n] \in BOOLEAN
-    \* /\ Node = DOMAIN active
     /\ active \in [ Node -> BOOLEAN ]
-    \* /\ \A n \in Node: network[n] \in Nat
-    \* /\ Node = DOMAIN network
     /\ network \in [ Node -> Nat ]
+    /\ counter \in [ Node -> Int ]
+    /\ color \in [ Node -> Color ]
+    /\ tokenPosition \in Node
+    /\ tokenCounter \in Int
+    /\ tokenColor \in Color
+---------------------
+
+
+Constraint ==
+    \A n \in Node: network[n] < 3 /\ counter[n] \in -3..3 /\ tokenCounter \in -3..3
+
 
 ======
+
+
 
 Safe ==
     \* If we detect termination, there is termination.
@@ -137,9 +179,6 @@ Live  ==
     TRUE
 
 ---------------------
-
-Constraint ==
-    \A n \in Node: network[n] < 3
 
 =============================================================================
 \* Modification History
