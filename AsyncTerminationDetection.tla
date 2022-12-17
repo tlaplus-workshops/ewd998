@@ -48,6 +48,7 @@ Init ==
        \/ terminationDetected = terminated
 
 SendMsg(snd, rcv) ==
+    \* /\ snd # rcv
     \* /\ network[rcv]++
     /\ network' = [ n \in Node |-> IF n = rcv THEN network[n] + 1 ELSE network[n] ]
     /\ UNCHANGED active
@@ -76,7 +77,7 @@ Next ==
         \/ RecvMsg(n)
         \/ SendMsg(n,m)
 
-Spec == Init /\ [][Next]_vars \*/\ WF_vars(Next)
+Spec == Init /\ [][Next]_vars /\ WF_vars(Next)
 
 ---------------------
 
@@ -92,12 +93,23 @@ TypeOK ==
 Safe ==
     \* If we detect termination, there is termination.
     \* IF terminationDetected THEN terminated ELSE TRUE
-    terminationDetected => terminated
+    [](terminationDetected => terminated)
+
+THEOREM Spec => Safe
 
 Live  ==
-    \* Eventually detect termination.
-    \* "Eventually" terminationDetected
-    <>terminationDetected
+    [](terminated => <>terminationDetected)
+
+THEOREM Spec => Live
+
+NeverTerminantes ==
+    []~terminated
+
+\* Implements == 
+\*     /\ Spec => TypeOK
+\*     /\ Spec => Safe
+\*     /\ Spec => Live
+
 
 ---------------------
 

@@ -68,7 +68,8 @@ VARIABLE
     tokenCounter,
     tokenColor
 
-vars ==<<active, counter, color, network, tokenPosition, tokenCounter, tokenColor>>
+vars ==
+    <<active, counter, color, network, tokenPosition, tokenCounter, tokenColor>>
 
 terminated ==
     \A n \in Node: ~ active[n] /\ network[n] = 0
@@ -92,6 +93,7 @@ Init ==
     /\ tokenCounter = 0
 
 InitiateToken ==
+    /\ ~terminationDetected
     /\ tokenPosition = 0
     /\ tokenPosition' = N - 1
     /\ tokenCounter' = 0
@@ -106,8 +108,8 @@ PassToken ==
     /\ tokenPosition' = tokenPosition - 1
     /\ tokenCounter' = tokenCounter + counter[tokenPosition]
     /\ tokenColor' = IF color[tokenPosition] = "black" THEN "black" ELSE tokenColor
-    \* /\ color' = [ color EXCEPT ![tokenPosition] = "white" ]
-    /\ UNCHANGED color
+    /\ color' = [ color EXCEPT ![tokenPosition] = "white" ]
+    \* /\ UNCHANGED color
     /\ UNCHANGED <<active, counter, network>>
 
 SendMsg(snd, rcv) ==
@@ -141,7 +143,8 @@ Next ==
         \/ RecvMsg(n)
         \/ SendMsg(n,m)
 
-Spec == Init /\ [][Next]_vars                  \*/\ WF_vars(Next)
+---------------------
+Spec == Init /\ [][Next]_vars /\ WF_vars(InitiateToken \/ PassToken)
 
 ATD == INSTANCE AsyncTerminationDetection
 ATDSpec == ATD!Spec
