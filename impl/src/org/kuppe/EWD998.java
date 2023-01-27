@@ -183,7 +183,7 @@ public class EWD998 {
 				    /\ UNCHANGED <<pending, color, counter, token>>
 			 */
 			if (active) {
-				active = randomWork.nextBoolean();
+				active = randomWork.nextDouble() < 0.75d;
 			}
 			
 			// --------------------------------------------------------------------------------- //
