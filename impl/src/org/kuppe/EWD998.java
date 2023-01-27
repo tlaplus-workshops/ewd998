@@ -35,6 +35,7 @@ public class EWD998 {
 	}
 	
 	private final Random randomWork = new Random();
+	private final EWD998VectorClock vc;
 	
 	public EWD998(final List<String> nodes, final int myId, final int port, final boolean isInitiator) throws Exception {
 		final BlockingQueue<String> inbox = new LinkedBlockingQueue<>();
@@ -46,6 +47,8 @@ public class EWD998 {
 			    /\ color \in [Node -> Color]
 			    /\ counter = [i \in Node |-> 0]
 			    /\ token = [pos |-> 0, q |-> 0, color |-> "black"]
+			    \* The clock variable is not part of EWD998.
+			    /\ clock = [n \in Node |-> [m \in Node |-> 0] ]
 		 */
 		boolean active = true;
 		Color color = Color.white;
@@ -54,6 +57,8 @@ public class EWD998 {
 			// /\ token = [pos |-> 0, q |-> 0, color |-> "black"]
 			inbox.put("[tok]0,black");
 		}
+		
+		vc = new EWD998VectorClock(myId, nodes.size());
 
 		boolean terminationDetected = false;
 		
@@ -68,9 +73,18 @@ public class EWD998 {
 					final Socket socket = serverSocket.accept();
 					InputStream inputStream = socket.getInputStream();
 					DataInputStream dataInputStream = new DataInputStream(inputStream);
-					final String msg = dataInputStream.readUTF();
+					final String in = dataInputStream.readUTF();
+										
+					// Print the raw message.
+					System.out.printf("rcv: %s < %s\n", nodes.get(myId), in);
 					
-					System.out.printf("rcv: %s < %s\n", nodes.get(myId), msg);
+					final String[] msgAndVC = in.split("\\|");
+					assert msgAndVC.length == 2;
+
+					// See EWD998!RecvMsg.
+					vc.merge(msgAndVC[1]);
+					
+					final String msg = msgAndVC[0];
 					inbox.add(msg);
 					if (msg.startsWith("[trm]")) {
 						// See note at marker "aklseflha" below.
@@ -171,6 +185,8 @@ public class EWD998 {
 					// \E rcv \in Node: replaced with probabilistic choice.
 					String receiver = nodes.get(randomWork.nextInt(nodes.size()));
 					sendMsg(receiver, "[pl]");
+				} else {					
+					vc.tick();
 				}
 			}
 			
@@ -254,6 +270,7 @@ public class EWD998 {
         final OutputStream outputStream = socket.getOutputStream();
         final DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
 
+        msg += "|" + vc.tick().serialize();
         dataOutputStream.writeUTF(msg);
         dataOutputStream.flush();
         dataOutputStream.close();
