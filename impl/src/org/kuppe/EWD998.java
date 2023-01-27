@@ -71,8 +71,8 @@ public class EWD998 {
 				System.out.printf("Node %s listening on %s\n", myId, serverSocket.getLocalSocketAddress());
 				while (true) {
 					final Socket socket = serverSocket.accept();
-					InputStream inputStream = socket.getInputStream();
-					DataInputStream dataInputStream = new DataInputStream(inputStream);
+					final InputStream inputStream = socket.getInputStream();
+					final DataInputStream dataInputStream = new DataInputStream(inputStream);
 					final String in = dataInputStream.readUTF();
 										
 					// Print the raw message.

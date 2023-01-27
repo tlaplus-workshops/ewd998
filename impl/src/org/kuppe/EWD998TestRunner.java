@@ -42,6 +42,9 @@ public class EWD998TestRunner {
 			
 			// Wait forever for the executor to terminate.
 			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+			
+			// Allow the OS to fully close the sockets, ...
+			Thread.sleep(500);
 		}
 	}
 }
