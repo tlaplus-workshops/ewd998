@@ -15,6 +15,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+
 // https://github.com/tlaplus-workshops/ewd998/blob/main/EWD998.tla
 public class EWD998 {
 
@@ -38,7 +42,7 @@ public class EWD998 {
 	private final EWD998VectorClock vc;
 	
 	public EWD998(final List<String> nodes, final int myId, final int port, final boolean isInitiator) throws Exception {
-		final BlockingQueue<String> inbox = new LinkedBlockingQueue<>();
+		final BlockingQueue<JsonObject> inbox = new LinkedBlockingQueue<>();
 		
 		/*
 			Init ==
@@ -55,7 +59,11 @@ public class EWD998 {
 		int counter = 0;
 		if (isInitiator) {
 			// /\ token = [pos |-> 0, q |-> 0, color |-> "black"]
-			inbox.put("[tok]0,black");
+			final JsonObject json = new JsonObject();
+			json.add("type", new JsonPrimitive("tok"));
+			json.add("q", new JsonPrimitive(0));
+			json.add("color", new JsonPrimitive(Color.black.toString()));
+			inbox.put(json);
 		}
 		
 		vc = new EWD998VectorClock(myId, nodes.size());
@@ -75,18 +83,16 @@ public class EWD998 {
 					final DataInputStream dataInputStream = new DataInputStream(inputStream);
 					final String in = dataInputStream.readUTF();
 										
+					final JsonObject msg = JsonParser.parseString(in).getAsJsonObject();
+					
 					// Print the raw message.
-					System.out.printf("rcv: %s < %s\n", nodes.get(myId), in);
+					System.out.printf("rcv: %s\n", in);
 					
-					final String[] msgAndVC = in.split("\\|");
-					assert msgAndVC.length == 2;
-
 					// See EWD998!RecvMsg.
-					vc.merge(msgAndVC[1]);
+					vc.merge(msg.get("vc").getAsJsonObject());
 					
-					final String msg = msgAndVC[0];
 					inbox.add(msg);
-					if (msg.startsWith("[trm]")) {
+					if (msg.get("type").getAsString().equals("trm")) {
 						// See note at marker "aklseflha" below.
 						dataInputStream.close();
 						inputStream.close();
@@ -104,7 +110,7 @@ public class EWD998 {
 		// --------------------------------------------------------------------------------- //
 		
 		while (true) {
-			final String msg = inbox.take();
+			final JsonObject msg = inbox.take();
 
 			int tokenQ = 0;
 			Color tokenColor = null;
@@ -112,11 +118,9 @@ public class EWD998 {
 			// --------------------------------------------------------------------------------- //
 
 			// InitiateToken and PassToken
-			if (msg.startsWith("[tok]")) {
-				// "[tok]-42,black"
-				final String[] qAndColor = msg.substring(5).split(",");
-				tokenQ = Integer.parseInt(qAndColor[0]);
-				tokenColor = Color.valueOf(qAndColor[1]);
+			if (msg.get("type").getAsString().equals("tok")) {
+				tokenQ = msg.get("q").getAsInt();
+				tokenColor = Color.valueOf(msg.get("color").getAsString());
 
 				if (isInitiator) {
 					/*
@@ -139,7 +143,7 @@ public class EWD998 {
 					terminationDetected = tokenQ + counter == 0 && color == Color.white && tokenColor == Color.white
 							&& !active;
 				}
-			} else if (msg.startsWith("[pl]")) {
+			} else if (msg.get("type").getAsString().equals("pl")) {
 				/*
 					RecvMsg(i) ==
 					    /\ pending[i] > 0
@@ -152,7 +156,7 @@ public class EWD998 {
 				active = true;
 				counter--;
 				color = Color.black;
-			} else if (msg.startsWith("[trm]")) {
+			} else if (msg.get("type").getAsString().equals("trm")) {
 				// (aklseflha) The termination message "[trm]" is *not* part of EWD998. Here,
 				// the initiator sends a trm message to all nodes including itself after
 				// detecting termination. A recipient of a trm message closes its server socket
@@ -178,13 +182,13 @@ public class EWD998 {
 			 */
 			if (active) {
 				// Simulate some work...
-				Thread.sleep(randomWork.nextInt(6000));
+				Thread.sleep(randomWork.nextInt(100));
 				if (randomWork.nextBoolean()) {
 					counter++;
 					
 					// \E rcv \in Node: replaced with probabilistic choice.
-					String receiver = nodes.get(randomWork.nextInt(nodes.size()));
-					sendMsg(receiver, "[pl]");
+					final String receiver = nodes.get(randomWork.nextInt(nodes.size()));
+					sendPayload(receiver);
 				} else {					
 					vc.tick();
 				}
@@ -217,11 +221,11 @@ public class EWD998 {
 						    /\ UNCHANGED <<active, counter, pending>>                
 					 */
 					if (!terminationDetected) {
-						sendMsg(nodes.get(nodes.size() - 1), "[tok]0,white");		
+						sendTok(nodes.get(nodes.size() - 1), 0, Color.white);		
 						color = Color.white;
 					} else {
 						for (String n : nodes) {
-							sendMsg(n, "[trm]");
+							sendTrm(n);
 						}
 					}
 					tokenColor = null;
@@ -236,8 +240,7 @@ public class EWD998 {
 						    /\ color' = [ color EXCEPT ![i] = "white" ]
 						    /\ UNCHANGED <<active, pending, counter>>
  					 */
-					sendMsg(nodes.get(myId - 1), String.format("[tok]%s,%s", tokenQ + counter,
-							color == Color.black ? Color.black : tokenColor));
+					sendTok(nodes.get(myId - 1), tokenQ + counter, color == Color.black ? Color.black : tokenColor);
 					color = Color.white;
 
 					tokenColor = null;
@@ -254,24 +257,52 @@ public class EWD998 {
 						    /\ ...
 						    /\ UNCHANGED <<token>>
 				     */
-					inbox.add(String.format("[tok]%s,%s", tokenQ, tokenColor));
+					final JsonObject json = new JsonObject();
+					json.add("type", new JsonPrimitive("tok"));
+					json.add("q", new JsonPrimitive(tokenQ));
+					json.add("color", new JsonPrimitive(tokenColor.toString()));
+					inbox.add(json);
 				}
 			}
 		}
 	}
 
+	private void sendPayload(final String receiver) throws Exception {
+		final JsonObject result = new JsonObject();
+		result.add("rcv", new JsonPrimitive(receiver));
+		result.add("type", new JsonPrimitive("pl"));
+		sendMsg(result);
+	}
+
+	private void sendTok(final String receiver, final int q, final Color color) throws Exception {
+		final JsonObject result = new JsonObject();
+		result.add("rcv", new JsonPrimitive(receiver));
+		result.add("type", new JsonPrimitive("tok"));
+		result.add("q", new JsonPrimitive(q));
+		result.add("color", new JsonPrimitive(color.toString()));
+		sendMsg(result);
+	}
+
+	private void sendTrm(final String receiver) throws Exception {
+		final JsonObject result = new JsonObject();
+		result.add("rcv", new JsonPrimitive(receiver));
+		result.add("type", new JsonPrimitive("trm"));
+		sendMsg(result);
+	}
+
 	// Boilerplate: Sending messages. 
-	private void sendMsg(String receiver, String msg) throws Exception {
-		System.out.printf("snd: %s < %s\n", receiver, msg);
+	private void sendMsg(JsonObject json) throws Exception {
+		System.out.printf("snd: %s\n", json);
 		
-		final String[] s = receiver.split(":");
+		final String[] s = json.get("rcv").getAsString().split(":");
         final Socket socket = new Socket(s[0], Integer.parseInt(s[1]));
 
         final OutputStream outputStream = socket.getOutputStream();
         final DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
 
-        msg += "|" + vc.tick().serialize();
-        dataOutputStream.writeUTF(msg);
+        json.add("vc", vc.tick().toJson());
+        
+        dataOutputStream.writeUTF(json.toString());
         dataOutputStream.flush();
         dataOutputStream.close();
 
