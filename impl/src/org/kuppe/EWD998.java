@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -307,18 +308,26 @@ public class EWD998 {
 		json.add("vc", vc.tick().toJson());
 		System.out.println(json);
 		
-		final Pair p = nodes.get(receiver);
-        final Socket socket = new Socket(p.host, p.port);
-
-        final OutputStream outputStream = socket.getOutputStream();
-        final DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
-
-        
-        dataOutputStream.writeUTF(json.toString());
-        dataOutputStream.flush();
-        dataOutputStream.close();
-
-        socket.close();
+		final Pair p = nodes.get(receiver);		
+		int retry = 0;
+		while (true) {
+			try (Socket socket = new Socket(p.host, p.port)) {
+				final OutputStream outputStream = socket.getOutputStream();
+				final DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
+						
+				dataOutputStream.writeUTF(json.toString());
+				dataOutputStream.flush();
+				dataOutputStream.close();
+				
+				socket.close();
+				return;
+			} catch (ConnectException ce) {
+				if (retry++ > 3) {
+					throw ce;
+				}
+				Thread.sleep(500L * retry);
+			}
+		}
 	}
 	
 	public static class Pair {
