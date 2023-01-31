@@ -95,8 +95,7 @@ public class EWD998 {
 					msg.add("host", new JsonPrimitive(myId));
 					
 					// See EWD998!RecvMsg.
-					vc.tickAndMerge(msg.get("vc").getAsJsonObject());
-					msg.add("vc", vc.toJson());
+					msg.add("vc", vc.tickAndMerge(msg.get("vc").getAsJsonObject()));
 
 					// Print the "raw" message after out host has been set and our vector clock has
 					// been incremented.
@@ -308,7 +307,7 @@ public class EWD998 {
 		json.add("src", new JsonPrimitive(sender));
 		json.add("rcv", new JsonPrimitive(receiver));
 		json.add("msg", msg);
-		json.add("vc", vc.tick().toJson());
+		json.add("vc", vc.tick());
 		System.out.println(json);
 		
 		final Pair p = nodes.get(receiver);		
