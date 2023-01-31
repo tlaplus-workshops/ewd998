@@ -1,9 +1,12 @@
 package org.kuppe;
 
-import com.google.gson.JsonArray;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.reflect.TypeToken;
 
 public class EWD998VectorClock {
 
@@ -23,6 +26,10 @@ public class EWD998VectorClock {
 	}
 
 	public void merge(final JsonObject json) {
+		// De-serialize.
+		final TypeToken<Map<String, Integer>> typeToken = new TypeToken<Map<String, Integer>>() { };
+		final Map<String, Integer> m = new Gson().fromJson(json, typeToken.getType());
+		
 		/*
 		 * This is where the "magic" of the vector clock happens. 
 		 * 
@@ -33,22 +40,16 @@ public class EWD998VectorClock {
 		 *                                    
 		 *    IN clock' = [ clock EXCEPT ![n] = Merge(inbox[n][j].vc, @) ]
 		 */
-		final JsonArray arr = json.get("clock").getAsJsonArray();
-		for (int i = 0; i < vc.length; i++) {
-			this.vc[i] = Math.max(this.vc[i], arr.get(i).getAsInt());
-		}
+		for (int i = 0; i < m.size(); i++) {
+			this.vc[i] = Math.max(this.vc[i], m.get(Integer.toString(i)));
+		}		
 	}
 
 	public JsonElement toJson() {
-		final JsonObject result = new JsonObject();
-		result.add("id", new JsonPrimitive(n));
-		
-		final JsonArray arr = new JsonArray(vc.length);
+		Map<String, Integer> m = new HashMap<>();
 		for (int i = 0; i < vc.length; i++) {
-			arr.add(vc[i]);
+			m.put(Integer.toString(i), vc[i]);
 		}
-		result.add("clock", arr);
-
-		return result;
+		return new Gson().toJsonTree(m);
 	}
 }
