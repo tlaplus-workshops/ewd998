@@ -7,8 +7,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -25,12 +25,17 @@ public class EWD998 {
 	public static void main(String[] args) throws Exception {
 		// foo:4711 bar:1234 frob:4423 1
 
-		// foo bar frob
-		final List<String> nodes = Arrays.asList(args).subList(0, args.length - 1);
+		// foo:4711 bar:1234 frob:4423
+		final Map<Integer, Pair> nodes = new HashMap<>();
+		for (int i = 0; i < args.length - 1; i++) {
+			String[] s = args[i].split(":");
+			nodes.put(i, new Pair(s[0], Integer.parseInt(s[1])));
+		}
+		
 		// nodes[1] = bar (zero-indexed)
 		final int myId = Integer.parseInt(args[args.length - 1]);
 
-		new EWD998(nodes, myId, Integer.parseInt(nodes.get(myId).split(":")[1]), myId == 0);
+		new EWD998(nodes, myId, myId == 0);
 	}
 
 	private enum Color {
@@ -39,11 +44,13 @@ public class EWD998 {
 	}
 	
 	private final Random randomWork = new Random();
+	private final Map<Integer, Pair> nodes;
 	private final EWD998VectorClock vc;
 	
-	public EWD998(final List<String> nodes, final int myId, final int port, final boolean isInitiator) throws Exception {
+	public EWD998(final Map<Integer, Pair> nodes, final int myId, final boolean isInitiator) throws Exception {
 		final BlockingQueue<JsonObject> inbox = new LinkedBlockingQueue<>();
 		
+		this.nodes = nodes;
 		/*
 			Init ==
 			    /\ active \in [Node -> BOOLEAN]
@@ -75,7 +82,7 @@ public class EWD998 {
 		// Boilerplate: Network receiver thread (after Init because Init adds an element to inbox).
 		final ExecutorService executorService = Executors.newSingleThreadExecutor();
 		executorService.submit(() -> {
-			try (ServerSocket serverSocket = new ServerSocket(port)) {
+			try (ServerSocket serverSocket = new ServerSocket(nodes.get(myId).port)) {
 				System.out.printf("Node %s listening on %s\n", myId, serverSocket.getLocalSocketAddress());
 				while (true) {
 					final Socket socket = serverSocket.accept();
@@ -187,8 +194,7 @@ public class EWD998 {
 					counter++;
 					
 					// \E rcv \in Node: replaced with probabilistic choice.
-					final String receiver = nodes.get(randomWork.nextInt(nodes.size()));
-					sendPayload(receiver);
+					sendPayload(myId, randomWork.nextInt(nodes.size()));
 				} else {					
 					vc.tick();
 				}
@@ -221,11 +227,11 @@ public class EWD998 {
 						    /\ UNCHANGED <<active, counter, pending>>                
 					 */
 					if (!terminationDetected) {
-						sendTok(nodes.get(nodes.size() - 1), 0, Color.white);		
+						sendTok(myId, nodes.size() - 1, 0, Color.white);
 						color = Color.white;
 					} else {
-						for (String n : nodes) {
-							sendTrm(n);
+						for (Integer n : nodes.keySet()) {
+							sendTrm(myId, n);
 						}
 					}
 					tokenColor = null;
@@ -240,7 +246,7 @@ public class EWD998 {
 						    /\ color' = [ color EXCEPT ![i] = "white" ]
 						    /\ UNCHANGED <<active, pending, counter>>
  					 */
-					sendTok(nodes.get(myId - 1), tokenQ + counter, color == Color.black ? Color.black : tokenColor);
+					sendTok(myId, myId - 1, tokenQ + counter, color == Color.black ? Color.black : tokenColor);
 					color = Color.white;
 
 					tokenColor = null;
@@ -267,35 +273,35 @@ public class EWD998 {
 		}
 	}
 
-	private void sendPayload(final String receiver) throws Exception {
+	private void sendPayload(final int sender, final int receiver) throws Exception {
 		final JsonObject result = new JsonObject();
 		result.add("rcv", new JsonPrimitive(receiver));
 		result.add("type", new JsonPrimitive("pl"));
-		sendMsg(result);
+		sendMsg(sender, receiver, result);
 	}
 
-	private void sendTok(final String receiver, final int q, final Color color) throws Exception {
+	private void sendTok(final int sender, final int receiver, final int q, final Color color) throws Exception {
 		final JsonObject result = new JsonObject();
 		result.add("rcv", new JsonPrimitive(receiver));
 		result.add("type", new JsonPrimitive("tok"));
 		result.add("q", new JsonPrimitive(q));
 		result.add("color", new JsonPrimitive(color.toString()));
-		sendMsg(result);
+		sendMsg(sender, receiver, result);
 	}
 
-	private void sendTrm(final String receiver) throws Exception {
+	private void sendTrm(final int sender, final int receiver) throws Exception {
 		final JsonObject result = new JsonObject();
 		result.add("rcv", new JsonPrimitive(receiver));
 		result.add("type", new JsonPrimitive("trm"));
-		sendMsg(result);
+		sendMsg(sender, receiver, result);
 	}
 
 	// Boilerplate: Sending messages. 
-	private void sendMsg(JsonObject json) throws Exception {
+	private void sendMsg(final int sender, final int receiver, final JsonObject json) throws Exception {
 		System.out.printf("snd: %s\n", json);
 		
-		final String[] s = json.get("rcv").getAsString().split(":");
-        final Socket socket = new Socket(s[0], Integer.parseInt(s[1]));
+		final Pair p = nodes.get(receiver);
+        final Socket socket = new Socket(p.host, p.port);
 
         final OutputStream outputStream = socket.getOutputStream();
         final DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
@@ -307,5 +313,15 @@ public class EWD998 {
         dataOutputStream.close();
 
         socket.close();
+	}
+	
+	public static class Pair {
+		public final String host;
+		public final int port;
+
+		public Pair(final String host, final int port) {
+			this.host = host;
+			this.port = port;
+		}
 	}
 }

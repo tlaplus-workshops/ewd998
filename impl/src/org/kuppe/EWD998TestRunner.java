@@ -1,9 +1,13 @@
 package org.kuppe;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import org.kuppe.EWD998.Pair;
 
 public class EWD998TestRunner {
 
@@ -25,16 +29,16 @@ public class EWD998TestRunner {
 			final ExecutorService executor = Executors.newFixedThreadPool(n);
 			for (int i = n - 1; i >= 0; i--) {
 
-				final String[] ewd998Args = new String[n + 1];
-				for (int j = 0; j < ewd998Args.length - 1; j++) {
-					ewd998Args[j] = String.format("%s:%s", HOSTNAME, BASEPORT + j);
+				final Map<Integer, Pair> nodes = new HashMap<>(n);
+				for (int j = 0; j < n; j++) {
+					nodes.put(j, new Pair(HOSTNAME, BASEPORT + j));
 				}
-				ewd998Args[ewd998Args.length - 1] = Integer.toString(i);
+				final int myId = i;
 				
 				// Cannot .get() the task because the runners would run sequentially and each
 				// run blocks until termination is detected.
 				executor.submit(() -> {
-					EWD998.main(ewd998Args);
+					new EWD998(nodes, myId, myId == 0);
 					executor.shutdown();
 					return null;
 				});
