@@ -92,12 +92,15 @@ public class EWD998 {
 					final String in = dataInputStream.readUTF();
 										
 					final JsonObject msg = JsonParser.parseString(in).getAsJsonObject();
-					
-					// Print the raw message.
-					System.out.println(in);
+					msg.add("host", new JsonPrimitive(myId));
 					
 					// See EWD998!RecvMsg.
 					vc.tickAndMerge(msg.get("vc").getAsJsonObject());
+					msg.add("vc", vc.toJson());
+
+					// Print the "raw" message after out host has been set and our vector clock has
+					// been incremented.
+					System.out.println(msg);
 					
 					inbox.add(msg.get("msg").getAsJsonObject());
 					if (msg.get("msg").getAsJsonObject().get("type").getAsString().equals("trm")) {
