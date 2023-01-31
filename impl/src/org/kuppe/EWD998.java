@@ -89,7 +89,7 @@ public class EWD998 {
 					System.out.printf("rcv: %s\n", in);
 					
 					// See EWD998!RecvMsg.
-					vc.merge(msg.get("vc").getAsJsonObject());
+					vc.tickAndMerge(msg.get("vc").getAsJsonObject());
 					
 					inbox.add(msg);
 					if (msg.get("type").getAsString().equals("trm")) {

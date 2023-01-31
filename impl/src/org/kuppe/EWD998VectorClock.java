@@ -19,13 +19,20 @@ public class EWD998VectorClock {
 		this.n = n;
 	}
 
-	public EWD998VectorClock tick() {
+	public synchronized EWD998VectorClock tick() {
 		// /\ clock' = [ clock EXCEPT ![n][n] = @ + 1 ]
 		this.vc[n]++;
 		return this;
 	}
 
-	public void merge(final JsonObject json) {
+	public synchronized EWD998VectorClock tickAndMerge(final JsonObject json) {
+		// Each time a process receives a message, it increments its own logical clock
+		// in the vector by one and updates each element in its vector by taking the
+		// maximum of the value in its own vector clock and the value in the vector in
+		// the received message (for every element).
+		// https://en.wikipedia.org/wiki/Vector_clock
+		tick();
+		
 		// De-serialize.
 		final TypeToken<Map<String, Integer>> typeToken = new TypeToken<Map<String, Integer>>() { };
 		final Map<String, Integer> m = new Gson().fromJson(json, typeToken.getType());
@@ -42,10 +49,12 @@ public class EWD998VectorClock {
 		 */
 		for (int i = 0; i < m.size(); i++) {
 			this.vc[i] = Math.max(this.vc[i], m.get(Integer.toString(i)));
-		}		
+		}
+		
+		return this;
 	}
 
-	public JsonElement toJson() {
+	public synchronized JsonElement toJson() {
 		Map<String, Integer> m = new HashMap<>();
 		for (int i = 0; i < vc.length; i++) {
 			m.put(Integer.toString(i), vc[i]);
