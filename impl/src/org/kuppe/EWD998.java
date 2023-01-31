@@ -93,13 +93,13 @@ public class EWD998 {
 					final JsonObject msg = JsonParser.parseString(in).getAsJsonObject();
 					
 					// Print the raw message.
-					System.out.printf("rcv: %s\n", in);
+					System.out.println(in);
 					
 					// See EWD998!RecvMsg.
 					vc.tickAndMerge(msg.get("vc").getAsJsonObject());
 					
-					inbox.add(msg);
-					if (msg.get("type").getAsString().equals("trm")) {
+					inbox.add(msg.get("msg").getAsJsonObject());
+					if (msg.get("msg").getAsJsonObject().get("type").getAsString().equals("trm")) {
 						// See note at marker "aklseflha" below.
 						dataInputStream.close();
 						inputStream.close();
@@ -275,14 +275,12 @@ public class EWD998 {
 
 	private void sendPayload(final int sender, final int receiver) throws Exception {
 		final JsonObject result = new JsonObject();
-		result.add("rcv", new JsonPrimitive(receiver));
 		result.add("type", new JsonPrimitive("pl"));
 		sendMsg(sender, receiver, result);
 	}
 
 	private void sendTok(final int sender, final int receiver, final int q, final Color color) throws Exception {
 		final JsonObject result = new JsonObject();
-		result.add("rcv", new JsonPrimitive(receiver));
 		result.add("type", new JsonPrimitive("tok"));
 		result.add("q", new JsonPrimitive(q));
 		result.add("color", new JsonPrimitive(color.toString()));
@@ -291,14 +289,23 @@ public class EWD998 {
 
 	private void sendTrm(final int sender, final int receiver) throws Exception {
 		final JsonObject result = new JsonObject();
-		result.add("rcv", new JsonPrimitive(receiver));
 		result.add("type", new JsonPrimitive("trm"));
 		sendMsg(sender, receiver, result);
 	}
 
 	// Boilerplate: Sending messages. 
-	private void sendMsg(final int sender, final int receiver, final JsonObject json) throws Exception {
-		System.out.printf("snd: %s\n", json);
+	private void sendMsg(final int sender, final int receiver, final JsonObject msg) throws Exception {
+		/*
+		 * ShiViz regexp: ^{"host":(?<host>[0-9]+),"src":(?<src>[0-9]+),"rcv":(?<rcv>[0-9]+),"msg":(?<event>({"type":"tok","q":-?[0-9]*,"color":"(white|black)"}|{"type":"(pl|trm|w|d)"})),"vc":(?<clock>.*)}
+		 */
+
+		final JsonObject json = new JsonObject();
+		json.add("host", new JsonPrimitive(sender));
+		json.add("src", new JsonPrimitive(sender));
+		json.add("rcv", new JsonPrimitive(receiver));
+		json.add("msg", msg);
+		json.add("vc", vc.tick().toJson());
+		System.out.println(json);
 		
 		final Pair p = nodes.get(receiver);
         final Socket socket = new Socket(p.host, p.port);
@@ -306,7 +313,6 @@ public class EWD998 {
         final OutputStream outputStream = socket.getOutputStream();
         final DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
 
-        json.add("vc", vc.tick().toJson());
         
         dataOutputStream.writeUTF(json.toString());
         dataOutputStream.flush();
