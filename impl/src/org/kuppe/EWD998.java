@@ -199,7 +199,17 @@ public class EWD998 {
 					// \E rcv \in Node: replaced with probabilistic choice.
 					sendPayload(myId, randomWork.nextInt(nodes.size()));
 				} else {					
-					vc.tick();
+//					vc.tick();
+
+					final JsonObject json = new JsonObject();
+					json.add("host", new JsonPrimitive(myId));
+					json.add("src", new JsonPrimitive(myId));
+					json.add("rcv", new JsonPrimitive(myId));
+					final JsonObject p = new JsonObject();
+					p.add("type", new JsonPrimitive("w"));
+					json.add("msg", p);
+					json.add("vc", vc.tick());
+					System.out.println(json.toString());
 				}
 			}
 			
@@ -213,6 +223,19 @@ public class EWD998 {
 			 */
 			if (active) {
 				active = randomWork.nextDouble() < 0.75d;
+				if (!active) {
+//					vc.tick();
+					
+					final JsonObject json = new JsonObject();
+					json.add("host", new JsonPrimitive(myId));
+					json.add("src", new JsonPrimitive(myId));
+					json.add("rcv", new JsonPrimitive(myId));
+					final JsonObject p = new JsonObject();
+					p.add("type", new JsonPrimitive("d"));
+					json.add("msg", p);
+					json.add("vc", vc.tick());
+					System.out.println(json.toString());
+				}
 			}
 			
 			// --------------------------------------------------------------------------------- //
