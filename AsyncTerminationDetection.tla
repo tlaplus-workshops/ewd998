@@ -15,34 +15,68 @@ EXTENDS Naturals
  \* * syntactically correct.  However, we don't know what elements are in the sets 
  \* * 23 and "frob" (nor do we care). The value of 23="frob" is undefined, and TLA+
  \* * users call this a "silly expression".
-CONSTANT N
+CONSTANT N 
 
 \* * We should declare what we assume about the parameters of a spec--the constants.
  \* * In this spec, we assume constant N to be a (positive) natural number, by
  \* * stating that N is in the set of Nat (defined in Naturals.tla) without 0 (zero).
  \* * Note that the TLC model-checker, which we will meet later, checks assumptions
  \* * upon startup.
-ASSUME NIsPosNat == N \in Nat \ {0}
+NIsPosNat == N \in Nat \ {0}
 
-\* TODO Fire up the TLA+ repl (`tlcrepl` in the Terminal > New Terminal) and 
- \* TODO find out what TLC returns for the following expressions:
- \* TODO 23 = "frob"
- \* TODO 23 # "frob"                       \* # is pretty-printed as ≠
- \* TODO {1,2,2,3,3} = {3,1,1,2,3,1}
- \* TODO 1 \div 4
- \* TODO 1 \div 0
- \* TODO {1,2,3} \cap {2,3,4}              \* \cap pp'ed as ∩
- \* TODO {1,2,3} \cup {2,3,4}              \* \cap pp'ed as ∪
- \* TODO {1,2,3} \ {2,3,4}
- \* TODO 23 \in {0}                        \* \in pp'ed as ∈
- \* TODO 23 \in {23, "frob"}
- \* TODO 23 \in {"frob", 23}
- \* TODO 23 \in {23} \ 23
- \* TODO 23 \in {23} \ {23}
- \* TODO 23 \notin {23} \ {23}
- \* TODO 10 \in 1..10
- \* TODO 1 \in 1..0
+ASSUME NIsPosNat
+
+Node == 0 .. N - 1 
+
+VARIABLE active, network, terminationDetected
+
+terminated ==
+    \A n \in Node: active[n] = FALSE /\ network[n] = 0
+
+TypeOK ==
+    /\ active \in [ Node -> BOOLEAN ]
+    /\ network \in [ Node -> Nat ]
+    /\ terminationDetected \in BOOLEAN  
+
+Init ==
+    /\ active \in [ Node -> BOOLEAN ]
+    /\ network \in [ Node -> 0..3 ]
+    /\ terminationDetected \in {FALSE, terminated}
+
+Terminates(n) ==
+    /\ active[n] = TRUE
+    /\ active' = [active EXCEPT ![n] = FALSE]
+    /\ UNCHANGED network
+    /\ terminationDetected' = FALSE
+
+SendMsg(snd, rcv) ==
+    /\ UNCHANGED active
+    /\ active[snd] = TRUE \* ???
+    /\ network' = [ network EXCEPT ![rcv] = @ + 1 ]
+    /\ UNCHANGED terminationDetected
+
+RecvMsg(rcv) ==
+    /\ network[rcv] > 0
+    \* /\ active[rcv] = TRUE \* ???
+    /\ active' = [active EXCEPT ![rcv] = TRUE]
+    /\ network' = [ network EXCEPT ![rcv] = network[rcv] - 1 ]
+    /\ UNCHANGED terminationDetected
+
+Next ==
+    \E n,m \in Node:
+        \/ Terminates(n)
+        \/ SendMsg(n,m)
+        \/ RecvMsg(n)
+
+Safe ==
+    \* IF terminationDetected THEN terminated ELSE TRUE
+    terminationDetected => terminated
+
+\* Live ==
+\*     "Eventually" terminationDetected
+----
+
+Constraint ==
+    \A n \in Node: network[n] < 3
 
 =============================================================================
-\* Modification History
-\* Created Sun Jan 10 15:19:20 CET 2021 by Stephan Merz @muenchnerkindl

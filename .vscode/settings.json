@@ -1,5 +1,5 @@
 {
-    "tlaplus.tlc.modelChecker.options": "-deadlock -noTE",
+    "tlaplus.tlc.modelChecker.options": "-deadlock -noTE -dump dot,actionlabels,colorize ATD -coverage 1",
     "tlaplus.tlc.statisticsSharing": "share",
     "tlaplus.java.options": "-XX:+UseParallelGC",
     "[tlaplus]": {"editor.codeActionsOnSave": {"source": true} },
