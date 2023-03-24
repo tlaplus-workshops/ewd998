@@ -72,9 +72,13 @@ Next ==
         \/ RecvMsg(n)
 
     \*   [A]_v     <=>      A \/ UNCHANGED v
+    \*  <<A>>_v    <=>      A /\ v' # v
+
+F ==
+    <>[](ENABLED <<Next>>_vars) => []<><<Next>>_vars
 
 Spec ==
-    Init /\ [] [Next]_vars /\ WF_vars(Next)
+    Init /\ [] [Next]_vars /\ \A n \in Node: WF_vars(Terminates(n))
 
 -------------------
 
@@ -87,7 +91,7 @@ Safe ==
 Live ==
     [](terminated => <>terminationDetected)
 
-THEOREM Spec => Safe    \*/\ NeverUndetect /\ Live
+THEOREM Spec => Safe  \*/\ NeverUndetect /\ Live
 
 -------------------
 

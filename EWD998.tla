@@ -34,6 +34,10 @@ ASSUME NIsPosNat
 
 Node == 0 .. N - 1 
 
+Initator ==
+    \* Who is the leader doesn't matter!
+    CHOOSE n \in Node: TRUE
+
 White == "white"
 Black == "Black"
 Colors == 
@@ -55,7 +59,7 @@ terminated ==
 terminationDetected ==
     /\ token.pos = 0
     /\ token.color = White
-    /\ token.q = 0
+    /\ token.q + counter[0] = 0
     /\ ~active[0]
     /\ color[0] = White
 
@@ -81,6 +85,10 @@ InitiateToken ==
                                !.color = White ]
     /\ color' = [ color EXCEPT ![token.pos] = White]                               
     /\ UNCHANGED <<counter, network, active>>
+
+\* Foo==
+\*     /\ token.pos = 0
+\*     /\ UNCHANGED vars
 
 PassToken ==
     /\ ~active[token.pos]
@@ -130,6 +138,21 @@ ATD ==
 ATDSpec == ATD!Spec
 
 THEOREM Spec => ATDSpec
+
+Alias ==
+    [
+        active |-> active, 
+        color |-> color,
+        counter |-> counter, 
+        network |-> network,
+        token |-> token,
+        term |-> terminated,
+        td |-> terminationDetected,
+
+        IT |-> ENABLED InitiateToken,
+        PT |-> ENABLED PassToken,
+        NN |-> ENABLED Next
+    ]
 
 -------------------
 
