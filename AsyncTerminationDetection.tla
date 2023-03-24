@@ -29,6 +29,7 @@ ASSUME NIsPosNat
 Node == 0 .. N - 1 
 
 VARIABLE active, network, terminationDetected
+vars == <<active, network, terminationDetected>>
 
 terminated ==
     \A n \in Node: active[n] = FALSE /\ network[n] = 0
@@ -44,23 +45,25 @@ Init ==
     /\ terminationDetected \in {FALSE, terminated}
 
 Terminates(n) ==
-    /\ active[n] = TRUE
+    \* /\ active[n] = TRUE
     /\ active' = [active EXCEPT ![n] = FALSE]
-    /\ UNCHANGED network
-    /\ terminationDetected' = FALSE
+    /\ UNCHANGED <<network>>
+    /\ terminationDetected' \in {terminationDetected}
+    \* /\ \/terminationDetected' = terminated'
+    \*    \/terminationDetected' = terminationDetected
 
 SendMsg(snd, rcv) ==
     /\ UNCHANGED active
-    /\ active[snd] = TRUE \* ???
+    /\ active[snd] = TRUE
     /\ network' = [ network EXCEPT ![rcv] = @ + 1 ]
     /\ UNCHANGED terminationDetected
 
 RecvMsg(rcv) ==
     /\ network[rcv] > 0
+    /\ UNCHANGED terminationDetected
     \* /\ active[rcv] = TRUE \* ???
     /\ active' = [active EXCEPT ![rcv] = TRUE]
     /\ network' = [ network EXCEPT ![rcv] = network[rcv] - 1 ]
-    /\ UNCHANGED terminationDetected
 
 Next ==
     \E n,m \in Node:
@@ -68,13 +71,25 @@ Next ==
         \/ SendMsg(n,m)
         \/ RecvMsg(n)
 
-Safe ==
-    \* IF terminationDetected THEN terminated ELSE TRUE
-    terminationDetected => terminated
+    \*   [A]_v     <=>      A \/ UNCHANGED v
 
-\* Live ==
-\*     "Eventually" terminationDetected
-----
+Spec ==
+    Init /\ [] [Next]_vars /\ WF_vars(Next)
+
+-------------------
+
+NeverUndetect ==
+    [] [terminationDetected => terminationDetected']_vars
+
+Safe ==
+    [](terminationDetected => terminated)
+
+Live ==
+    [](terminated => <>terminationDetected)
+
+THEOREM Spec => Safe    \*/\ NeverUndetect /\ Live
+
+-------------------
 
 Constraint ==
     \A n \in Node: network[n] < 3
