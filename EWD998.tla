@@ -1,19 +1,17 @@
-0) Sending a message by node  i  increments a counter at  i  , the receipt of a
-   message decrements i's counter
+0) Sending a message by node  i  increments a counter at  i  , the receipt of a message decrements i's counter
 3) Receiving a *message* (not token) blackens the (receiver) node
-2) An active node j -owning the token- keeps the token.  When j becomes inactive,
-   it passes the token to its neighbor with  q = q + counter[j] 
+2) An active node j -owning the token- keeps the token.  When j becomes inactive, it passes the token to its neighbor with  q = q + counter[j] 
 4) A black node taints the token
 7) Passing the token whitens the sender node
-1) The initiator sends the token with a counter  q  initialized to  0  and color
-   white
+1) The initiator sends the token with a counter  q  initialized to  0  and color white
 5) The initiator starts a new round iff the current round is inconclusive
 6) The initiator whitens itself and the token when initiating a new round
 
+https://github.com/tlaplus-workshops/ewd998/blob/032023/EWD998.tla
 
 ------- MODULE EWD998 -----
 
-EXTENDS Naturals
+EXTENDS Naturals, Integers
 
 \* * A constant is a parameter of a specification. In other words, it is a
  \* * "variable" that cannot change throughout a behavior, i.e., a sequence
@@ -36,48 +34,106 @@ ASSUME NIsPosNat
 
 Node == 0 .. N - 1 
 
-VARIABLE active, network
-vars == <<active, network>>
+White == "white"
+Black == "Black"
+Colors == 
+    {White,Black}
+
+VARIABLE 
+    active, 
+    color,
+    counter, 
+    
+    network,
+    
+    token \* [ q |-> 42, color |-> "white", pos |-> 0]
+vars == <<active, network, color, counter, token>>
 
 terminated ==
     \A n \in Node: active[n] = FALSE /\ network[n] = 0
 
+terminationDetected ==
+    /\ token.pos = 0
+    /\ token.color = White
+    /\ token.q = 0
+    /\ ~active[0]
+    /\ color[0] = White
+
 TypeOK ==
     /\ active \in [ Node -> BOOLEAN ]
+    /\ color \in [ Node -> Colors ]
+    /\ counter \in [ Node -> Int ]
     /\ network \in [ Node -> Nat ]
+    /\ token \in [ q: Int, color: Colors, pos: Node]
 
 Init ==
     /\ active \in [ Node -> BOOLEAN ]
-    /\ network \in [ Node -> 0..3 ]
+    /\ counter \in [ Node -> 0..0 ]
+    /\ color \in [ Node -> Colors ]
+    /\ network \in [ Node -> 0..0 ]
+    /\ token \in [ q: {0}, color: {Black}, pos: Node]
+
+InitiateToken ==
+    \* ???
+    /\ token.pos = 0
+    /\ token' = [ token EXCEPT !["q"] = 0,
+                               !["pos"]= N - 1,
+                               !.color = White ]
+    /\ color' = [ color EXCEPT ![token.pos] = White]                               
+    /\ UNCHANGED <<counter, network, active>>
+
+PassToken ==
+    /\ ~active[token.pos]
+    /\ token.pos # 0
+    /\ token' = [ token EXCEPT !["q"] = token.q + counter[token.pos],
+                               !["pos"]= @ - 1,
+                               !.color = IF color[token.pos] = Black
+                                         THEN Black
+                                         ELSE @ ]
+    /\ color' = [ color EXCEPT ![token.pos] = White]                               
+    /\ UNCHANGED <<counter, network, active>>
 
 Terminates(n) ==
-    \* /\ active[n] = TRUE
+    \* /\ active[n] = TRUE \* ???
     /\ active' = [active EXCEPT ![n] = FALSE]
-    /\ UNCHANGED <<network>>
+    /\ UNCHANGED <<network, color, counter, token>>
 
 SendMsg(snd, rcv) ==
     /\ UNCHANGED active
     /\ active[snd] = TRUE
     /\ network' = [ network EXCEPT ![rcv] = @ + 1 ]
+    /\ counter' = [counter EXCEPT ![snd] = @ + 1]
+    /\ UNCHANGED <<color, token>>
 
 RecvMsg(rcv) ==
     /\ network[rcv] > 0
     \* /\ active[rcv] = TRUE \* ???
     /\ active' = [active EXCEPT ![rcv] = TRUE]
     /\ network' = [ network EXCEPT ![rcv] = network[rcv] - 1 ]
+    /\ counter' = [counter EXCEPT ![rcv] = @ - 1]
+    /\ UNCHANGED <<color, token>>
 
 Next ==
     \E n,m \in Node:
         \/ Terminates(n)
         \/ SendMsg(n,m)
         \/ RecvMsg(n)
+        \/ InitiateToken
+        \/ PassToken
 
 Spec ==
     Init /\ [] [Next]_vars /\ WF_vars(Next)
 
+ATD ==
+    INSTANCE AsyncTerminationDetection
+
+ATDSpec == ATD!Spec
+
+THEOREM Spec => ATDSpec
+
 -------------------
 
 Constraint ==
-    \A n \in Node: network[n] < 3
+    \A n \in Node: network[n] < 3 /\ counter[n] \in -3..3
 
 =====

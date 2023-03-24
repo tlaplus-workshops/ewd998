@@ -48,7 +48,7 @@ Terminates(n) ==
     \* /\ active[n] = TRUE
     /\ active' = [active EXCEPT ![n] = FALSE]
     /\ UNCHANGED <<network>>
-    /\ terminationDetected' \in {terminationDetected}
+    /\ terminationDetected' \in {terminated', terminationDetected}
     \* /\ \/terminationDetected' = terminated'
     \*    \/terminationDetected' = terminationDetected
 
@@ -79,7 +79,7 @@ Spec ==
 -------------------
 
 NeverUndetect ==
-    [] [terminationDetected => terminationDetected']_vars
+    [][terminationDetected => terminationDetected']_vars
 
 Safe ==
     [](terminationDetected => terminated)
