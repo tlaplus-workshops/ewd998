@@ -42,15 +42,27 @@ Node == 0 .. N-1
  \* * node has yet to receive.
 VARIABLES 
   active,               \* activation status of nodes
-  pending               \* number of messages pending at a node
+  pending,               \* number of messages pending at a node
+  terminationDetected
+
+TypeOK ==
+    /\ pending \in [ Node -> Nat ]
+    /\ active \in [ Node -> BOOLEAN ]
+    /\ terminationDetected \in BOOLEAN 
 
 \* * A definition that lets us refer to the spec's variables (more on it later).
-vars == << active, pending >>
+vars == << active, pending, terminationDetected >>
 
 -----------------------------------------------------------------------------
 
+terminated ==
+    \A n \in Node: active[n] = FALSE /\ pending[n] = 0
+
 \* * Initially, all nodes are active and no messages are pending.
 Init ==
+    /\ active \in [ Node -> BOOLEAN ]
+    /\ pending \in [ Node -> 0..2 ]
+    /\ terminationDetected \in {FALSE, terminated}
 
 -----------------------------------------------------------------------------
 
@@ -64,16 +76,58 @@ Init ==
 
 \* * Node i terminates.
 Terminate(i) ==
-    UNCHANGED vars \* Short-hand saying that the variables do not change.
+    \* active[i] := FALSE
+    \* /\ active[i] = TRUE
+    /\ active' = [ n \in Node |-> (IF n = i THEN FALSE ELSE active[n]) ]
+    /\ pending' = pending
+    /\ \/ terminationDetected' = terminated'
+       \/ UNCHANGED terminationDetected
+    \*    \/ terminationDetected' = TRUE
 
 \* * Node i sends a message to node j.
 SendMsg(i, j) ==
-    UNCHANGED vars
+    /\ active[i] = TRUE
+    /\ pending' = [ n \in Node |-> IF n = j THEN pending[n]+ 1 ELSE pending[n] ]
+    /\ pending' = [ pending EXCEPT ![j] = pending[j] + 1 ]
+    /\ pending' = [ pending EXCEPT ![j] = @ + 1 ]
+    /\ UNCHANGED active
+    /\ UNCHANGED terminationDetected
 
 \* * Node I receives a message.
 Wakeup(i) ==
-    UNCHANGED vars
+    /\ active[i] = FALSE \* ????
+    /\ pending[i] > 0
+    /\ active' = [ n \in Node |-> (IF n = i THEN TRUE ELSE active[n]) ]
+    /\ pending' = [ n \in Node |-> IF n = i THEN pending[n]- 1 ELSE pending[n] ]
+    /\ UNCHANGED terminationDetected
+
+Next ==
+    \E i, j \in Node: 
+        \/ SendMsg(i,j)
+        \/ Wakeup(i)
+        \/ Terminate(i)
+
+Spec ==
+    Init /\ [][Next]_vars  \* Next \/ (active' = active /\ pending' = pending /\ terminationDetected' = terminationDetected)
+
+---------------
+
+Safe ==
+    \* IF terminationDetected THEN terminated ELSE TRUE
+    [](terminationDetected => terminated)
+
+THEOREM Spec => Safe
+
+Live ==
+    terminated ~> []terminationDetected
+    \* /\ [](terminated => <>[]terminationDetected)
+
+THEOREM Spec => Live
+----------------
+
+
+\* Ignore this if you don't care about TLC!
+Constraint ==
+    \A n \in Node: pending[n] < 3
 
 =============================================================================
-\* Modification History
-\* Created Sun Jan 10 15:19:20 CET 2021 by Stephan Merz @muenchnerkindl
