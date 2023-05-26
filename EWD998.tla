@@ -33,7 +33,7 @@ terminated ==
 
 terminationDetected ==
     /\ token.pos = 0
-    /\ token.val = 0
+    /\ token.val + counter[0] = 0
     /\ token.color = "white"
     /\ active[0] = FALSE
     /\ color[0] = "white"
@@ -74,8 +74,8 @@ InitiateToken ==
     /\ token.pos = 0
     /\ token' = [ 
         pos |-> N - 1, 
-        val |-> counter[0], 
-        color |-> color[0] 
+        val |-> 0, 
+        color |-> "white"
       ]
     /\ color' = [color EXCEPT ![0] = "white"]
     /\ UNCHANGED << active, counter, pending >>
@@ -98,18 +98,15 @@ Terminate(i) ==
 
 \* * Node i sends a message to node j.
 SendMsg(i, j) ==
-    \* /\ i # j \* ???
     /\ active[i] = TRUE
-    /\ color' = [color EXCEPT ![i] = "black"]
     /\ counter' = [ counter EXCEPT ![i] = @ + 1 ]
     /\ pending' = [ pending EXCEPT ![j] = @ + 1 ]
-    /\ UNCHANGED << active, token >>
+    /\ UNCHANGED << active, token, color >>
 
 \* * Node I receives a message.
 Wakeup(i) ==
-    /\ active[i] = FALSE \* ????
     /\ pending[i] > 0
-    /\ color' = [color EXCEPT  ![i] = "black"]
+    /\ color' = [color EXCEPT ![i] = "black"]
     /\ counter' = [ counter EXCEPT ![i] = @ - 1 ]
     /\ active' = [ active EXCEPT ![i] = TRUE ]
     /\ pending' = [ pending EXCEPT ![i] = @ - 1 ]

@@ -95,7 +95,6 @@ SendMsg(i, j) ==
 
 \* * Node I receives a message.
 Wakeup(i) ==
-    /\ active[i] = FALSE \* ????
     /\ pending[i] > 0
     /\ active' = [ n \in Node |-> (IF n = i THEN TRUE ELSE active[n]) ]
     /\ pending' = [ n \in Node |-> IF n = i THEN pending[n]- 1 ELSE pending[n] ]
