@@ -108,8 +108,17 @@ Next ==
         \/ Terminate(i)
 
 Spec ==
-    Init /\ [][Next]_vars  \* Next \/ (active' = active /\ pending' = pending /\ terminationDetected' = terminationDetected)
+    Init /\ [][Next]_vars /\ \A i \in Node: WF_vars(Terminate(i))
+    
+    
+    \* /\ <><<Next>>_vars  \* <<A>>_v   <=>   A /\ v' # v
 
+    \* WF_v(A)  <=>   <>[]ENABLED <<A>>_v => []<><<A>>_v
+
+    \* SF_v(A)  <=>   []<>ENABLED <<A>>_v => []<><<A>>_v
+
+
+\* ENABLED << Foo >>_vars
 ---------------
 
 Safe ==
