@@ -24,24 +24,60 @@ CONSTANT N
  \* * upon startup.
 ASSUME NIsPosNat == N \in Nat \ {0}
 
-\* TODO Fire up the TLA+ repl (`tlcrepl` in the Terminal > New Terminal) and 
- \* TODO find out what TLC returns for the following expressions:
- \* TODO 23 = "frob"
- \* TODO 23 # "frob"                       \* # is pretty-printed as ≠
- \* TODO {1,2,2,3,3} = {3,1,1,2,3,1}
- \* TODO 1 \div 4
- \* TODO 1 \div 0
- \* TODO {1,2,3} \cap {2,3,4}              \* \cap pp'ed as ∩
- \* TODO {1,2,3} \cup {2,3,4}              \* \cap pp'ed as ∪
- \* TODO {1,2,3} \ {2,3,4}
- \* TODO 23 \in {0}                        \* \in pp'ed as ∈
- \* TODO 23 \in {23, "frob"}
- \* TODO 23 \in {"frob", 23}
- \* TODO 23 \in {23} \ 23
- \* TODO 23 \in {23} \ {23}
- \* TODO 23 \notin {23} \ {23}
- \* TODO 10 \in 1..10
- \* TODO 1 \in 1..0
+Nodes ==
+    0 .. N-1
+
+VARIABLE messages, active, terminationDetected
+
+termination ==
+    \A n \in Nodes: active[n] = FALSE /\ messages[n] = 0
+
+Init ==
+    /\ active = [ n \in Nodes |-> TRUE ]
+    /\ messages = [ n \in Nodes |-> 0]
+    \* /\ terminationDetected \in {FALSE, termination}
+    /\ \/ terminationDetected = FALSE
+       \/ terminationDetected = termination
+
+Idle(node) ==
+    /\ active' = [ n \in Nodes |-> IF n = node THEN FALSE ELSE active[n]]
+    /\ active' = [ active EXCEPT ![node] = FALSE' ]
+    /\ messages' = messages
+    /\ \/ terminationDetected' = termination'
+       \/ terminationDetected' = terminationDetected
+
+SendMsg(snd, rcv) ==
+    /\ active[snd] = TRUE
+    /\ messages' = [ n \in Nodes |-> IF n = rcv THEN messages[n] + 1 ELSE messages[n] ]
+    /\ messages' = [ messages EXCEPT ![rcv] = messages[rcv] + 1 ]
+    /\ messages' = [ messages EXCEPT ![rcv] = @ + 1 ]
+    /\ active' = active
+    /\ terminationDetected' = terminationDetected
+
+RecvMsg(rcv) ==
+    /\ messages[rcv] > 0
+    /\ messages' = [ n \in Nodes |-> IF n = rcv THEN messages[n] - 1 ELSE messages[n] ]
+    /\ active' = [ n \in Nodes |-> IF n = rcv THEN TRUE ELSE active[n]] 
+    /\ terminationDetected' = terminationDetected
+
+Next ==
+    \E n, m \in Nodes: 
+        \/ Idle(n)
+        \/ SendMsg(n,m)
+        \/ RecvMsg(n)
+
+----
+
+Inv ==
+    \* IF terminationDetected THEN termination ELSE TRUE
+    terminationDetected => termination
+    \* terminationDetected = termination
+
+Gooood ==
+    termination => <>terminationDetected
+
+OnlyThreeMsgs ==
+    \A n \in Nodes: messages[n] < 4
 
 =============================================================================
 \* Modification History
